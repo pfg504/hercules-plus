@@ -7,7 +7,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ieee.c 7706 2011-08-19 22:52:45Z jj $
+// $Id: ieee.c 7709 2011-08-20 02:41:18Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This module implements ESA/390 Binary Floating-Point (IEEE 754)   */
@@ -67,9 +67,9 @@
 /*           'SoftFloat' IEEE Binary Floating Point package                  */
 
 #include "milieu.h"
-#include "softfloat.h"
-#include "softfloat-macros.h"
-#include "softfloat-specialize.h"
+#include "SoftFloat.h"
+#include "SoftFloat-macros.h"
+#include "SoftFloat-specialise.h"
 
 /* Handy constants                           low       high                 */
 static const float128  float128_zero   = { LIT64(0), LIT64( 0x0000000000000000 ) };

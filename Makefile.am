@@ -2,7 +2,7 @@
 # Makefile for Hercules S/370, ESA/390 and z/Architecture emulator
 # Process this file with 'automake' to produce Makefile.in
 #
-# $Id: Makefile.am 7707 2011-08-19 23:15:11Z fish $
+# $Id: Makefile.am 7714 2011-08-20 04:58:39Z fish $
 #
 # ***************************************************************************
 
@@ -11,11 +11,11 @@ ACLOCAL_AMFLAGS  = -I m4
 
 lns=@LN_S@
 
-SUBDIRS = decNumber m4 po util html man . crypto
+SUBDIRS = decNumber SoftFloat m4 po util html man . crypto
 
 LDADD = @LTLIBICONV@ @LTLIBINTL@ @LIBS@
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/decNumber
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/decNumber -I$(top_srcdir)/SoftFloat
 
 if BUILD_HERCIFC
   HERCIFC = hercifc
@@ -378,7 +378,6 @@ endif
                        timer.c      \
                        esame.c      \
                        ieee.c       \
-                       softfloat.c  \
                        dfp.c        \
                        machdep.h    \
                        httpserv.c   \
@@ -414,6 +413,7 @@ endif
                       libherct.la     \
                       libhercd.la     \
                       decNumber/libdecNumber.la \
+                      SoftFloat/libSoftFloat.la \
                       $(LDADD)
 
 #
@@ -623,9 +623,6 @@ EXTRA_DIST = autoconf/config.rpath \
              README.SUN            \
              README.AIX            \
              _TODO.txt             \
-             SoftFloat-history.txt \
-             SoftFloat-source.txt  \
-             SoftFloat.txt         \
              makefile.msvc         \
              makefile-dllmod.msvc  \
              msvc.makefile.includes/BZIP2_DIR.msvc    \
@@ -755,12 +752,6 @@ noinst_HEADERS = fishhang.h     \
                  dbgtrace.h     \
                  chain.h        \
                  extstring.h    \
-                 milieu.h                \
-                 softfloat-fixme.h       \
-                 softfloat-macros.h      \
-                 softfloat-specialize.h  \
-                 softfloat-types.h       \
-                 softfloat.h             \
                  $(extra_dynamic_SRC)
 
 cckd: cckd2ckd$(EXEEXT)  \

@@ -2,14 +2,14 @@
 # CONFIGURE.AC: Process this file with AutoConf to produce a configure script.
 ###############################################################################
 
-# $Id: configure.ac 56 2011-08-19 13:35:55Z sdogood1706 $
+# $Id: configure.ac 7709 2011-08-20 02:41:18Z jj $
 
 #    AC is AutoConfigure, AM is AutoMake, and AH is AutoHeader. The
 #    'HC_XXXX..' macros are custom Hercules autoconf macros defined
 #    in the 'hercules.m4' file in the 'autoconf' subdirectory.
 
 AC_INIT(hercules.h)                     # (package, version, bugreport email, etc)
-AC_REVISION($Revision: 56 $)          # (the version of this configure.ac)
+AC_REVISION($Revision: 7709 $)          # (the version of this configure.ac)
 AC_CONFIG_AUX_DIR(autoconf)             # (directory containing auxillary build tools)
 AM_INIT_AUTOMAKE(hercules,3.07)         # (the version of our software package)
 AM_CONFIG_HEADER(config.h)              # (the file the resulting configure script will produce)
@@ -2103,7 +2103,7 @@ AM_CONDITIONAL( USE_DLLTOOL,         [ test "$hc_cv_is_windows"       = "yes" ] 
 
 AC_CACHE_SAVE()
 
-AC_OUTPUT( [ Makefile util/Makefile html/Makefile crypto/Makefile po/Makefile.in po/Makefile man/Makefile m4/Makefile decNumber/Makefile] )
+AC_OUTPUT( [ Makefile util/Makefile html/Makefile crypto/Makefile po/Makefile.in po/Makefile man/Makefile m4/Makefile decNumber/Makefile SoftFloat/Makefile] )
 
 ###############################################################################
 #   (end-of-file)

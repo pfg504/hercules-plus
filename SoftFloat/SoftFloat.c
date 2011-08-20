@@ -1,4 +1,4 @@
-/* softfloat.c (C) John R. Hauser, 1998-2002                         */
+/* SoftFloat.c (C) John R. Hauser, 1998-2002                         */
 /*             (C) Copyright "Fish" (David B. Trout), 2011           */
 /*             This module is part of the SoftFloat package.         */
 /*                                                                   */
@@ -50,14 +50,14 @@ these four paragraphs for those parts of this code that are retained.
 =============================================================================*/
 
 #include "milieu.h"
-#include "softfloat.h"
+#include "SoftFloat.h"
 
 /*----------------------------------------------------------------------------
 | Primitive arithmetic functions, including multi-word arithmetic, and
 | division and square root approximations.  (Can be specialized to target if
 | desired.)
 *----------------------------------------------------------------------------*/
-#include "softfloat-macros.h"
+#include "SoftFloat-macros.h"
 
 /*----------------------------------------------------------------------------
 | Functions and definitions to determine:  (1) whether tininess for underflow
@@ -67,7 +67,7 @@ these four paragraphs for those parts of this code that are retained.
 | are propagated from function inputs to output.  These details are target-
 | specific.
 *----------------------------------------------------------------------------*/
-#include "softfloat-specialize.h"
+#include "SoftFloat-specialise.h"
 
 /*----------------------------------------------------------------------------
 | Takes a 64-bit fixed-point value `absZ' with binary point between bits 6
