@@ -1,4 +1,4 @@
-* RNSBG test $Id: rnsbg.txt 4687 2008-03-30 00:08:51Z rbowler $
+* RNSBG test $Id$
 sysclear
 archmode esame
 r 1a0=00000000800000000000000000000200 # z/Arch restart PSW

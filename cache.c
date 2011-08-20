@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cache.c 7640 2011-07-26 01:50:54Z pgorlinsky $
+// $Id$
 
 //FIXME ?? Dynamic resizing is disabled
 

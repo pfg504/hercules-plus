@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------
 # (c) Copyright Roger Bowler, 2005-2007
 # --------------------------------------------------------------------------
-# $Id: CONFIG.msvc 93 2011-08-19 14:58:10Z sdogood1706 $
+# $Id$
 #
 #  Set NODEBUG flag appropriately before !INCLUDEing <win32.mak>
 #  and attempt to determine the Visual Studio compiler version

@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------
 # (c) Copyright Roger Bowler, 2005-2007
 # --------------------------------------------------------------------------
-# $Id: ZLIB_FLAGS.msvc 96 2011-08-19 15:04:33Z sdogood1706 $
+# $Id$
 #
 #  Sets ZLIB-compression-related compiler/linker flags & #defines...
 #

@@ -1,4 +1,4 @@
-* LDETR test $Id: ldetr.txt 4171 2006-12-30 15:54:18Z rbowler $
+* LDETR test $Id$
 sysclear           
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

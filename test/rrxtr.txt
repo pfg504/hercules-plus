@@ -1,4 +1,4 @@
-* RRXTR test $Id: rrxtr.txt 4276 2007-01-30 16:20:32Z rbowler $
+* RRXTR test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

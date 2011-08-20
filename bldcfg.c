@@ -7,7 +7,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: bldcfg.c 7677 2011-08-08 11:23:09Z jj $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module builds the configuration tables for the Hercules      */

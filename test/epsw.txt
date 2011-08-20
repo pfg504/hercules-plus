@@ -1,4 +1,4 @@
-* EPSW test $Id: epsw.txt 4468 2007-11-15 21:34:01Z rbowler $
+* EPSW test $Id$
 sysclear           
 archmode esa/390
 r 000=0008000080000200                 # ESA/390 restart PSW

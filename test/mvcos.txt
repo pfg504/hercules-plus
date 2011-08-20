@@ -1,4 +1,4 @@
-* MVCOS test $Id: mvcos.txt 4764 2008-05-11 23:01:22Z rbowler $
+* MVCOS test $Id$
 sysclear
 archmode esame
 r 01a0=00000001800000000000000000002000 # z/Arch restart PSW

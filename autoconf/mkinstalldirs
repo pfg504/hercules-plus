@@ -4,7 +4,7 @@
 # Created: 1993-05-16
 # Public domain
 
-# $Id: mkinstalldirs 57 2011-08-19 13:40:37Z sdogood1706 $
+# $Id$
 
 errstatus=0
 dirmode=""

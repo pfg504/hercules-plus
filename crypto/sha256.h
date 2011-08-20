@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: sha256.h 6 2011-08-19 01:13:59Z sdogood1706 $
+// $Id$
 
 /* $OpenBSD: sha2.h,v 1.2 2004/04/28 23:11:57 millert Exp $ */
 /* modified for use with dyncrypt */

@@ -1,4 +1,4 @@
-* CSST test $Id: csst.txt 4964 2008-12-22 00:46:54Z ivan $
+* CSST test $Id$
 sysclear
 archmode esame
 r 1a0=00000000000000000000000000000200 # z/Arch restart PSW

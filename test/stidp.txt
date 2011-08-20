@@ -1,4 +1,4 @@
-* STIDP test $Id: stidp.txt 6652 2010-09-29 08:12:28Z pgorlinsky $
+* STIDP test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

@@ -1,4 +1,4 @@
-* AGF test $Id: agf.txt 5568 2009-12-26 21:00:28Z rbowler $
+* AGF test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

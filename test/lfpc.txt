@@ -1,4 +1,4 @@
-* LFPC test $Id: lfpc.txt 4470 2007-11-15 22:54:43Z rbowler $
+* LFPC test $Id$
 sysclear
 archmode esa/390
 r 000=0008000080000200                 # ESA/390 restart PSW

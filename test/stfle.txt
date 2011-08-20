@@ -1,4 +1,4 @@
-* STFL/STFLE test $Id: stfle.txt 6652 2010-09-29 08:12:28Z pgorlinsky $
+* STFL/STFLE test $Id$
 sysclear           
 archmode ESAME
 r 000=0008000000000200                 # EC mode restart PSW

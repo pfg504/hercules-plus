@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------
 # (c) Copyright Roger Bowler, 2005-2007
 # --------------------------------------------------------------------------
-# $Id: HERC_FLAGS.msvc 94 2011-08-19 14:58:34Z sdogood1706 $
+# $Id$
 #
 #  Sets additional Hercules-related compiler/linker flags & #defines...
 #

@@ -1,4 +1,4 @@
-* CGXR test $Id: cgxr.txt 4753 2008-05-04 14:10:28Z rbowler $
+* CGXR test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

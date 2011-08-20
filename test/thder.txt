@@ -1,4 +1,4 @@
-* THDER,THDR tests $Id: thder.txt 4738 2008-04-18 14:12:18Z rbowler $
+* THDER,THDR tests $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

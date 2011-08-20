@@ -1,4 +1,4 @@
-* TBEDR,TBDR tests $Id: tbedr.txt 4739 2008-04-18 14:26:07Z rbowler $
+* TBEDR,TBDR tests $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW
