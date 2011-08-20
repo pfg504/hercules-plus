@@ -2,7 +2,7 @@
 # Makefile for Hercules S/370, ESA/390 and z/Architecture emulator
 # Process this file with 'automake' to produce Makefile.in
 #
-# $Id: Makefile.am 56 2011-08-19 13:35:55Z sdogood1706 $
+# $Id: Makefile.am 7707 2011-08-19 23:15:11Z fish $
 #
 # ***************************************************************************
 
@@ -378,6 +378,7 @@ endif
                        timer.c      \
                        esame.c      \
                        ieee.c       \
+                       softfloat.c  \
                        dfp.c        \
                        machdep.h    \
                        httpserv.c   \
@@ -622,6 +623,9 @@ EXTRA_DIST = autoconf/config.rpath \
              README.SUN            \
              README.AIX            \
              _TODO.txt             \
+             SoftFloat-history.txt \
+             SoftFloat-source.txt  \
+             SoftFloat.txt         \
              makefile.msvc         \
              makefile-dllmod.msvc  \
              msvc.makefile.includes/BZIP2_DIR.msvc    \
@@ -696,8 +700,6 @@ noinst_HEADERS = fishhang.h     \
                  w32ctca.h      \
                  tt32api.h      \
                  linklist.h     \
-                 ieee-sol.h     \
-                 ieee-w32.h     \
                  httpmisc.h     \
                  devtype.h      \
                  codepage.h     \
@@ -753,6 +755,12 @@ noinst_HEADERS = fishhang.h     \
                  dbgtrace.h     \
                  chain.h        \
                  extstring.h    \
+                 milieu.h                \
+                 softfloat-fixme.h       \
+                 softfloat-macros.h      \
+                 softfloat-specialize.h  \
+                 softfloat-types.h       \
+                 softfloat.h             \
                  $(extra_dynamic_SRC)
 
 cckd: cckd2ckd$(EXEEXT)  \
