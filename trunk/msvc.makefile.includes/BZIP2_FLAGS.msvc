@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------
 # (c) Copyright Roger Bowler, 2005-2007
 # --------------------------------------------------------------------------
-# $Id: BZIP2_FLAGS.msvc 93 2011-08-19 14:58:10Z sdogood1706 $
+# $Id$
 #
 #  Sets BZIP2-compression-related compiler/linker flags & #defines...
 #

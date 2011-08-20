@@ -1,4 +1,4 @@
-* MXTR test $Id: mxtr.txt 4167 2006-12-29 15:15:29Z rbowler $
+* MXTR test $Id$
 sysclear           
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

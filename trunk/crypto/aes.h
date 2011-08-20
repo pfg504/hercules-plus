@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: aes.h 6 2011-08-19 01:13:59Z sdogood1706 $
+// $Id$
 
 /* $OpenBSD: rijndael.h,v 1.11 2005/05/25 05:47:53 markus Exp $ */
 /* modified for use by dyncrypt */

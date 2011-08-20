@@ -1,4 +1,4 @@
-* TRTE test $Id: trte.txt 4679 2008-03-28 13:36:25Z rbowler $
+* TRTE test $Id$
 sysclear
 archmode esame
 r 1a0=00000000800000000000000000000200 # z/Arch restart PSW

@@ -1,4 +1,4 @@
-* LPP test $Id: lpp.txt 7613 2011-07-23 06:42:44Z fish $
+* LPP test $Id$
 sysclear
 archmode ESAME
 archlvl  ena load_prog_param

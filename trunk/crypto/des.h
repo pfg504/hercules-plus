@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: des.h 6 2011-08-19 01:13:59Z sdogood1706 $
+// $Id$
 
 
 #ifndef _DES_H

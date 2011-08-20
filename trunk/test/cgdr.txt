@@ -1,4 +1,4 @@
-* CGDR test $Id: cgdr.txt 4751 2008-05-04 09:53:49Z rbowler $
+* CGDR test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

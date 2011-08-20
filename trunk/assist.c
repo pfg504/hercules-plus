@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: assist.c 7596 2011-07-19 01:36:06Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module contains routines which process the MVS Assist        */

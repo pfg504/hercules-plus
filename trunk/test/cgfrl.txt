@@ -1,4 +1,4 @@
-* CGFRL test $Id: cgfrl.txt 4681 2008-03-28 23:03:54Z rbowler $
+* CGFRL test $Id$
 sysclear
 archmode esame
 r 1a0=00000000800000000000000000000200 # z/Arch restart PSW

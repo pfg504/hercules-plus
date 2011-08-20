@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------
 # (c) Copyright Roger Bowler, 2005-2007
 # --------------------------------------------------------------------------
-# $Id: DEBUG_RETAIL.msvc 94 2011-08-19 14:58:34Z sdogood1706 $
+# $Id$
 #
 #  Sets appropriate compiler/linker flags (cdebug & ldebug) depending on
 #  whether a normal retail release or debugging version of the product is

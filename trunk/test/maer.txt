@@ -1,4 +1,4 @@
-* MAER test $Id: maer.txt 4489 2007-11-23 17:34:10Z rbowler $
+* MAER test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

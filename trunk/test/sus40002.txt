@@ -1,4 +1,4 @@
-* $Id: sus40002.txt 7642 2011-07-26 14:51:17Z pgorlinsky $
+* $Id$
 *
 *
 mainsize 4097

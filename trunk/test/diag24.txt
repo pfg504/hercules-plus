@@ -1,4 +1,4 @@
-* DIAG24 test $Id: diag24.txt 6652 2010-09-29 08:12:28Z pgorlinsky $
+* DIAG24 test $Id$
 sysclear
 archmode esa/390
 r 000=000C000000000200                 # ESA/390 restart PSW

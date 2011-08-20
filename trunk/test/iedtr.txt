@@ -1,4 +1,4 @@
-* IEDTR test $Id: iedtr.txt 4212 2007-01-05 16:58:02Z rbowler $
+* IEDTR test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

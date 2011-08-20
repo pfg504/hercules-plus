@@ -1,4 +1,4 @@
-* LLHRL test $Id: llhrl.txt 4755 2008-05-05 16:56:20Z rbowler $
+* LLHRL test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

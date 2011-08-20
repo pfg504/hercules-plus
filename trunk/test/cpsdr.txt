@@ -1,4 +1,4 @@
-* CPSDR test $Id: cpsdr.txt 4486 2007-11-23 12:28:07Z rbowler $
+* CPSDR test $Id$
 sysclear           
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

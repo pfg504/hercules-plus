@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: des.c 6 2011-08-19 01:13:59Z sdogood1706 $
+// $Id$
 
 /* des.c - implementation of DES
  * http://www.tartarus.org/~simon-anonsvn/viewcvs.cgi/putty/

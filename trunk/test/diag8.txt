@@ -1,4 +1,4 @@
-* DIAG8 test $Id: diag8.txt 6926 2010-10-16 19:52:28Z jj $
+* DIAG8 test $Id$
 sysclear
 archmode esa/390
 r 000=000C000000000200                 # ESA/390 restart PSW

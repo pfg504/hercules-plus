@@ -1,4 +1,4 @@
-* CXGTR,CDGTR test $Id: cxgtr.txt 4195 2007-01-02 11:39:32Z rbowler $
+* CXGTR,CDGTR test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW

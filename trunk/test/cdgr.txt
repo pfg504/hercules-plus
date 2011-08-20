@@ -1,4 +1,4 @@
-* CDGR/CEGR/CXGR test $Id: cdgr.txt 4743 2008-04-22 17:41:22Z rbowler $
+* CDGR/CEGR/CXGR test $Id$
 sysclear
 archmode esame
 r 1a0=00000001800000000000000000000200 # z/Arch restart PSW
