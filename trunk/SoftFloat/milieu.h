@@ -46,7 +46,7 @@ these four paragraphs for those parts of this code that are retained.
 /*----------------------------------------------------------------------------
 | Include common integer types and flags.
 *----------------------------------------------------------------------------*/
-#include "softfloat-types.h"
+#include "SoftFloat-types.h"
 
 /*----------------------------------------------------------------------------
 | Symbolic Boolean literals.
