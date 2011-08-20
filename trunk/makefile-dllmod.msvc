@@ -1,0 +1,74 @@
+# ***************************************************************************
+# MAKEFILE-DLLMOD.MSVC (c) Copyright Roger Bowler, 2005-2010
+# Build Hercules for Win32 using MSVC and nmake (DLL version with loadable modules)
+#
+# $Id: makefile-dllmod.msvc 6416 2010-09-09 14:36:38Z rbowler $
+#
+# ***************************************************************************
+
+INCDIR = msvc.makefile.includes
+
+# ---------------------------------------------------------------------
+!INCLUDE $(INCDIR)\CONFIG.msvc
+!INCLUDE $(INCDIR)\VERSION.msvc
+!INCLUDE $(INCDIR)\OUTPUT_DIRS.msvc
+!INCLUDE $(INCDIR)\MODULES.msvc
+!INCLUDE $(INCDIR)\OBJ_CODE.msvc
+!INCLUDE $(INCDIR)\ZLIB_DIR.msvc
+!INCLUDE $(INCDIR)\BZIP2_DIR.msvc
+!INCLUDE $(INCDIR)\PCRE_DIR.msvc
+!INCLUDE $(INCDIR)\REXX_DIR.msvc
+# ---------------------------------------------------------------------
+
+###################################################
+# NOTE! must set the 'NODEBUG' variable properly
+#       BEFORE calling win32.mak since it uses it.
+###################################################
+
+# ---------------------------------------------------------------------
+!INCLUDE <win32.mak>
+# ---------------------------------------------------------------------
+
+###################################################
+# NOTE! must set our prefered 'cdebug' value(s)
+#       AFTER calling win32.mak since it sets it.
+###################################################
+
+# ---------------------------------------------------------------------
+!INCLUDE $(INCDIR)\DEBUG_RETAIL.msvc
+!INCLUDE $(INCDIR)\ZLIB_FLAGS.msvc
+!INCLUDE $(INCDIR)\BZIP2_FLAGS.msvc
+!INCLUDE $(INCDIR)\PCRE_FLAGS.msvc
+!INCLUDE $(INCDIR)\REXX_FLAGS.msvc
+!INCLUDE $(INCDIR)\HERC_FLAGS.msvc
+# ---------------------------------------------------------------------
+
+!IFDEF DYNDIR
+!INCLUDE $(DYNDIR)$(DYNMOD).msvc
+MODULES = $(MODULES) $(X)$(DYNMOD).dll
+rcflags = $(rcflags) -D TARGETFILENAME=\"$(DYNMOD).dll\" -D MAX_CPU_ENGINES_STR=\"$(MAX_CPU_ENGINES)\"
+!ENDIF
+
+# ---------------------------------------------------------------------
+!INCLUDE $(INCDIR)\PRIM_RULES.msvc
+!INCLUDE $(INCDIR)\OUTDIR_RULES.msvc
+!INCLUDE $(INCDIR)\MOD_RULES1.msvc
+!INCLUDE $(INCDIR)\MOD_RULES2.msvc
+!INCLUDE $(INCDIR)\ZLIB_RULES.msvc
+!INCLUDE $(INCDIR)\BZIP2_RULES.msvc
+!INCLUDE $(INCDIR)\PCRE_RULES.msvc
+!INCLUDE $(INCDIR)\REXX_RULES.msvc
+# ---------------------------------------------------------------------
+
+!IFDEF DYNDIR
+
+$(O)$(DYNMOD).res: $(DYNDIR)$(DYNMOD).rc
+    $(rc) $(rcflags) $(rcvars) -fo $(O)$(DYNMOD).res $(DYNDIR)$(DYNMOD).rc
+
+$(X)$(DYNMOD).dll: $(O)$(DYNMOD).res $(DYNOBJ) $(O)hengine.lib $(O)hutil.lib $(O)hsys.lib
+    $(linkdll)
+
+{$(DYNDIR)}.c{$(OBJDIR)}.obj::
+    $(cc) $(cdebug) $(cflags) /Fp"$(OBJDIR)\\build_pch.pch" /Yu"hstdinc.h" $(cvarsdll) /Fo"$(OBJDIR)\\" /Fd"$(OBJDIR)\\" $<
+
+!ENDIF

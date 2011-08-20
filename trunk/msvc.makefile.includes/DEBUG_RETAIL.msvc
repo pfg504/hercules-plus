@@ -1,0 +1,53 @@
+# ***************************************************************************
+#     DEBUG_RETAIL.msvc      (!INCLUDE ed by "makefile-dllmod.msvc")
+# --------------------------------------------------------------------------
+# (c) Copyright Roger Bowler, 2005-2007
+# --------------------------------------------------------------------------
+# $Id: DEBUG_RETAIL.msvc 94 2011-08-19 14:58:34Z sdogood1706 $
+#
+#  Sets appropriate compiler/linker flags (cdebug & ldebug) depending on
+#  whether a normal retail release or debugging version of the product is
+#  being built...  (also sets preprocessor #defines too, as appropriate)
+#
+# ***************************************************************************
+
+# -------------------------------------------------
+# NOTE! must set our prefered 'cdebug' value(s)
+#       AFTER calling win32.mak since it sets it.
+# -------------------------------------------------
+
+!IF $(vsversion) < 8
+MAPFILE = /map:$(MAPDIR)\$(@B).map /mapinfo:lines
+!ELSE
+MAPFILE = /map:$(MAPDIR)\$(@B).map
+!ENDIF
+
+!IFDEF NODEBUG
+# -------------------------------
+# RETAIL: full optimization
+# -------------------------------
+
+# PROGRAMMING NOTE: we're purposely discarding win32.mak's $(cdebug) settings
+# and replacing them with our own by leaving "$(cdebug)" out of the statement
+
+cdebug = /O2 /GL /D NDEBUG
+ldebug = $(ldebug) /LTCG
+
+# Create .PDB (Program Database) files for debugging for 'Release' builds too!
+# (so we can easily analyze "MiniDump" crash dumps should Herc ever crash)
+
+cdebug = $(cdebug) /Zi /Gm
+ldebug = $(ldebug) /DEBUG /PDB:$(PDBDIR)\$(@B).pdb
+
+!ELSE
+# -------------------------------
+# DEBUG: no optimizations at all
+# -------------------------------
+
+# PROGRAMMING NOTE: we're purposely discarding win32.mak's $(cdebug) settings
+# and replacing them with our own by leaving "$(cdebug)" out of the statement
+
+cdebug  = -Zi -Od -D DEBUG -D _DEBUG -Gm
+ldebug = /DEBUG /PDB:$(PDBDIR)\$(@B).pdb
+
+!ENDIF
