@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# $Id: _build.tail 110 2011-08-19 16:07:31Z sdogood1706 $
+#
+# $Log$
+#
+MYCMD=`basename ${0} .tail`
+LOGFILE=`pwd`/${MYCMD}.log
+rm -f ${LOGFILE} >/dev/null 2>&1
+touch ${LOGFILE}
+CMD \/c start "Snapshot Logfile ${LOGFILE}" /i tail -f ${LOGFILE}

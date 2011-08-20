@@ -1,0 +1,23 @@
+/* HEXTAPI.H   (c) Copyright Roger Bowler & Others, 2005-2011        */
+/*             Definition of Hercules External (public) APIs         */
+/*                                                                   */
+/*   Released under "The Q Public License Version 1"                 */
+/*   (http://www.hercules-390.org/herclic.html) as modifications to  */
+/*   Hercules.                                                       */
+
+// $Id: hextapi.h 7594 2011-07-18 23:16:59Z pgorlinsky $
+
+/*
+        +-------------------------------------------------+
+        |   This file originally written by Ivan Warren   |
+        |   THE STATE OF THIS API IS NOT YET FINALIZED    |
+        |   AND THEREFORE, THE INTERFACE MAY CHANGE       |
+        +-------------------------------------------------+
+*/
+
+#ifndef _HEXTAPI_H_
+#define _HEXTAPI_H_
+
+// ZZ FIXME: do we even NEED this header any longer?!
+
+#endif

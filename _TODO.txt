@@ -1,0 +1,165 @@
+
+
+                          ---------------------
+                           HERCULES TODO IDEAS
+                          ---------------------
+
+
+                   (in absolutely *NO* particular order)
+
+
+-------------------------------------------------------------------------------
+
+  Per Mark Gaubatz, we need a new dasd util to fix CE/SA alt cyl issue
+  for existing dasds created using the old dasdinit.
+
+-------------------------------------------------------------------------------
+
+  Card reader: @stack support, like Ivan's tape autoloader, to provide
+  ability to specify different options (ascii/ebcdic) for each i/p file.
+  Then you could stack a VM USERID card in ebcdic followed by a normal
+  ascii text file (which would be auto-translated to ebcdic of course),
+  or vice-versa: an ascii USERID card followed by ebcdic binary data.
+  Would make getting VMARC files into VM much easier without having to
+  mess with a ebcdic USERID card.
+
+-------------------------------------------------------------------------------
+
+  Maxrates off: reset/disable automatic maxrates
+
+-------------------------------------------------------------------------------
+
+  Also provide separate zip file containing .PDB files for download for
+  Windows snapshots (but especially for final official Windows releases!)
+  so that on the rare occasion that Hercules ever does crash we're able
+  to determine exactly where the crash occurred. We cannot do that without
+  the .PDB files!
+
+-------------------------------------------------------------------------------
+
+  Design a more platform generic cpu features runtime check that checks for
+  the availability of certain processor features and then points some sysblk
+  function-pointers to the correct function. That way we can exploit certain
+  features if they're available. Of course going through a function pointer
+  may be too inefficient depending on where the function is being used, but
+  depending on what the function (feature) provides it may end up being an
+  overall gain than a loss.
+
+  E.g. (WIN64):
+
+    init_hostinfo:
+    BOOL WINAPI IsProcessorFeaturePresent( PF_COMPARE_EXCHANGE128 );
+    _INTEGRAL_MAX_BITS (machdep.h ==> _InterlockedCompareExchange128 ==> cmpxchg16b)
+
+-------------------------------------------------------------------------------
+
+  Design a way for users to define command synonyms. (dynmod?)
+
+-------------------------------------------------------------------------------
+
+  Document all DIAGNOSE instruction support
+
+-------------------------------------------------------------------------------
+
+  Trace (instruction and/or device) to file instead of to console.
+  (Then new utility to format/display it offline).
+
+-------------------------------------------------------------------------------
+
+  Instruction Tracing: ability to specify multiple disparate trace ranges.
+
+-------------------------------------------------------------------------------
+
+  Windows block device support (i.e. ability to define an entire drive
+  (Windows drive letter / partition) as a Hercules dasd)
+
+-------------------------------------------------------------------------------
+
+  BUG: instruction tracing: control registers not being shown for some
+  instructions which use/modify them. We need a better way to determine
+  if FPRs/CRs/ARs should be traced or not. (New bits in OPCODE table?)
+  (see "display_inst_regs" function in "hscmisc.c")
+
+-------------------------------------------------------------------------------
+
+  Full 2540 reader/punch support!   mode=1 (normal), mode=2 (binary/"card image")
+                                    hopper selection, etc.
+
+-------------------------------------------------------------------------------
+
+  Ability to specify highlighting for console messages via regex pattern.
+
+-------------------------------------------------------------------------------
+
+  ISSUE: there's the possibility for "socketpair" function to connect to some
+  other socket other than the pair's listening socket due to some other socket
+  on the host already listening for connections on INADDR_LOOPBACK. Fix is to
+  change the "socketpair" function to use a starting port# and SO_REUSEADDR
+  in a 'setsockopt' call and detect (HSO_errno == HSO_EADDRINUSE) return code
+  in its 'bind' call and auto-retry again using next port# (in a loop). Refer
+  to the "console_connection_handler" function for reference.
+
+-------------------------------------------------------------------------------
+
+  DUMP command (Windows only) to create on-demand mini-dump.
+
+-------------------------------------------------------------------------------
+
+  Device or facility per Gerhard Postpischil's 9/20/2007 suggestion
+  that allows one to generate random "problems" (i/o errors, machine
+  checks, etc) for better software error recovery testing.
+
+-------------------------------------------------------------------------------
+
+  Add new "+rdbwd" 3590-device-only option to set flag in
+  TapeCommands3590 table to allow/accept Read Backward CCW.
+  (Requested by "herc_fun" = Charlie <os_390@hotmail.com>)
+
+-------------------------------------------------------------------------------
+
+  "Generic-ize" the 'qd' command so that it works for ANY device
+  instead of just dasd devices. SenseId and RDC (Read Device
+  Characteristics) information is valuable information to display
+  for devices other than dasd! (e.g. tape devices for example)
+
+-------------------------------------------------------------------------------
+
+  Add SRF (Suspend/Resume) support for tape devices.
+
+  Add SRF (Suspend/Resume) support for CTC devices.
+
+-------------------------------------------------------------------------------
+
+  BCTC support for sysplex'ing via GRS.
+
+-------------------------------------------------------------------------------
+
+  Generic native host SCSI support (mostly for tape,
+  but having it opens other interesting possibilities)
+
+-------------------------------------------------------------------------------
+
+  QDIO/QETH (custom Herc device driver to directly update guest storage)
+
+-------------------------------------------------------------------------------
+
+  Large block support in channel subsystem (blocks > 64K ==> 2MB maximum?)
+
+-------------------------------------------------------------------------------
+
+  Suspend and Resume need prompts. Suspend if overwriting existing file.
+  Resume if machine is not in reset state.
+
+-------------------------------------------------------------------------------
+
+  Suspend/Resume with file specification as an option.
+
+-------------------------------------------------------------------------------
+
+  Resume with start if successful option
+
+-------------------------------------------------------------------------------
+
+
+
+-------------------------------------------------------------------------------

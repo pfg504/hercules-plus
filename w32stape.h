@@ -1,0 +1,45 @@
+/* W32STAPE.H   (c) Copyright "Fish" (David B. Trout), 2005-2011     */
+/*               Hercules Win32 SCSI Tape handling module            */
+/*                                                                   */
+/*   Released under "The Q Public License Version 1"                 */
+/*   (http://www.hercules-390.org/herclic.html) as modifications to  */
+/*   Hercules.                                                       */
+
+// $Id: w32stape.h 7594 2011-07-18 23:16:59Z pgorlinsky $
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+//  This module contains only MSVC support for SCSI tapes.
+//  Primary SCSI Tape support is in module 'scsitape.c'...
+//
+////////////////////////////////////////////////////////////////////////////////////
+
+#ifndef _W32STAPE_H_
+#define _W32STAPE_H_
+
+#ifdef _MSVC_
+
+#include "w32mtio.h"        // Win32 version of 'mtio.h'
+
+#define  WIN32_TAPE_DEVICE_NAME    "\\\\.\\Tape0"
+
+#ifndef _W32STAPE_C_
+  #ifndef _HTAPE_DLL_
+    #define W32ST_DLL_IMPORT  DLL_IMPORT
+  #else
+    #define W32ST_DLL_IMPORT  extern
+  #endif
+#else
+  #define   W32ST_DLL_IMPORT  DLL_EXPORT
+#endif
+
+W32ST_DLL_IMPORT int     w32_open_tape  ( const char* path, int oflag,   ... );
+W32ST_DLL_IMPORT int     w32_define_BOT ( int fd, U32 msk, U32 bot );
+W32ST_DLL_IMPORT int     w32_ioctl_tape ( int fd,       int request, ... );
+W32ST_DLL_IMPORT int     w32_close_tape ( int fd );
+W32ST_DLL_IMPORT ssize_t w32_read_tape  ( int fd,       void* buf, size_t nbyte );
+W32ST_DLL_IMPORT ssize_t w32_write_tape ( int fd, const void* buf, size_t nbyte );
+
+#endif // _MSVC_
+
+#endif // _W32STAPE_H_
