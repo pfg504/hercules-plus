@@ -1,5 +1,4 @@
-/* HETLIB.C    (c) Copyright Roger Bowler, 2010-2011                 */
-/*             (c) Copyright Leland Lucius, 2000-2009                */
+/* HETLIB.C    (c) Copyright Leland Lucius, 2000-2011                */
 /*             Header for the Hercules Emulated Tape library         */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
@@ -20,7 +19,7 @@
 || ----------------------------------------------------------------------------
 */
 
-// $Id: hetlib.h 7594 2011-07-18 23:16:59Z pgorlinsky $
+// $Id: hetlib.h 7722 2011-08-21 11:49:21Z jj $
 
 #include "hercules.h"
 

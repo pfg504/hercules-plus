@@ -10,7 +10,7 @@
 /* prototypes required by Hercules in the MSVC environment           */
 /*-------------------------------------------------------------------*/
 
-// $Id: hercwind.h 854 2011-08-16 02:10:24Z paulgorlinsky $
+// $Id: hercwind.h 7722 2011-08-21 11:49:21Z jj $
 
 #if !defined(_HERCWIND_H)
 #define _HERCWIND_H

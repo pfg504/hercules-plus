@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hercifc.c 7594 2011-07-18 23:16:59Z pgorlinsky $
+// $Id: hercifc.c 7722 2011-08-21 11:49:21Z jj $
 
 // Copyright    (C) Copyright Roger Bowler, 2000-2009
 //              (C) Copyright James A. Pierson, 2002-2009

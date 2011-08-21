@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: scsitape.c 7699 2011-08-17 21:40:41Z pgorlinsky $
+// $Id: scsitape.c 7722 2011-08-21 11:49:21Z jj $
 
 /* Original Author: "Fish" (David B. Trout)                          */
 /* Prime Maintainer: "Fish" (David B. Trout)                         */

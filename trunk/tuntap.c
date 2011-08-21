@@ -1,12 +1,12 @@
-/* TUNTAP.C    (c) Copyright "Fish" (David B. Trout), 2002-2011      */
-/*             (C) Copyright James A. Pierson, 2002-2009             */
+/* TUNTAP.C    (C) Copyright James A. Pierson, 2002-2011             */
+/*             (c) Copyright "Fish" (David B. Trout), 2002-2009      */
 /*              Hercules - TUN/TAP Abstraction Layer                 */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: tuntap.c 7612 2011-07-22 22:35:05Z pgorlinsky $
+// $Id: tuntap.c 7722 2011-08-21 11:49:21Z jj $
 
 // TUN/TAP implementations differ among platforms. Linux and FreeBSD
 // offer much the same functionality but with differing semantics.

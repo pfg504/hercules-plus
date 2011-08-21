@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: fishhang.c 7594 2011-07-18 23:16:59Z pgorlinsky $
+// $Id: fishhang.c 7722 2011-08-21 11:49:21Z jj $
 
 #include "hstdinc.h"
 

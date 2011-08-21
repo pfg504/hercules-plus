@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: scsitape.h 7597 2011-07-19 01:45:21Z fish $
+// $Id: scsitape.h 7722 2011-08-21 11:49:21Z jj $
 
 ////////////////////////////////////////////////////////////////////////////////////
 //

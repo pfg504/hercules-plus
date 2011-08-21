@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: feat900.h 7653 2011-08-01 11:05:56Z jj $
+// $Id: feat900.h 7722 2011-08-21 11:49:21Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This file defines the architectural features which are included   */

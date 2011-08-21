@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: fthreads.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: fthreads.c 7722 2011-08-21 11:49:21Z jj $
 
 #include "hstdinc.h"
 

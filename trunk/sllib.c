@@ -1,12 +1,11 @@
-/* SLLIB.C      (c) Copyright Roger Bowler, 2010-2011                */
-/*              (c) Copyright Leland Lucius, 2000-2009               */
+/* SLLIB.C      (c) Copyright Leland Lucius, 2000-2011               */
 /*             Library for managing Standard Label tapes.            */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: sllib.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id: sllib.c 7722 2011-08-21 11:49:21Z jj $
 
 #include "hstdinc.h"
 

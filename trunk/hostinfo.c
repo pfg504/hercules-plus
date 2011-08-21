@@ -1,12 +1,12 @@
-/* HOSTINFO.C   (c) Copyright TurboHercules, SAS 2010-2011           */
-/*              (c) Copyright "Fish" (David B. Trout), 2002-2009     */
+/* HOSTINFO.C   (c) Copyright "Fish" (David B. Trout), 2002-2011     */
+/*              (c) Copyright TurboHercules, SAS 2010-2011           */
 /*                 Hercules functions to set/query host information  */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hostinfo.c 7603 2011-07-22 17:17:13Z pgorlinsky $
+// $Id: hostinfo.c 7722 2011-08-21 11:49:21Z jj $
 
 /*-------------------------------------------------------------------*/
 /* functions to set/query host system information                    */

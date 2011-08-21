@@ -1,5 +1,4 @@
-/* HETLIB.C    (c) Copyright Roger Bowler, 2010-2011                 */
-/*             (c) Copyright Leland Lucius, 2000-2009                */
+/* HETLIB.C    (c) Copyright Leland Lucius, 2000-2011                */
 /*             Library for managing Hercules Emulated Tapes          */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
@@ -17,7 +16,7 @@
 || ----------------------------------------------------------------------------
 */
 
-// $Id: hetlib.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id: hetlib.c 7722 2011-08-21 11:49:21Z jj $
 
 #include "hstdinc.h"
 
