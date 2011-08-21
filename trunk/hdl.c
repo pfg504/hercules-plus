@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hdl.c 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id: hdl.c 7720 2011-08-21 11:14:43Z jj $
 
 #include "hstdinc.h"
 
@@ -137,7 +137,6 @@ HDLSHD *shdent;
             WRMSG(HHC01502, "I", shdent->shdname);
         }   
         free(shdent);
-        log_wakeup(NULL);
     }
 
     WRMSG(HHC01504, "I");
