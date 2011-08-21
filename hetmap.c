@@ -1,13 +1,13 @@
-/* HETMAP.C     (c) Copyright TurboHercules, SAS, 2011               */
+/* HETMAP.C     (c) Copyright Leland Lucius, 2000-2011               */
 /*              (c) Copyright Paul F. Gorlinsky, 2010                */
-/*              (c) Copyright Leland Lucius, 2000-2009               */
+/*              (c) Copyright TurboHercules, SAS, 2011               */
 /*         Displays information about a Hercules Emulated Tape       */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hetmap.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: hetmap.c 7722 2011-08-21 11:49:21Z jj $
 
 /*
 || ----------------------------------------------------------------------------

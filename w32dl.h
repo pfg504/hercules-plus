@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: w32dl.h 7594 2011-07-18 23:16:59Z pgorlinsky $
+// $Id: w32dl.h 7722 2011-08-21 11:49:21Z jj $
 
 #ifndef _W32_DL_H
 #define _W32_DL_H

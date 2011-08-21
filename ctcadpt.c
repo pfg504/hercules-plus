@@ -1,5 +1,5 @@
-/* CTCADPT.C    (c) Copyright Roger Bowler, 2000-2011                */
-/*              (c) Copyright James A. Pierson, 2002-2009            */
+/* CTCADPT.C    (c) Copyright James A. Pierson, 2002-2011            */
+/*              (c) Copyright Roger Bowler, 2000-2011                */
 /*              (c) Copyright Willem Konynenberg, 2000-2009          */
 /*              (c) Copyright Vic Cross, 2001-2009                   */
 /*              Hercules Channel-to-Channel Emulation Support        */
@@ -8,7 +8,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ctcadpt.c 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id: ctcadpt.c 7722 2011-08-21 11:49:21Z jj $
 
 // Hercules Channel-to-Channel Emulation Support
 // ====================================================================

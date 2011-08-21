@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: dyngui.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: dyngui.c 7722 2011-08-21 11:49:21Z jj $
 
 #include "hstdinc.h"
 #include "hercules.h"       // (#includes "config." w/#define for VERSION)

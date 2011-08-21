@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hostopts.h 7594 2011-07-18 23:16:59Z pgorlinsky $
+// $Id: hostopts.h 7722 2011-08-21 11:49:21Z jj $
 
 //    This header file #included by 'featall.h' and 'hercules.h'
 

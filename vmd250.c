@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: vmd250.c 7698 2011-08-17 21:01:37Z pgorlinsky $
+// $Id: vmd250.c 7722 2011-08-21 11:49:21Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This module implements DIAGNOSE code X'250'                       */
