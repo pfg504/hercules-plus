@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: config.c 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id: config.c 7720 2011-08-21 11:14:43Z jj $
 
 /*-------------------------------------------------------------------*/
 /* The original configuration builder is now called bldcfg.c         */
@@ -144,7 +144,6 @@ int was_locked = sysblk.mainstor_locked;
             if (sysblk.mainstor_locked)
             {
                 WRMSG(HHC01429, "I", "main"); // "Unlocking %s storage"
-                log_wakeup(NULL);
                 MUNLOCK(sysblk.storkeys,
                          round_to_hostpagesize( sysblk.mainsize ) +
                          round_to_hostpagesize( sysblk.mainsize / STORAGE_KEY_UNITSIZE ) );
@@ -183,7 +182,6 @@ int was_locked = sysblk.mainstor_locked;
                         if (was_locked)
                         {
                             WRMSG(HHC01428, "I", "main"); // "Locking %s storage"
-                            log_wakeup(NULL);
                             MLOCK(storkeys, config_allocmsize);
                             sysblk.mainstor_locked = 1;
                         }
@@ -200,7 +198,6 @@ int was_locked = sysblk.mainstor_locked;
             if (sysblk.lock_mainstor)
             {
                 WRMSG(HHC01428, "I", "main"); // "Locking %s storage"
-                log_wakeup(NULL);
                 MLOCK(storkeys, storsize);
                 sysblk.mainstor_locked = 1;
             }
@@ -287,7 +284,6 @@ int was_locked = sysblk.xpndstor_locked;
             if (sysblk.xpndstor_locked)
             {
                 WRMSG(HHC01428, "I", "expanded"); // "Locking %s storage"
-                log_wakeup(NULL);
                 MUNLOCK(sysblk.xpndstor, ((RADR)config_allocxsize << XSTORE_PAGESHIFT) );
                 sysblk.xpndstor_locked = 0;
             }
@@ -316,7 +312,6 @@ int was_locked = sysblk.xpndstor_locked;
                         if (was_locked)
                         {
                             WRMSG(HHC01428, "I", "expanded"); // "Locking %s storage"
-                            log_wakeup(NULL);
                             MLOCK(xpndstor, ((RADR)config_allocxsize << XSTORE_PAGESHIFT) );
                             sysblk.xpndstor_locked = 1;
                         }
@@ -338,7 +333,6 @@ int was_locked = sysblk.xpndstor_locked;
             if (sysblk.lock_xpndstor)
             {
                 WRMSG(HHC01428, "I", "expanded"); // "Locking %s storage"
-                log_wakeup(NULL);
                 MLOCK(xpndstor, xpndsize);
                 sysblk.xpndstor_locked = 1;
             }
@@ -470,12 +464,12 @@ DEVBLK**dvpp;
         initialize_condition ( &dev->resumecond         );
         initialize_condition ( &dev->iocond             );
 #if defined(OPTION_SCSI_TAPE)
-        initialize_condition ( &dev->devunique.tape_dev.stape_sstat_cond   );
-        InitializeListLink   ( &dev->devunique.tape_dev.stape_statrq.link  );
-        InitializeListLink   ( &dev->devunique.tape_dev.stape_mntdrq.link  );
-        dev->devunique.tape_dev.stape_statrq.dev = dev;
-        dev->devunique.tape_dev.stape_mntdrq.dev = dev;
-        dev->devunique.tape_dev.sstat            = GMT_DR_OPEN(-1);
+        initialize_condition ( &dev->stape_sstat_cond   );
+        InitializeListLink   ( &dev->stape_statrq.link  );
+        InitializeListLink   ( &dev->stape_mntdrq.link  );
+        dev->stape_statrq.dev = dev;
+        dev->stape_mntdrq.dev = dev;
+        dev->sstat            = GMT_DR_OPEN(-1);
 #endif
         /* Search for the last device block on the chain */
         for (dvpp = &(sysblk.firstdev); *dvpp != NULL;
@@ -525,7 +519,7 @@ DEVBLK**dvpp;
     dev->pmcw.chpid[0] = dev->devnum >> 8;
 
 #if defined(OPTION_SHARED_DEVICES)
-    dev->shrd_dev.shrdwait = -1;
+    dev->shrdwait = -1;
 #endif /*defined(OPTION_SHARED_DEVICES)*/
 
 #ifdef EXTERNALGUI
@@ -578,14 +572,17 @@ int     i;                              /* Loop index                */
         /* Call the device close handler */
         (dev->hnd->close)(dev);
 
+    if ( dev->pszVaultPath != NULL )
+    {
+        free( dev->pszVaultPath );
+        dev->pszVaultPath = NULL;
+    }
+
     for (i = 0; i < dev->argc; i++)
         if (dev->argv[i])
             free(dev->argv[i]);
     if (dev->argv)
-    {
         free(dev->argv);
-        dev->argv = NULL;
-    }
 
     free(dev->typname);
 
@@ -612,13 +609,6 @@ int     i;                              /* Loop index                */
         }
 
         dev->group = NULL;
-    }
-
-    // free filename space
-    if ( dev->filename != NULL )
-    {
-        free(dev->filename);
-        dev->filename = NULL;
     }
 
     ret_devblk(dev);
