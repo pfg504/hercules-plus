@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: autogen.sh 113 2011-08-19 16:08:32Z sdogood1706 $
+# $Id$
 #
 # $Log$
 
