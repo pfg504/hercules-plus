@@ -15,7 +15,7 @@ SUBDIRS = decNumber SoftFloat m4 po util html man . crypto
 
 LDADD = @LTLIBICONV@ @LTLIBINTL@ @LIBS@
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/decNumber -I$(top_srcdir)/SoftFloat
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/decNumber
 
 if BUILD_HERCIFC
   HERCIFC = hercifc
@@ -379,6 +379,7 @@ endif
                        esame.c      \
                        ieee.c       \
                        dfp.c        \
+                       SoftFloat.c  \
                        machdep.h    \
                        httpserv.c   \
                        cgibin.c     \
@@ -413,7 +414,6 @@ endif
                       libherct.la     \
                       libhercd.la     \
                       decNumber/libdecNumber.la \
-                      SoftFloat/libSoftFloat.la \
                       $(LDADD)
 
 #
@@ -622,6 +622,9 @@ EXTRA_DIST = autoconf/config.rpath \
              README.MSVC           \
              README.SUN            \
              README.AIX            \
+             SoftFloat.README      \
+             SoftFloat-history.txt \
+             SoftFloat-source.txt  \
              _TODO.txt             \
              makefile.msvc         \
              makefile-dllmod.msvc  \
@@ -752,6 +755,12 @@ noinst_HEADERS = fishhang.h     \
                  dbgtrace.h     \
                  chain.h        \
                  extstring.h    \
+                 milieu.h       \
+                 SoftFloat.h            \
+                 SoftFloat-fixme.h      \
+                 SoftFloat-macros.h     \
+                 SoftFloat-types.h      \
+                 SoftFloat-specialise.h \
                  $(extra_dynamic_SRC)
 
 cckd: cckd2ckd$(EXEEXT)  \
