@@ -2,7 +2,7 @@
 # Makefile for Hercules S/370, ESA/390 and z/Architecture emulator
 # Process this file with 'automake' to produce Makefile.in
 #
-# $Id: Makefile.am 7714 2011-08-20 04:58:39Z fish $
+# $Id$
 #
 # ***************************************************************************
 
