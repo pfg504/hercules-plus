@@ -11,7 +11,7 @@ ACLOCAL_AMFLAGS  = -I m4
 
 lns=@LN_S@
 
-SUBDIRS = decNumber SoftFloat m4 po util html man . crypto
+SUBDIRS = decNumber m4 po util html man . crypto
 
 LDADD = @LTLIBICONV@ @LTLIBINTL@ @LIBS@
 
