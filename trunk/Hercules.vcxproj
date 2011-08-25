@@ -388,6 +388,7 @@
     <ClCompile Include="hetinit.c" />
     <ClCompile Include="hetmap.c" />
     <ClCompile Include="hetupd.c" />
+    <ClCompile Include="SoftFloat\SoftFloat.c" />
     <ClCompile Include="tapecopy.c" />
     <ClCompile Include="tapemap.c" />
     <ClCompile Include="tapesplt.c" />
@@ -538,6 +539,7 @@
     <None Include="decNumber\readme.txt" />
     <None Include="hercules.ico" />
     <None Include="README.HRAF" />
+    <None Include="SoftFloat\README.txt" />
     <None Include="_TODO.txt" />
     <None Include="CHANGES" />
     <None Include="README.ISSUES" />
@@ -767,6 +769,12 @@
     <ClInclude Include="hdiagf18.h" />
     <ClInclude Include="hercifc.h" />
     <ClInclude Include="qeth.h" />
+    <ClInclude Include="SoftFloat\milieu.h" />
+    <ClInclude Include="SoftFloat\SoftFloat-fixme.h" />
+    <ClInclude Include="SoftFloat\SoftFloat-macros.h" />
+    <ClInclude Include="SoftFloat\SoftFloat-specialise.h" />
+    <ClInclude Include="SoftFloat\SoftFloat-types.h" />
+    <ClInclude Include="SoftFloat\SoftFloat.h" />
     <ClInclude Include="tt32api.h" />
     <ClInclude Include="tuntap.h" />
     <ClInclude Include="w32ctca.h" />

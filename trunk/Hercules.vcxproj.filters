@@ -624,6 +624,9 @@
     <ClCompile Include="dyn76.c">
       <Filter>Source Files\Hercules\Emulation\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SoftFloat\SoftFloat.c">
+      <Filter>Source Files\Hercules\Emulation\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="crypto\Makefile.am">
@@ -1268,6 +1271,9 @@
     <None Include="README.HRAF">
       <Filter>Other Files\DOC\README</Filter>
     </None>
+    <None Include="SoftFloat\README.txt">
+      <Filter>Other Files\DOC</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="crypto\aes.h">
@@ -1566,6 +1572,24 @@
     </ClInclude>
     <ClInclude Include="qeth.h">
       <Filter>Source Files\Hercules\Devices\CTC\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftFloat\milieu.h">
+      <Filter>Source Files\Hercules\Emulation\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftFloat\SoftFloat.h">
+      <Filter>Source Files\Hercules\Emulation\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftFloat\SoftFloat-fixme.h">
+      <Filter>Source Files\Hercules\Emulation\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftFloat\SoftFloat-macros.h">
+      <Filter>Source Files\Hercules\Emulation\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftFloat\SoftFloat-specialise.h">
+      <Filter>Source Files\Hercules\Emulation\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftFloat\SoftFloat-types.h">
+      <Filter>Source Files\Hercules\Emulation\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
