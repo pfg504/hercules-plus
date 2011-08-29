@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: featall.h 7678 2011-08-09 02:00:07Z pgorlinsky $
+// $Id: featall.h 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /* Default features                                                  */

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: con1052c.c 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id: con1052c.c 7726 2011-08-28 11:41:48Z jj $
 
 #include "hstdinc.h"
 
@@ -363,7 +363,10 @@ DEVHND con1052_device_hndinfo = {
         con1052_immed,                 /* Immediate CCW Codes        */
         NULL,                          /* Signal Adapter Input       */
         NULL,                          /* Signal Adapter Output      */
+        NULL,                          /* Signal Adapter Sync        */
+        NULL,                          /* Signal Adapter Output Mult */
         NULL,                          /* QDIO subsys desc           */
+        NULL,                          /* QDIO set subchan ind       */
         NULL,                          /* Hercules suspend           */
         NULL                           /* Hercules resume            */
 };

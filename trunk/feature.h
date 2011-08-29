@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: feature.h 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id: feature.h 7726 2011-08-28 11:41:48Z jj $
 
 #ifdef HAVE_CONFIG_H
   #include <config.h> // Hercules build configuration options/settings

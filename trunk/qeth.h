@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: qeth.h 7647 2011-07-31 10:51:27Z hsg001 $
+// $Id: qeth.h 7726 2011-08-28 11:41:48Z jj $
 
 /* This implementation is based on the S/390 Linux implementation    */
 
@@ -205,6 +205,13 @@ typedef struct _OSA_GRP {
 
     BYTE  qibk;                 /* Queue Information Block Key       */
     U64   qiba;                 /* Queue Information Block Address   */
+
+    U64   alsi;                 /* Adapter Local Summ Indicator      */
+#define ALSI_ERROR      0x80    /* ZZ TO BE CONFIRMED                */
+    U64   dsci;                 /* Device status change Indicator    */
+#define DSCI_IOCOMP     0x01    /* ZZ TO BE CONFIRMED                */
+    BYTE  ks;                   /* alsi storage key                  */
+    BYTE  kc;                   /* dsci storage key                  */
 
     int   l3;                   /* Adapter in layer 3 mode           */
 

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: feat900.h 7722 2011-08-21 11:49:21Z jj $
+// $Id: feat900.h 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This file defines the architectural features which are included   */
@@ -118,6 +118,7 @@
 #define FEATURE_PROTECTION_INTERCEPTION_CONTROL
 #define FEATURE_QUEUED_DIRECT_IO
 #define FEATURE_QEBSM
+#define FEATURE_QDIO_THININT
 #define FEATURE_RESET_REFERENCE_BITS_MULTIPLE_FACILITY          /*810*/
 //#define FEATURE_RESTORE_SUBCHANNEL_FACILITY                     /*208*/
 #define FEATURE_RESUME_PROGRAM

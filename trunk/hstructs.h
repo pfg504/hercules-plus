@@ -603,11 +603,7 @@ struct SYSBLK {
 
         int     mss;                    /* Multiple CSS enabled      */
         int     lcssmax;                /* Maximum Subchannel-Set Id */
-        LOCK    crwlock;                /* CRW queue lock            */
-        U32    *crwarray;               /* CRW queue                 */
-        U32     crwalloc;               /* #of entries allocated     */
-        U32     crwcount;               /* #of entries queued        */
-        U32     crwindex;               /* CRW queue index           */
+        U32     chp_reset[8];           /* Channel path reset masks  */
         IOINT  *iointq;                 /* I/O interrupt queue       */
 #if !defined(OPTION_FISHIO)
         DEVBLK *ioq;                    /* I/O queue                 */
@@ -636,7 +632,6 @@ struct SYSBLK {
         U32     servparm;               /* Service signal parameter  */
         unsigned int                    /* Flags                     */
                 sys_reset:1,            /* 1 = system in reset state */
-                ipled:1,                /* 1 = guest has been IPL'ed */
                 daemon_mode:1,          /* Daemon mode active        */
                 panel_init:1,           /* Panel display initialized */
                 npquiet:1,              /* New Panel quiet indicator */
@@ -726,7 +721,6 @@ struct SYSBLK {
 #endif
 
 #if defined(OPTION_INSTRUCTION_COUNTING)
-        LOCK  icount_lock;
 #define IMAP_FIRST sysblk.imap01
         U64 imap01[256];
         U64 imapa4[256];
@@ -909,6 +903,14 @@ enum type_loader {  LDR_MANUAL, /* No automation             */
 /*-------------------------------------------------------------------*/
 
 typedef struct _SSBLK {                 /* Subsystem ID block        */
+#define HDL_NAME_SSBLK   "SSBLK"
+#define HDL_VERS_SSBLK   "3.08"
+#define HDL_SIZE_SSBLK   sizeof(SSBLK)
+        BYTE    blknam[16];             /* Name of block             */
+        BYTE    blkver[8];              /* Version Number            */
+        U64     blkloc;                 /* Address of block    big-e */
+        U32     blksiz;                 /* size of block       big-e */
+
         CHAIN   chain;                  /* Block chain               */
         CUBLK  *cu;                     /* Owning CU                 */
         U16     ssid;                   /* Subsystem ID (if present) */
@@ -918,7 +920,31 @@ typedef struct _SSBLK {                 /* Subsystem ID block        */
         U8      devcount;               /* Number of associated dev  */
         DEVBLK *dev[256];               /* Associated devblocks      */
         void   *stats;                  /* Associated statistics     */
+
+        BYTE    blkend[16];             /* eye-end                   */
 } SSBLK;
+
+
+/*-------------------------------------------------------------------*/
+/* Channel Path config block                                         */
+/*-------------------------------------------------------------------*/
+struct CHPBLK {
+#define HDL_NAME_CHPBLK   "CHPBLK"
+#define HDL_VERS_CHPBLK   "3.08"
+#define HDL_SIZE_CHPBLK   sizeof(CHPBLK)
+        BYTE    blknam[16];             /* Name of block             */
+        BYTE    blkver[8];              /* Version Number            */
+        U64     blkloc;                 /* Address of block    big-e */
+        U32     blksiz;                 /* size of block       big-e */
+
+        CHPBLK *next;
+        BYTE    css;
+        BYTE    chpid;
+        BYTE    chptype;
+
+        BYTE    blkend[16];             /* eye-end                   */
+};
+
 
 /*-------------------------------------------------------------------*/
 /* Device configuration block                                        */
@@ -1094,7 +1120,8 @@ struct DEVBLK {                         /* Device configuration block*/
                 resumesuspended:1;      /* 1=Hresuming suspended dev */
 #define IOPENDING(_dev) ((_dev)->pending || (_dev)->pcipending || (_dev)->attnpending)
 #define INITIAL_POWERON_370() \
-    ( !sysblk.ipled && ARCH_370 == sysblk.arch_mode )
+    ( dev->crwpending && ARCH_370 == sysblk.arch_mode )
+        int     crwpending;             /* 1=CRW pending             */
         int     syncio_active;          /* 1=Synchronous I/O active  */
         int     syncio_retry;           /* 1=Retry I/O asynchronously*/
 
@@ -1361,7 +1388,7 @@ struct DEVBLK {                         /* Device configuration block*/
 #define TAPEDISPTYP_MOUNT          6    /* Display Until Mounted     */
 #define TAPEDISPTYP_UNMOUNT        7    /* Display Until Unmounted   */
 #define TAPEDISPTYP_UMOUNTMOUNT    8    /* Display #1 Until Unmounted,
-                                                then #2 Until Mounted  */
+                                              then #2 Until Mounted  */
 #define TAPEDISPTYP_WAITACT        9    /* Display until motion      */
 
 #define IS_TAPEDISPTYP_SYSMSG( dev ) \
@@ -1415,16 +1442,16 @@ struct DEVBLK {                         /* Device configuration block*/
                 u_int   fbaxtdef:1;             /* 1=Extent defined          */
                 BYTE    fbamask;                /* Define extent file mask   */
                 U32     fbaxblkn;               /* Offset from start of device
-                                                to first block of extent  */
+                                                   to first block of extent  */
                 U32     fbaxfirst;              /* Block number within dataset
-                                                of first block of extent  */
+                                                   of first block of extent  */
                 U32     fbaxlast;               /* Block number within dataset
-                                                of last block of extent   */
+                                                   of last block of extent   */
                 /* Values from locate */
                 BYTE    fbaoper;                /* Locate operation byte     */
                 U16     fbalcnum;               /* Block count for locate    */
                 U32     fbalcblk;               /* Block number within dataset
-                                                of first block for locate */
+                                                   of first block for locate */
 
                 /*  Device dependent fields for ckddasd                      */
 
@@ -1505,6 +1532,7 @@ struct DEVBLK {                         /* Device configuration block*/
                 int     qidxstate;              /* IDX state                 */
 #define OSA_IDX_STATE_INACTIVE  0x00
 #define OSA_IDX_STATE_ACTIVE    0x01
+                int     thinint;                /* Thin Interrupts on PCI    */
             } qdio_dev;
 
         } devunique;

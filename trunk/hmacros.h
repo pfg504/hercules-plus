@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hmacros.h 7691 2011-08-13 10:01:51Z jj $
+// $Id: hmacros.h 7726 2011-08-28 11:41:48Z jj $
 
 //      This header auto-#included by 'hercules.h'...
 //
@@ -509,14 +509,6 @@ typedef U64  (*z900_trace_br_func) (int amode,  U64 ia, REGS *regs);
      release_lock(&(_regs)->sysblk->mainlock); \
    } \
  } while (0)
-
-/*-------------------------------------------------------------------*/
-/* Obtain/Release crwlock.                                           */
-/* crwlock can be obtained by any thread.                            */
-/*-------------------------------------------------------------------*/
-
-#define OBTAIN_CRWLOCK()    obtain_lock( &sysblk.crwlock )
-#define RELEASE_CRWLOCK()   release_lock( &sysblk.crwlock )
 
 /*-------------------------------------------------------------------*/
 /* Obtain/Release intlock.                                           */

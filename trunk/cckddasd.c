@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cckddasd.c 7698 2011-08-17 21:01:37Z pgorlinsky $
+// $Id: cckddasd.c 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This module contains device functions for compressed emulated     */
@@ -5853,7 +5853,10 @@ DEVHND cckddasd_device_hndinfo = {
         NULL,                          /* Immediate CCW Codes        */
         NULL,                          /* Signal Adapter Input       */
         NULL,                          /* Signal Adapter Ouput       */
+        NULL,                          /* Signal Adapter Sync        */
+        NULL,                          /* Signal Adapter Output Mult */
         NULL,                          /* QDIO subsys desc           */
+        NULL,                          /* QDIO set subchan ind       */
         &ckddasd_hsuspend,             /* Hercules suspend           */
         &ckddasd_hresume               /* Hercules resume            */
 };
@@ -5878,7 +5881,10 @@ DEVHND cfbadasd_device_hndinfo = {
         NULL,                          /* Immediate CCW Codes        */
         NULL,                          /* Signal Adapter Input       */
         NULL,                          /* Signal Adapter Ouput       */
+        NULL,                          /* Signal Adapter Sync        */
+        NULL,                          /* Signal Adapter Output Mult */
         NULL,                          /* QDIO subsys desc           */
+        NULL,                          /* QDIO set subchan ind       */
         &fbadasd_hsuspend,             /* Hercules suspend           */
         &ckddasd_hresume               /* Hercules resume            */
 };

@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ctc_lcs.c 7698 2011-08-17 21:01:37Z pgorlinsky $
+// $Id: ctc_lcs.c 7726 2011-08-28 11:41:48Z jj $
 
 #include "hstdinc.h"
 
@@ -2650,7 +2650,10 @@ DEVHND lcs_device_hndinfo =
         CTC_Immed_Commands,            /* Immediate CCW Codes        */
         NULL,                          /* Signal Adapter Input       */
         NULL,                          /* Signal Adapter Output      */
+        NULL,                          /* Signal Adapter Sync        */
+        NULL,                          /* Signal Adapter Output Mult */
         NULL,                          /* QDIO subsys desc           */
+        NULL,                          /* QDIO set subchan ind       */
         NULL,                          /* Hercules suspend           */
         NULL                           /* Hercules resume            */
 };

@@ -7,7 +7,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: msgenu.h 7698 2011-08-17 21:01:37Z pgorlinsky $
+// $Id: msgenu.h 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This file contains the text of all of the messages issued by      */
@@ -718,10 +718,6 @@ do { \
 #define HHC00880 "device %1d:%04X: status %s"
 #define HHC00881 "I/O interrupt queue:%s"
 #define HHC00882 "device %1d:%04X: %s%s%s%s, pri %d"
-#define HHC00883 "Channel Report queue: (NULL)"
-#define HHC00884 "Channel Report queue: (empty)"
-#define HHC00885 "Channel Report queue:"
-#define HHC00886 "CRW 0x%08.8X: %s"
 
 #define HHC00888 "Architecture level changes take effect after a system reset or IPL"
 #define HHC00889 "Facility change pending; ipl/sysreset/sysclear needed to complete"
@@ -1261,7 +1257,6 @@ do { \
 #define HHC02019 "SR: CPU key %8.8X found but no active CPU"
 #define HHC02020 "SR: value error, incorrect length"
 #define HHC02021 "SR: string error, incorrect length"
-#define HHC02022 "SR: error loading CRW queue: not enough memory for %d CRWs"
 
 // reserve 021xx for logger.c
 #define HHC02100 "Logger: log not active"

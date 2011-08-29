@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: featchk.h 7645 2011-07-29 10:22:48Z jj $
+// $Id: featchk.h 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /*  Perform various checks on feature combinations, and set          */
@@ -293,6 +293,10 @@
 
 #if defined(FEATURE_QEBSM)
  #define _FEATURE_QEBSM
+#endif 
+
+#if defined(FEATURE_QDIO_THININT)
+ #define _FEATURE_QDIO_THININT
 #endif 
 
 #if defined(FEATURE_HERCULES_DIAGCALLS)

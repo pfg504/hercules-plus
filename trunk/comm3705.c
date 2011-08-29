@@ -7,7 +7,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: comm3705.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: comm3705.c 7726 2011-08-28 11:41:48Z jj $
 
 /***********************************************************************/
 /*                                                                     */
@@ -2308,7 +2308,10 @@ DEVHND com3705_device_hndinfo = {
         commadpt_immed_command,        /* Immediate CCW Codes        */
         NULL,                          /* Signal Adapter Input       */
         NULL,                          /* Signal Adapter Output      */
+        NULL,                          /* Signal Adapter Sync        */
+        NULL,                          /* Signal Adapter Output Mult */
         NULL,                          /* QDIO subsys desc           */
+        NULL,                          /* QDIO set subchan ind       */
         NULL,                          /* Hercules suspend           */
         NULL                           /* Hercules resume            */
 };

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: diagmssf.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: diagmssf.c 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This module implements various diagnose functions                 */
@@ -389,10 +389,19 @@ DEVBLK            *dev;                /* Device block pointer       */
             memset( spccbchp, 0, sizeof(SPCCB_CHP_STATUS) );
 
             /* Identify CHPIDs used */
-            for (dev = sysblk.firstdev; dev != NULL; dev = dev->nextdev) {
-                spccbchp->installed[dev->devnum >> 11] |= 0x80 >> ((dev->devnum >> 8) & 7);
-                spccbchp->assigned[dev->devnum >> 11] |= 0x80 >> ((dev->devnum >> 8) & 7);
-                spccbchp->configured[dev->devnum >> 11] |= 0x80 >> ((dev->devnum >> 8) & 7);
+            for (dev = sysblk.firstdev; dev != NULL; dev = dev->nextdev)
+            {
+                for (i = 0; i < 8; i++)
+                {
+                    if( ((0x80 >> i) & dev->pmcw.pim) )
+                    {
+                    BYTE chpid;
+                        chpid = dev->pmcw.chpid[i];
+                        spccbchp->installed[chpid / 8] |= 0x80 >> (chpid % 8);
+                        spccbchp->assigned[chpid / 8] |= 0x80 >> (chpid % 8);
+                        spccbchp->configured[chpid / 8] |= 0x80 >> (chpid % 8);
+                    }
+               }
             }
 
             /* Set response code X'0010' in SPCCB header */

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: clock.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: clock.c 7726 2011-08-28 11:41:48Z jj $
 
 /* The emulated hardware clock is based on the host clock, adjusted  */
 /* by means of an offset and a steering rate.                        */

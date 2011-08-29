@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: esame.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: esame.c 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This module implements the instructions which exist in ESAME      */

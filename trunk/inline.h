@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: inline.h 7410 2011-04-10 04:35:42Z pgorlinsky $
+// $Id: inline.h 7726 2011-08-28 11:41:48Z jj $
 
 /* Original author Roger Bowler, 1999                                */
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
