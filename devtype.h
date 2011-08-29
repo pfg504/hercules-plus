@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: devtype.h 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id: devtype.h 7726 2011-08-28 11:41:48Z jj $
 
 
 #if !defined(_DEVICES_H)
@@ -53,7 +53,10 @@ struct DEVHND {
         DEVIM immed;                   /* Immediate CCW Codes        */
         DEVSA *siga_r;                 /* Signal Adapter Input       */
         DEVSA *siga_w;                 /* Signal Adapter Output      */
-        DEVQD *ssqd;                   /* QDIO subsys desc           */
+        DEVSA *siga_s;                 /* Signal Adapter Sync        */
+        DEVSA *siga_m;                 /* Signal Adapter Output Mult */
+        DEVQD *ssqd;                   /* QDIO subsys query desc     */
+        DEVQD *ssci;                   /* QDIO set subchan ind       */
         DEVSR *hsuspend;               /* Hercules suspend           */
         DEVSR *hresume;                /* Hercules resume            */
 };

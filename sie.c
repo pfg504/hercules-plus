@@ -6,7 +6,7 @@
 /*   Hercules.                                                       */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2007      */
 
-// $Id: sie.c 855 2011-08-17 00:07:30Z paulgorlinsky $
+// $Id: sie.c 7726 2011-08-28 11:41:48Z jj $
 
 /*      This module contains the SIE instruction as                  */
 /*      described in IBM S/370 Extended Architecture                 */

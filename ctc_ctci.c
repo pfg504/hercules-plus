@@ -9,7 +9,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ctc_ctci.c 7725 2011-08-24 23:55:00Z fish $
+// $Id: ctc_ctci.c 7726 2011-08-28 11:41:48Z jj $
 
 
 #include "hstdinc.h"
@@ -93,7 +93,10 @@ DEVHND ctci_device_hndinfo =
         CTCI_Immed_Commands,           /* Immediate CCW Codes        */
         NULL,                          /* Signal Adapter Input       */
         NULL,                          /* Signal Adapter Output      */
+        NULL,                          /* Signal Adapter Sync        */
+        NULL,                          /* Signal Adapter Output Mult */
         NULL,                          /* QDIO subsys desc           */
+        NULL,                          /* QDIO set subchan ind       */
         NULL,                          /* Hercules suspend           */
         NULL                           /* Hercules resume            */
 };

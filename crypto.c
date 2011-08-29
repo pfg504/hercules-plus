@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: crypto.c 7661 2011-08-04 23:01:48Z pgorlinsky $
+// $Id: crypto.c 7726 2011-08-28 11:41:48Z jj $
 
 #include "hstdinc.h"
 #include "hercules.h"

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hao.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id: hao.c 7728 2011-08-29 03:50:39Z jj $
 
 /*---------------------------------------------------------------------------*/
 /* file: hao.c                                                               */
@@ -579,6 +579,8 @@ static int hao_ignoremsg(char *msg)
       return TRUE;                              /* Ignore if now empty */
   if (nocolor > msg)                            /* Color prefix found? */
     memmove( msg, nocolor, msglen+1 );          /* Remove color prefix */
+#else /* defined( OPTION_MSGCLR ) */
+  msglen = strlen(msg);
 #endif /* defined( OPTION_MSGCLR ) */
 
   if (!debuglen)

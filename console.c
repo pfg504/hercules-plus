@@ -3641,7 +3641,10 @@ DEVHND constty_device_hndinfo = {
         constty_immed,                 /* Immediate CCW Codes        */
         NULL,                          /* Signal Adapter Input       */
         NULL,                          /* Signal Adapter Output      */
+        NULL,                          /* Signal Adapter Sync        */
+        NULL,                          /* Signal Adapter Output Mult */
         NULL,                          /* QDIO subsys desc           */
+        NULL,                          /* QDIO set subchan ind       */
         NULL,                          /* Hercules suspend           */
         NULL                           /* Hercules resume            */
 };
@@ -3680,7 +3683,10 @@ DEVHND loc3270_device_hndinfo = {
         loc3270_immed,                 /* Immediate CCW Codes        */
         NULL,                          /* Signal Adapter Input       */
         NULL,                          /* Signal Adapter Output      */
+        NULL,                          /* Signal Adapter Sync        */
+        NULL,                          /* Signal Adapter Output Mult */
         NULL,                          /* QDIO subsys desc           */
+        NULL,                          /* QDIO set subchan ind       */
         &loc3270_hsuspend,             /* Hercules suspend           */
         &loc3270_hresume               /* Hercules resume            */
 };

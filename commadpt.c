@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: commadpt.c 7607 2011-07-22 22:09:34Z pgorlinsky $
+// $Id: commadpt.c 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /* Hercules Communication Line Driver                                */
@@ -3138,7 +3138,10 @@ DEVHND comadpt_device_hndinfo = {
         commadpt_immed_command,        /* Immediate CCW Codes        */
         NULL,                          /* Signal Adapter Input       */
         NULL,                          /* Signal Adapter Output      */
+        NULL,                          /* Signal Adapter Sync        */
+        NULL,                          /* Signal Adapter Output Mult */
         NULL,                          /* QDIO subsys desc           */
+        NULL,                          /* QDIO set subchan ind       */
         NULL,                          /* Hercules suspend           */
         NULL                           /* Hercules resume            */
 };

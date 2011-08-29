@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2010      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2010      */
 
-// $Id: ipl.c 7621 2011-07-24 15:15:18Z pgorlinsky $
+// $Id: ipl.c 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This module implements the Initial Program Load (IPL) function of */
@@ -120,7 +120,6 @@ int ARCH_DEP(system_reset) (int cpu, int clear)
 
     /* set default system state to reset */
     sysblk.sys_reset = TRUE; 
-    sysblk.ipled = FALSE;
 
     return rc1;
 } /* end function system_reset */
@@ -318,7 +317,6 @@ int rc;
     sysblk.ipldev = devnum;
     sysblk.iplcpu = regs->cpuad;
     sysblk.ipllcss = lcss;
-    sysblk.ipled = TRUE;
 
     /* Finish up... */
     return ARCH_DEP(common_load_finish) (regs);

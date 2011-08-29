@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: dyngui.c 7722 2011-08-21 11:49:21Z jj $
+// $Id: dyngui.c 7726 2011-08-28 11:41:48Z jj $
 
 #include "hstdinc.h"
 #include "hercules.h"       // (#includes "config." w/#define for VERSION)
@@ -16,6 +16,13 @@
 
 #include "devtype.h"
 #include "opcode.h"
+
+#if !defined(V1)
+ #define V1 0
+#endif
+#if !defined(V2)
+ #define V2 0
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Some handy macros...       (feel free to add these to hercules.h)

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: config.c 7720 2011-08-21 11:14:43Z jj $
+// $Id: config.c 7726 2011-08-28 11:41:48Z jj $
 
 /*-------------------------------------------------------------------*/
 /* The original configuration builder is now called bldcfg.c         */
@@ -528,6 +528,14 @@ DEVBLK**dvpp;
     dev->shrd_dev.shrdwait = -1;
 #endif /*defined(OPTION_SHARED_DEVICES)*/
 
+#ifdef _FEATURE_CHANNEL_SUBSYSTEM
+    /* Indicate a CRW is pending for this device */
+#if defined(_370)
+    if (sysblk.arch_mode != ARCH_370)
+#endif /*defined(_370)*/
+        dev->crwpending = 1;
+#endif /*_FEATURE_CHANNEL_SUBSYSTEM*/
+
 #ifdef EXTERNALGUI
     if ( !dev->pGUIStat )
     {
@@ -552,7 +560,7 @@ void ret_devblk(DEVBLK *dev)
 {
     /* Mark device invalid */
     dev->allocated = 0;
-    dev->pmcw.flag5 &= ~PMCW5_V; // compat ZZ deprecated
+    dev->pmcw.flag5 &= ~PMCW5_V;
     release_lock(&dev->lock);
 }
 
@@ -622,14 +630,6 @@ int     i;                              /* Loop index                */
     }
 
     ret_devblk(dev);
-
-#ifdef _FEATURE_CHANNEL_SUBSYSTEM
-    /* Build Channel Report */
-#if defined(_370)
-    if (sysblk.arch_mode != ARCH_370)
-#endif
-        build_detach_chrpt( dev );
-#endif /*_FEATURE_CHANNEL_SUBSYSTEM*/
 
     return 0;
 } /* end function detach_devblk */
@@ -1146,11 +1146,11 @@ int     i;                              /* Loop index                */
     release_lock(&dev->lock);
 
 #ifdef _FEATURE_CHANNEL_SUBSYSTEM
-    /* Build Channel Report */
+    /* Signal machine check */
 #if defined(_370)
     if (sysblk.arch_mode != ARCH_370)
 #endif
-        build_attach_chrpt( dev );
+        machine_check_crwpend();
 #endif /*_FEATURE_CHANNEL_SUBSYSTEM*/
 
     /*
@@ -1161,6 +1161,7 @@ int     i;                              /* Loop index                */
     */
 
     release_lock(&sysblk.config);
+
     return 0;
 } /* end function attach_device */
 
@@ -1186,10 +1187,26 @@ int    rc;
 
     rc = detach_devblk( dev );
 
+#ifdef _FEATURE_CHANNEL_SUBSYSTEM
+    /* Indicate a CRW is pending for this device */
+#if defined(_370)
+    if (sysblk.arch_mode != ARCH_370)
+#endif /*defined(_370)*/
+        dev->crwpending = 1;
+#endif /*_FEATURE_CHANNEL_SUBSYSTEM*/
+
     release_lock(&sysblk.config);
 
     if(!rc)
         WRMSG (HHC01465, "I", lcss, devnum, "device");
+
+#ifdef _FEATURE_CHANNEL_SUBSYSTEM
+    /* Signal machine check */
+#if defined(_370)
+    if (sysblk.arch_mode != ARCH_370)
+#endif
+        machine_check_crwpend();
+#endif /*_FEATURE_CHANNEL_SUBSYSTEM*/
 
     return rc;
 }
@@ -1223,14 +1240,6 @@ DEVBLK *dev;                            /* -> Device block           */
         return 1;
     }
 
-#ifdef _FEATURE_CHANNEL_SUBSYSTEM
-    /* Build Channel Report */
-#if defined(_370)
-    if (sysblk.arch_mode != ARCH_370)
-#endif
-        build_detach_chrpt( dev );
-#endif /*_FEATURE_CHANNEL_SUBSYSTEM*/
-
     /* Obtain the device lock */
     obtain_lock(&dev->lock);
 
@@ -1241,22 +1250,28 @@ DEVBLK *dev;                            /* -> Device block           */
     dev->pmcw.devnum[0] = newdevn >> 8;
     dev->pmcw.devnum[1] = newdevn & 0xFF;
 
-    /* Disable the device */
-    dev->pmcw.flag5 &= ~PMCW5_E;
 #if defined(OPTION_FAST_DEVLOOKUP)
     DelDevnumFastLookup(lcss,olddevn);
-    DelDevnumFastLookup(lcss,newdevn);
+    AddDevnumFastLookup(dev,lcss,newdevn);
 #endif
+
+#ifdef _FEATURE_CHANNEL_SUBSYSTEM
+    /* Indicate a CRW is pending for this device */
+#if defined(_370)
+    if (sysblk.arch_mode != ARCH_370)
+#endif /*defined(_370)*/
+        dev->crwpending = 1;
+#endif /*_FEATURE_CHANNEL_SUBSYSTEM*/
 
     /* Release device lock */
     release_lock(&dev->lock);
 
 #ifdef _FEATURE_CHANNEL_SUBSYSTEM
-    /* Build Channel Report */
+    /* Signal machine check */
 #if defined(_370)
     if (sysblk.arch_mode != ARCH_370)
 #endif
-        build_attach_chrpt( dev );
+        machine_check_crwpend();
 #endif /*_FEATURE_CHANNEL_SUBSYSTEM*/
 
 //    WRMSG (HHC01459, "I", lcss, olddevn, lcss, newdevn);
