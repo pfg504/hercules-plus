@@ -1,11 +1,7 @@
 /* FEATALL.H    (c) Copyright Jan Jaeger, 2000-2011                  */
 /*              Architecture-dependent macro definitions             */
-/*                                                                   */
-/*   Released under "The Q Public License Version 1"                 */
-/*   (http://www.hercules-390.org/herclic.html) as modifications to  */
-/*   Hercules.                                                       */
 
-// $Id: featall.h 7726 2011-08-28 11:41:48Z jj $
+// $Id: featall.h 7734 2011-08-31 12:38:58Z jj $
 
 /*-------------------------------------------------------------------*/
 /* Default features                                                  */
@@ -101,10 +97,10 @@
     #define NO_CMDSER                   /* Serialise all commands    */
 #endif
 
-#define OPTION_CMDTGT                   /* the cmdtgt command        */
-#define OPTION_MSGCLR                   /* Colored messages          */
-#define OPTION_MSGHLD                   /* Sticky messages           */
-#define OPTION_MSGLCK                   /* Lock during msg write     */
+// #define OPTION_CMDTGT                   /* the cmdtgt command        */
+// #define OPTION_MSGCLR                   /* Colored messages          */
+// #define OPTION_MSGHLD                   /* Sticky messages           */
+// #define OPTION_MSGLCK                   /* Lock during msg write     */
 
 #if !defined(OPTION_SCP_MSG_PREFIX) && !defined(NO_SCP_MSG_PREFIX)
 #define NO_SCP_MSG_PREFIX               /* Prefix scp msg with HHC*  */
@@ -300,6 +296,7 @@
 #undef FEATURE_RESTORE_SUBCHANNEL_FACILITY                      /*208*/
 #undef FEATURE_RESUME_PROGRAM
 #undef FEATURE_SCEDIO
+#undef FEATURE_SVS
 #undef FEATURE_S370_CHANNEL
 #undef FEATURE_S390_DAT
 #undef FEATURE_S370E_EXTENDED_ADDRESSING

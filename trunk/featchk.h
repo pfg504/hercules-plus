@@ -1,11 +1,7 @@
 /* FEATCHK.H    (c) Copyright Jan Jaeger, 2000-2011                  */
 /*              Feature definition consistency checks                */
-/*                                                                   */
-/*   Released under "The Q Public License Version 1"                 */
-/*   (http://www.hercules-390.org/herclic.html) as modifications to  */
-/*   Hercules.                                                       */
 
-// $Id: featchk.h 7726 2011-08-28 11:41:48Z jj $
+// $Id: featchk.h 7734 2011-08-31 12:38:58Z jj $
 
 /*-------------------------------------------------------------------*/
 /*  Perform various checks on feature combinations, and set          */
@@ -297,6 +293,10 @@
 
 #if defined(FEATURE_QDIO_THININT)
  #define _FEATURE_QDIO_THININT
+#endif 
+
+#if defined(FEATURE_SVS)
+ #define _FEATURE_SVS
 #endif 
 
 #if defined(FEATURE_HERCULES_DIAGCALLS)

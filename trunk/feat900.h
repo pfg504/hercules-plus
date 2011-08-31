@@ -1,11 +1,7 @@
 /* FEAT900.H    (c) Copyright Jan Jaeger, 2000-2011                  */
 /*              ESAME feature definitions                            */
-/*                                                                   */
-/*   Released under "The Q Public License Version 1"                 */
-/*   (http://www.hercules-390.org/herclic.html) as modifications to  */
-/*   Hercules.                                                       */
 
-// $Id: feat900.h 7726 2011-08-28 11:41:48Z jj $
+// $Id: feat900.h 7734 2011-08-31 12:38:58Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This file defines the architectural features which are included   */
@@ -122,6 +118,7 @@
 #define FEATURE_RESET_REFERENCE_BITS_MULTIPLE_FACILITY          /*810*/
 //#define FEATURE_RESTORE_SUBCHANNEL_FACILITY                     /*208*/
 #define FEATURE_RESUME_PROGRAM
+#define FEATURE_SVS
 #define FEATURE_REGION_RELOCATE
 //#define FEATURE_S370_CHANNEL  /* comment if FEATURE_CHANNEL_SUBSYSTEM used */
 #define FEATURE_SCEDIO
