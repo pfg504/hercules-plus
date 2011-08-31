@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: config.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: config.c 862 2011-08-29 18:47:05Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* The original configuration builder is now called bldcfg.c         */
@@ -558,6 +558,8 @@ DEVBLK**dvpp;
 static
 void ret_devblk(DEVBLK *dev)
 {
+    memset( &dev->devunique, 0, sizeof(dev->devunique) );
+
     /* Mark device invalid */
     dev->allocated = 0;
     dev->pmcw.flag5 &= ~PMCW5_V;
