@@ -9,7 +9,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: opcode.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: opcode.c 7734 2011-08-31 12:38:58Z jj $
 
 #include "hstdinc.h"
 
@@ -863,6 +863,11 @@
  UNDEF_INST(set_queue_buffer_state)
  UNDEF_INST(extract_queue_buffer_state)
 #endif /*!defined(FEATURE_QEBSM)*/
+
+
+#if !defined(FEATURE_SVS)
+ UNDEF_INST(set_vector_summary)
+#endif /*!defined(FEATURE_SVS)*/
 
 
 #if !defined(FEATURE_CHANNEL_SWITCHING)
@@ -3133,7 +3138,7 @@ static zz_func opcode_b2xx[0x100][GEN_MAXARCH] = {
  /*B262*/ GENx___x390x900 (lock_page,RRE,"LKPG"),
  /*B263*/ GENx37Xx390x900 (compression_call,RRE,"CMPSC"),
  /*B264*/ GENx___x___x___ ,                                     /* Sysplex   */
- /*B265*/ GENx___x___x___ , /*(set_vector_summary,?,"SVS"),*/   /* Sysplex   */
+ /*B265*/ GENx___x___x900 (set_vector_summary,RRE,"SVS"),    /*           */
  /*B266*/ GENx___x___x___ ,                                     /* Sysplex   */
  /*B267*/ GENx___x___x___ ,                                     /* Sysplex   */
  /*B268*/ GENx___x___x___ , /*(define_vector,?,"DV"),*/         /* Sysplex   */

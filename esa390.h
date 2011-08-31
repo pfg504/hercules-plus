@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: esa390.h 7726 2011-08-28 11:41:48Z jj $
+// $Id: esa390.h 7734 2011-08-31 12:38:58Z jj $
 
 #ifndef _ESA390_H
 #define _ESA390_H
@@ -1448,8 +1448,9 @@ typedef struct _MBK {
 #define STFL_HOST_RESOURCE_ACCESS (STFL_HBASE+5)
 #define STFL_QEBSM              (STFL_HBASE+6)
 #define STFL_QDIO_THININT       (STFL_HBASE+7)
+#define STFL_SVS                (STFL_HBASE+8)
 
-#define STFL_HMAX               (STFL_HBASE+7)
+#define STFL_HMAX               (STFL_HBASE+8)
 #define STFL_HBYTESIZE (((STFL_HMAX+8))/8)
 #define STFL_HDWRDSIZE ((STFL_HBYTESIZE+7)/8)
 

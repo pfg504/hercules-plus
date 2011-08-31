@@ -1,14 +1,10 @@
 /* OPCODE.H     (c) Copyright Jan Jaeger, 2000-2011                  */
 /*              Instruction decoding macros and prototypes           */
-/*                                                                   */
-/*   Released under "The Q Public License Version 1"                 */
-/*   (http://www.hercules-390.org/herclic.html) as modifications to  */
-/*   Hercules.                                                       */
 
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: opcode.h 7726 2011-08-28 11:41:48Z jj $
+// $Id: opcode.h 7734 2011-08-31 12:38:58Z jj $
 
 #ifndef _OPCODE_H
 #define _OPCODE_H
@@ -3277,12 +3273,19 @@ DEF_INST(test_pending_zone_interrupt);
 
 /* Instructions in qdio.c */
 #if defined(FEATURE_QUEUED_DIRECT_IO)
+
 DEF_INST(signal_adapter);
-#endif /*defined(FEATURE_QUEUED_DIRECT_IO)*/
+
 #if defined(FEATURE_QEBSM)
 DEF_INST(set_queue_buffer_state);
 DEF_INST(extract_queue_buffer_state);
 #endif /*defined(FEATURE_QEBSM)*/
+
+#if defined(FEATURE_SVS)
+DEF_INST(set_vector_summary);
+#endif /*defined(FEATURE_SVS)*/
+
+#endif /*defined(FEATURE_QUEUED_DIRECT_IO)*/
 
 
 /* Instructions in float.c */
