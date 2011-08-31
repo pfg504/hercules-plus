@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: tapedev.c 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id: tapedev.c 862 2011-08-29 18:47:05Z paulgorlinsky $
 
 /* Original Author: Roger Bowler                                     */
 /* Prime Maintainer: Ivan Warren                                     */
@@ -2379,6 +2379,8 @@ void autoload_tape_entry( DEVBLK *dev, int argc, char *argv[] )
 {
 int                i;
 TAPEAUTOLOADENTRY  tae;
+
+    memset(&tae, 0, sizeof(tae) );
 
     if (dev->devunique.tape_dev.alss >= AUTOLOADER_MAX)
         return;
