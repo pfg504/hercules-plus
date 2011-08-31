@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: service.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: service.c 7731 2011-08-30 12:26:30Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This module implements service processor functions                */
@@ -1963,6 +1963,7 @@ BYTE            *xstmap;                /* Xstore bitmap, zero means
     /* Set condition code 0 */
     regs->psw.cc = 0;
 
+    RETURN_INTCHECK(regs);
 } /* end function service_call */
 
 
