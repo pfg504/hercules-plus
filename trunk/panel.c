@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: panel.c 7718 2011-08-20 09:54:08Z jj $
+// $Id: panel.c 7733 2011-08-31 00:19:09Z jj $
 
 /*              Modified for New Panel Display =NP=                  */
 /*-------------------------------------------------------------------*/
@@ -1709,8 +1709,7 @@ static void NP_update(REGS *regs)
         if (i >= cons_rows - 3) break;
         if (!dev->allocated) continue;
 
-        online = (dev->console && dev->connected) || 
-                 ( dev->filename != NULL && strlen(dev->filename) > 0 );
+        online = (dev->console && dev->connected) || strlen(dev->filename) > 0;
         busy   = dev->busy != 0 || IOPENDING(dev) != 0;
         open   = dev->fd > 2;
 
@@ -1886,7 +1885,11 @@ DLL_EXPORT void update_maxrates_hwm()       // (update high-water-mark values)
     {
         if (sysblk.panel_init)
         {
-            panel_command("-herc maxrates");
+            panel_command(
+#if defined(OPTION_CMDTGT)
+                          "herc "
+#endif
+                                "maxrates");
         }
 
         prev_high_mips_rate = curr_high_mips_rate;
@@ -2002,9 +2005,21 @@ char    buf[1024];                      /* Buffer workarea           */
 #if       defined( OPTION_CONFIG_SYMBOLS )
     /* Set Some Function Key Defaults */
     {
-        set_symbol("PF01", "SUBST IMMED herc help &0");
-        set_symbol("PF11", "IMMED herc devlist TAPE");
-        set_symbol("PF10", "SUBST DELAY herc devinit &*");
+        set_symbol("PF01", "SUBST IMMED "
+#if defined(OPTION_CMDTGT)
+                                       "herc "
+#endif
+                                            "help &0");
+        set_symbol("PF11", "IMMED "
+#if defined(OPTION_CMDTGT)
+                                 "herc "
+#endif
+                                      "devlist TAPE");
+        set_symbol("PF10", "SUBST DELAY "
+#if defined(OPTION_CMDTGT)
+                                       "herc "
+#endif
+                                            "devinit &*");
     }
 #endif
 
@@ -2203,11 +2218,19 @@ char    buf[1024];                      /* Buffer workarea           */
                             break;
                         case 'S':                   /* START */
                         case 's':
-                            do_panel_command("herc startall");
+                            do_panel_command(
+#if defined(OPTION_CMDTGT)
+                                             "herc "
+#endif
+                                                  "startall");
                             break;
                         case 'P':                   /* STOP */
                         case 'p':
-                            do_panel_command("herc stopall");
+                            do_panel_command(
+#if defined(OPTION_CMDTGT)
+                                             "herc "
+#endif
+                                                  "stopall");
                             break;
                         case 'O':                   /* Store */
                         case 'o':
@@ -2292,7 +2315,11 @@ char    buf[1024];                      /* Buffer workarea           */
                                 redraw_status = 1;
                                 break;
                             }
-                            sprintf (cmdline, "herc ipl %4.4x", NPdevnum[i]);
+                            sprintf (cmdline, 
+#if defined(OPTION_CMDTGT)
+                                             "herc "
+#endif
+                                                   "ipl %4.4x", NPdevnum[i]);
                             do_panel_command(cmdline);
                             memset(NPprompt2,0,sizeof(NPprompt2));
                             redraw_status = 1;
@@ -2311,7 +2338,11 @@ char    buf[1024];                      /* Buffer workarea           */
                                 redraw_status = 1;
                                 break;
                             }
+#if defined(OPTION_CMDTGT)
                             MSGBUF( cmdline, "herc i %4.4x", NPdevnum[i]);
+#else
+                            MSGBUF( cmdline, "i %4.4x", NPdevnum[i]);
+#endif
                             do_panel_command(cmdline);
                             memset(NPprompt2,0,sizeof(NPprompt2));
                             redraw_status = 1;
@@ -2353,7 +2384,11 @@ char    buf[1024];                      /* Buffer workarea           */
                             break;
                         case 4:                     /* POWER - 2nd part */
                             if (NPdevice == 'y' || NPdevice == 'Y')
-                                do_panel_command("herc quit");
+                                do_panel_command(
+#if defined(OPTION_CMDTGT)
+                                                 "herc "
+#endif
+                                                      "quit");
                             memset(NPprompt1, 0, sizeof(NPprompt1));
                             redraw_status = 1;
                             break;
@@ -2366,7 +2401,11 @@ char    buf[1024];                      /* Buffer workarea           */
                             break;
                         case 5:                    /* Restart - part 2 */
                             if (NPdevice == 'y' || NPdevice == 'Y')
-                                do_panel_command("herc restart");
+                                do_panel_command(
+#if defined(OPTION_CMDTGT)
+                                                 "herc "
+#endif
+                                                      "restart");
                             memset(NPprompt1, 0, sizeof(NPprompt1));
                             redraw_status = 1;
                             break;
@@ -2379,7 +2418,11 @@ char    buf[1024];                      /* Buffer workarea           */
                             break;
                         case 6:                    /* External - part 2 */
                             if (NPdevice == 'y' || NPdevice == 'Y')
-                                do_panel_command("herc ext");
+                                do_panel_command(
+#if defined(OPTION_CMDTGT)
+                                                 "herc "
+#endif
+                                                      "ext");
                             memset(NPprompt1, 0, sizeof(NPprompt1));
                             redraw_status = 1;
                             break;
@@ -2471,7 +2514,11 @@ char    buf[1024];                      /* Buffer workarea           */
 
                     if ( pf == NULL )
                     {
+#if defined(OPTION_CMDTGT)
                         MSGBUF( msgbuf, "DELAY herc * %s UNDEFINED", szPF );
+#else
+                        MSGBUF( msgbuf, "DELAY * %s UNDEFINED", szPF );
+#endif
                         pf = msgbuf;
                     }
 
@@ -2979,7 +3026,11 @@ char    buf[1024];                      /* Buffer workarea           */
                                         strcpy(cmdline, NPdevnam[NPasgn]);
                                     }
                                     strcpy(NPdevnam[NPasgn], "");
-                                    sprintf (NPentered, "herc devinit %4.4x %s",
+                                    sprintf (NPentered, 
+#if defined(OPTION_CMDTGT)
+                                                       "herc "
+#endif
+                                                             "devinit %4.4x %s",
                                              NPdevnum[NPasgn], cmdline);
                                     do_panel_command(NPentered);
                                     strcpy(NPprompt2, "");
