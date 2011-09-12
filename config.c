@@ -505,7 +505,7 @@ DEVBLK**dvpp;
             WRMSG (HHC01460, "E", lcss, devnum, buf, strerror(errno));
             return NULL;
         }
-        memset (dev, 0, sizeof(DEVBLK));
+        __optimize_clear( dev, sizeof(DEVBLK) );
 
         /* Initialize the device lock and conditions */
 
@@ -601,7 +601,7 @@ DEVBLK**dvpp;
 static
 void ret_devblk(DEVBLK *dev)
 {
-    memset( &dev->devunique, 0, sizeof(dev->devunique) );
+    __optimize_clear( &dev->devunique, sizeof(dev->devunique) );
 
     /* Mark device invalid */
     dev->allocated = 0;

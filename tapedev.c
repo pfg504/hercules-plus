@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: tapedev.c 862 2011-08-29 18:47:05Z paulgorlinsky $
+// $Id: tapedev.c 866 2011-09-12 21:30:43Z paulgorlinsky $
 
 /* Original Author: Roger Bowler                                     */
 /* Prime Maintainer: Ivan Warren                                     */
@@ -1582,7 +1582,7 @@ int  mountnewtape ( DEVBLK *dev, int argc, char **argv )
 /*-------------------------------------------------------------------*/
 void tapedev_query_device ( DEVBLK *dev, char **devclass, int buflen, char *buffer )
 {
-    char devparms[ PATH_MAX + 1 + 128 ];
+    char devparms[ FILENAME_MAX + 1 + 128 ];
     char dispmsg [ 256 ];    
     char fmt_mem [ 128 ];    // Max of 21 bytes used for U64
     char fmt_eot [ 128 ];    // Max of 21 bytes used for U64
@@ -1590,11 +1590,12 @@ void tapedev_query_device ( DEVBLK *dev, char **devclass, int buflen, char *buff
 
     BEGIN_DEVICE_CLASS_QUERY( "TAPE", dev, devclass, buflen, buffer );
 
-    memset(buffer, 0, buflen);
-    memset(devparms, 0, sizeof(devparms));
-    memset(dispmsg, 0, sizeof(dispmsg));
-    memset(fmt_mem, 0, sizeof(fmt_mem));
-    memset(fmt_eot, 0, sizeof(fmt_eot));
+    __optimize_clear( buffer, buflen );
+
+    __optimize_clear(devparms, sizeof(devparms));
+    __optimize_clear(dispmsg, sizeof(dispmsg));
+    __optimize_clear(fmt_mem, sizeof(fmt_mem));
+    __optimize_clear(fmt_eot, sizeof(fmt_eot));
 
     GetDisplayMsg( dev, dispmsg, sizeof(dispmsg) );
 

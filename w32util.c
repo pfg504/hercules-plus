@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: w32util.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: w32util.c 866 2011-09-12 21:30:43Z paulgorlinsky $
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1280,7 +1280,7 @@ DLL_EXPORT BYTE *hostpath( BYTE *outpath, const BYTE *inpath, size_t buffsize )
     if (!outpath || !buffsize)
         return NULL;
 
-    *outpath = 0;
+    __optimize_clear(outpath, buffsize);
 
     if (!inpath)
         return outpath;

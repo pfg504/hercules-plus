@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: logger.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: logger.c 866 2011-09-12 21:30:43Z paulgorlinsky $
 
 /* If standard output or standard error is redirected then the log   */
 /* is written to the redirection.                                    */
@@ -42,7 +42,7 @@ static FILE *logger_syslog[2];          /* Syslog read/write pipe    */
        int   logger_syslogfd[2];        /*   pairs                   */
 static FILE *logger_hrdcpy;             /* Hardcopy log or zero      */
 static int   logger_hrdcpyfd;           /* Hardcopt fd or -1         */
-static char  logger_filename[MAX_PATH];
+static char  *logger_filename = NULL;   /* Logger Filename Pointer   */
 
 /* Find the index for a specific line number in the log,             */
 /* one being the most recent line                                    */
@@ -563,8 +563,12 @@ DLL_EXPORT void logger_init(void)
             /* Ignore standard output to the extent that it is
             treated as standard error */
             logger_hrdcpyfd = dup(STDOUT_FILENO);
-            strlcpy(logger_filename, "STDOUT redirected from command line",
-                    sizeof(logger_filename));
+            if ( logger_filename != NULL )
+            {
+                free(logger_filename);
+                logger_filename = NULL;
+            }
+            logger_filename = strdup("STDOUT redirected from command line");
             if(dup2(STDERR_FILENO,STDOUT_FILENO) == -1)
             {
                 fprintf(stderr, MSG(HHC02102, "E", "dup2()", strerror(errno)));
@@ -576,8 +580,12 @@ DLL_EXPORT void logger_init(void)
             if(!isatty(STDOUT_FILENO))
             {
                 logger_hrdcpyfd = dup(STDOUT_FILENO);
-                strlcpy(logger_filename, "STDOUT redirected from command line",
-                        sizeof(logger_filename));
+                if ( logger_filename != NULL )
+                {
+                    free(logger_filename);
+                    logger_filename = NULL;
+                }
+                logger_filename = strdup("STDOUT redirected from command line");
                 if(dup2(STDERR_FILENO,STDOUT_FILENO) == -1)
                 {
                     fprintf(stderr, MSG(HHC02102, "E", "dup2()", strerror(errno)));
@@ -586,8 +594,12 @@ DLL_EXPORT void logger_init(void)
             }
             if(!isatty(STDERR_FILENO))
             {
-                strlcpy(logger_filename, "STDERR redirected from command line",
-                        sizeof(logger_filename));
+                if ( logger_filename != NULL )
+                {
+                    free(logger_filename);
+                    logger_filename = NULL;
+                }
+                logger_filename = strdup("STDERR redirected from command line");
                 logger_hrdcpyfd = dup(STDERR_FILENO);
                 if(dup2(STDOUT_FILENO,STDERR_FILENO) == -1)
                 {
@@ -626,6 +638,7 @@ DLL_EXPORT void logger_init(void)
         fprintf(stderr, MSG(HHC02102, "E", buf, strerror(errno)));
         exit(1);
     }
+    __optimize_clear(logger_buffer, logger_bufsize);
 
     if(create_pipe(logger_syslogfd))
     {
@@ -657,10 +670,15 @@ DLL_EXPORT char *log_dsphrdcpy(void)
     static char  buf[MAX_PATH+2];
     static char *pzbuf = buf;
 
-    if ( strchr(logger_filename,SPACE) == NULL )
-        pzbuf = logger_filename;
+    if ( logger_filename != NULL )
+    {
+        if ( strchr(logger_filename,SPACE) == NULL )
+            pzbuf = logger_filename;
+        else
+            MSGBUF(buf, "'%s'", logger_filename);
+    }
     else
-        MSGBUF(buf, "'%s'", logger_filename);
+        MSGBUF(buf, "(NULL)");
 
     return pzbuf;
 }
@@ -673,7 +691,11 @@ int   new_hrdcpyfd = -1;
 
     if(!filename)
     {
-        memset(logger_filename, 0, sizeof(logger_filename));
+        if ( logger_filename != NULL )
+        {
+            free(logger_filename);
+            logger_filename = NULL;
+        }
 
         if(!logger_hrdcpy)
         {
@@ -699,23 +721,49 @@ int   new_hrdcpyfd = -1;
             }
             fprintf(temp_hrdcpy,MSG(HHC02101, "I"));
             fclose(temp_hrdcpy);
+            if ( logger_filename != NULL )
+            {
+                free(logger_filename);
+                logger_filename = NULL;
+            }
             WRMSG(HHC02101, "I");
             return;
         }
     }
     else
     {
-        char pathname[MAX_PATH];
-        hostpath(pathname, filename, sizeof(pathname));
+        char *pathname = (char *)malloc( FILENAME_MAX );
+        if ( pathname == NULL )
+        {
+            WRMSG(HHC02102, "E","malloc()",strerror(errno));
+            return;
+        }
 
-        memset(logger_filename, 0, sizeof(logger_filename));
+        hostpath(pathname, filename, FILENAME_MAX);
 
-        new_hrdcpyfd = HOPEN(pathname,
+        if ( logger_filename != NULL )
+        {
+            free( logger_filename );
+            logger_filename = NULL;
+        }
+
+        logger_filename = strdup(pathname);
+        if ( logger_filename == NULL )
+        {
+            free(pathname);
+            pathname = NULL;
+            WRMSG(HHC02102, "E","strdup(pathname)",strerror(errno));
+            return;
+        }
+
+        new_hrdcpyfd = HOPEN(logger_filename,
                 O_WRONLY | O_CREAT | O_TRUNC /* O_SYNC */,
                             S_IRUSR  | S_IWUSR | S_IRGRP);
         if(new_hrdcpyfd < 0)
         {
             WRMSG(HHC02102, "E","open()",strerror(errno));
+            free(logger_filename);
+            logger_filename = NULL;
             return;
         }
         else
@@ -723,6 +771,8 @@ int   new_hrdcpyfd = -1;
             if(!(new_hrdcpy = fdopen(new_hrdcpyfd,"w")))
             {
                 WRMSG(HHC02102,"E", "fdopen()", strerror(errno));
+                free(logger_filename);
+                logger_filename = NULL;
                 return;
             }
             else
@@ -732,18 +782,17 @@ int   new_hrdcpyfd = -1;
                 obtain_lock(&logger_lock);
                 logger_hrdcpy = new_hrdcpy;
                 logger_hrdcpyfd = new_hrdcpyfd;
-                strlcpy(logger_filename, filename, sizeof(logger_filename));
                 release_lock(&logger_lock);
 
                 if(temp_hrdcpy)
                 {
-                    char buf[MAX_PATH+2];
+                    char buf[FILENAME_MAX+2];
                     char *pzbuf = buf;
 
-                    if ( strchr(filename,SPACE) == NULL )
-                        pzbuf = filename;
+                    if ( strchr(logger_filename,SPACE) == NULL )
+                        pzbuf = logger_filename;
                     else
-                        MSGBUF(buf,"'%s'",filename);
+                        MSGBUF(buf,"'%s'",logger_filename);
 
                     if ( sysblk.emsg & EMSG_TS )
                     {
