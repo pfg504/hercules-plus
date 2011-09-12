@@ -389,7 +389,7 @@ int message_cmd(int argc,char *argv[], char *cmdline,int withhdr)
         if (withhdr)
         {
             char msgbuf[256];
-            char *lparname = str_lparname();
+            char *lparname = strdup(str_lparname());
             time(&mytime);
             mytm=localtime(&mytime);
             MSGBUF(msgbuf, " %2.2d:%2.2d:%2.2d  * MSG FROM %s: %s\n",
@@ -398,23 +398,21 @@ int message_cmd(int argc,char *argv[], char *cmdline,int withhdr)
                      mytm->tm_sec,
                      (strlen(lparname)!=0)? lparname: "HERCULES",
                      msgtxt );
-            writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY),
+            if (lparname != NULL)
+                free(lparname);
 #if defined(OPTION_MSGCLR)
-                     "<pnl,color(white,black)>",
+            writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY), "<pnl,color(white,black)>", "%s", msgbuf );
 #else
-                     "",
+            writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY), "", "%s", msgbuf );
 #endif
-                     "%s", msgbuf );
         }
         else
         {
-            writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY),
 #if defined(OPTION_MSGCLR)
-                     "<pnl,color(white,black)>",
+            writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY), "<pnl,color(white,black)>", "%s\n", msgtxt );
 #else
-                     "",
+            writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY), "", "%s\n", msgtxt );
 #endif
-                     "%s\n",msgtxt);
         }
     }
     return 0;

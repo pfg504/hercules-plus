@@ -10,7 +10,7 @@
 //      The <config.h> header and other required headers are
 //      presumed to have already been #included ahead of it...
 
-// $Id: hexterns.h 855 2011-08-17 00:07:30Z paulgorlinsky $
+// $Id: hexterns.h 7748 2011-09-10 08:10:49Z jj $
 
 #ifndef _HEXTERNS_H
 #define _HEXTERNS_H

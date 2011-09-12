@@ -261,16 +261,19 @@ FACILITY(SIGP_SETARCH_S370,NONE,         NONE,      S370|ESA390|ZARCH, NONE)
 #if defined(_FEATURE_HOST_RESOURCE_ACCESS_FACILITY)
 FACILITY(HOST_RESOURCE_ACCESS,NONE,      NONE,      S370|ESA390|ZARCH, NONE)
 #endif
+#endif /*defined(_FEATURE_HERCULES_DIAGCALLS)*/
 #if defined(_FEATURE_QEBSM)
 FACILITY(QEBSM,            Z390,         NONE,      Z390,          ALS3)
 #endif /*defined(_FEATURE_QEBSM)*/
 #if defined(_FEATURE_QDIO_THININT)
 FACILITY(QDIO_THININT,     Z390,         NONE,      Z390,          ALS3)
 #endif /*defined(_FEATURE_QDIO_THININT)*/
+#if defined(_FEATURE_QDIO_TDD)
+FACILITY(QDIO_TDD,         NONE,         NONE,      Z390,          ALS3)
+#endif /*defined(_FEATURE_QDIO_TDD)*/
 #if defined(_FEATURE_SVS)
 FACILITY(SVS,              Z390,         NONE,      Z390,          ALS3)
 #endif /*defined(_FEATURE_SVS)*/
-#endif
 
 { NULL, 0, 0, 0, 0, 0 }
 };
@@ -293,7 +296,7 @@ int i;
 }
 
 
-void set_alslevel(int alslevel)
+static void set_alslevel(int alslevel)
 {
 FACTAB *tb;
 int i,j;
@@ -389,7 +392,7 @@ ARCHTAB *tb;
 }
 
 
-void force_facbit(int bitno, int enable, BYTE mode)
+static void force_facbit(int bitno, int enable, BYTE mode)
 {
 int fbyte, fbit;
 char sbitno[32];
@@ -462,7 +465,7 @@ char sbitno[32];
     }
 }
 
-void set_facility(FACTAB *facility, int enable, BYTE mode)
+static void set_facility(FACTAB *facility, int enable, BYTE mode)
 {
 int fbyte, fbit;
 BYTE fac_changed = FALSE;
@@ -575,7 +578,7 @@ BYTE fac_changed = FALSE;
 }
 
 
-int update_archlvl(int argc, char *argv[])
+static int update_archlvl(int argc, char *argv[])
 {
 FACTAB *tb;
 ARCHTAB *ab;
@@ -786,10 +789,10 @@ int archlvl_cmd(int argc, char *argv[], char *cmdline)
             return -1;
         }
 
-    sysblk.dummyregs.arch_mode = sysblk.arch_mode;
 #if defined(OPTION_FISHIO)
-    ios_arch_mode = sysblk.arch_mode;
+    ios_arch_mode =
 #endif /* defined(OPTION_FISHIO) */
+    sysblk.dummyregs.arch_mode = sysblk.arch_mode;
 
     if ( argc == 2 )
     {
@@ -799,6 +802,5 @@ int archlvl_cmd(int argc, char *argv[], char *cmdline)
 
     return 0;
 }
-
 
 #endif /*!defined(_GEN_ARCH)*/

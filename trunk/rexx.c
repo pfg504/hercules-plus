@@ -212,8 +212,11 @@ RXSYSEXIT ExitList[2];
     {   /* try $(MODPATH)\rexx\filename if not found and no pathing information */
     char execpath[MAX_PATH];
 
-        strlcpy( execpath, get_symbol("MODPATH"), sizeof(execpath) );
+        execpath[0] = '\0';
+#if defined(OPTION_CONFIG_SYMBOLS)
+        strlcat( execpath, get_symbol("MODPATH"), sizeof(execpath) );
         strlcat( execpath, PATHSEPS,              sizeof(execpath) );
+#endif
         strlcat( execpath, "rexx",                sizeof(execpath) );
         strlcat( execpath, PATHSEPS,              sizeof(execpath) );
         strlcat( execpath, argv[1],               sizeof(execpath) );

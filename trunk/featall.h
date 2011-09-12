@@ -101,6 +101,8 @@
     #define NO_CMDSER                   /* Serialise all commands    */
 #endif
 
+#define OPTION_BUILTIN_SYMBOLS
+#define OPTION_CONFIG_SYMBOLS
 #define OPTION_CMDTGT                   /* the cmdtgt command        */
 #define OPTION_MSGCLR                   /* Colored messages          */
 #define OPTION_MSGHLD                   /* Sticky messages           */
@@ -295,6 +297,8 @@
 #undef FEATURE_PROTECTION_INTERCEPTION_CONTROL
 #undef FEATURE_QUEUED_DIRECT_IO
 #undef FEATURE_QEBSM
+#undef FEATURE_QDIO_THININT
+#undef FEATURE_QDIO_TDD
 #undef FEATURE_REGION_RELOCATE
 #undef FEATURE_RESET_REFERENCE_BITS_MULTIPLE_FACILITY           /*810*/
 #undef FEATURE_RESTORE_SUBCHANNEL_FACILITY                      /*208*/

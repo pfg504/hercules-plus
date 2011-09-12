@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: logmsg.c 7691 2011-08-13 10:01:51Z jj $
+// $Id: logmsg.c 7748 2011-09-10 08:10:49Z jj $
 
 #include "hstdinc.h"
 
@@ -105,7 +105,7 @@
 #endif
 static LOCK log_route_lock;
 
-#define MAX_LOG_ROUTES 16
+#define MAX_LOG_ROUTES MAX_CPU_ENGINES+4
 typedef struct _LOG_ROUTES
 {
     TID t;
@@ -196,6 +196,7 @@ DLL_EXPORT void log_close(void)
     return;
 }
 
+#if defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)
 DLL_EXPORT void writemsg(const char *srcfile, int line, const char* function,
                          int grp, int lvl, char *color, char *msg, ...)
 {
@@ -299,6 +300,7 @@ DLL_EXPORT void writemsg(const char *srcfile, int line, const char* function,
 
     log_wakeup(NULL);
 }
+#endif /*defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)*/
 
 /*-------------------------------------------------------------------*/
 /* Log message: Normal routing (panel or buffer, as appropriate)     */
@@ -394,6 +396,7 @@ DLL_EXPORT void logmsgb(char *msg,...)
 }
 #endif
 
+#if defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)
 /*-------------------------------------------------------------------*/
 /* Log message: Device trace                                         */
 /*-------------------------------------------------------------------*/
@@ -425,7 +428,9 @@ DLL_EXPORT void logdevtr(DEVBLK *dev,char *msg,...)
         free(bfr);
     }
 } /* end function logdevtr */
+#endif /*defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)*/
 
+#if defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)
 /* panel : 0 - No, 1 - Only, 2 - Also */
 DLL_EXPORT void log_write(int panel,char *msg)
 {
@@ -542,6 +547,32 @@ DLL_EXPORT void log_write(int panel,char *msg)
     if ( ptr != NULL ) free(ptr);
     return;
 }
+#else /*defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)*/
+/* panel : 0 - No, 1 - Only, 2 - Also */
+DLL_EXPORT void log_write(int panel,char *msg)
+{
+
+/* (log_write function proper starts here) */
+    int slot;
+    log_route_init();
+    if(panel==1)
+    {
+        write_pipe( logger_syslogfd[LOG_WRITE], msg, strlen(msg) );
+        return;
+    }
+    obtain_lock(&log_route_lock);
+    slot=log_route_search(thread_id());
+    release_lock(&log_route_lock);
+    if(slot<0 || panel>0)
+    {
+        write_pipe( logger_syslogfd[LOG_WRITE], msg, strlen(msg) );
+        if(slot<0)
+            return;
+    }
+    log_routes[slot].w(log_routes[slot].u,msg);
+    return;
+}
+#endif /*defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)*/
 
 /* capture log output routine series */
 /* log_capture is a sample of how to */
@@ -591,6 +622,7 @@ DLL_EXPORT char *log_capture(void *(*fun)(void *),void *p)
     return(cd.obfr);
 }
 
+#if defined( OPTION_MSGCLR )
 /*-------------------------------------------------------------------*/
 /* Skip past "<pnl ...>" message prefix...                           */
 /* Input:                                                            */
@@ -608,3 +640,4 @@ DLL_EXPORT int skippnlpfx(const char** ppsz)
     }
     return (int)strlen( *ppsz );
 }
+#endif /*defined( OPTION_MSGCLR )*/
