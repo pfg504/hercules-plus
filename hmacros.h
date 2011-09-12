@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hmacros.h 7726 2011-08-28 11:41:48Z jj $
+// $Id: hmacros.h 7748 2011-09-10 08:10:49Z jj $
 
 //      This header auto-#included by 'hercules.h'...
 //
@@ -36,6 +36,7 @@
     #define __noop(...)
   #endif
 #endif
+
 
 /*-------------------------------------------------------------------*/
 /* "Portability" macros for handling _MSVC_ port...                  */
@@ -738,7 +739,7 @@ typedef U64  (*z900_trace_br_func) (int amode,  U64 ia, REGS *regs);
     (NULL)
   #define HDC3(_func, _arg1,_arg2,_arg3) \
     (NULL)
-  #define HDC4(_func, _arg1,_arg2,arg3,arg4) \
+  #define HDC4(_func, _arg1,_arg2,_arg3,_arg4) \
     (NULL)
   #define HDC5(_func, _arg1,_arg2,_arg3,_arg4,_arg5) \
     (NULL)
@@ -794,17 +795,8 @@ typedef U64  (*z900_trace_br_func) (int amode,  U64 ia, REGS *regs);
  #define INIT_MSGLCK
 #endif
 
-#define INITIALIZE_UTILITY(name) \
-  do { \
-    SET_THREAD_NAME(name); \
-    INITIALIZE_NLS(); \
-    INITIALIZE_EXTERNAL_GUI(); \
-    memset (&sysblk, 0, sizeof(SYSBLK)); \
-    INIT_MSGLCK \
-    initialize_detach_attr (DETACHED); \
-    initialize_join_attr   (JOINABLE); \
-    set_codepage(NULL); \
-    init_hostinfo( &hostinfo ); \
+#if defined(OPTION_CONFIG_SYMBOLS)
+#define INIT_UTILMSGLVL \
     do \
     { \
         char *msglvl = (char *)get_symbol( "HERCULES_UTIL_MSGLVL" );\
@@ -824,7 +816,23 @@ typedef U64  (*z900_trace_br_func) (int amode,  U64 ia, REGS *regs);
             if ( strcasestr(msglvl, "time") ) \
                 sysblk.emsg |= EMSG_TS; \
         } \
-    } while(0); \
+    } while (0)
+#else
+#define INIT_UTILMSGLVL
+#endif
+
+#define INITIALIZE_UTILITY(name) \
+  do { \
+    SET_THREAD_NAME(name); \
+    INITIALIZE_NLS(); \
+    INITIALIZE_EXTERNAL_GUI(); \
+    memset (&sysblk, 0, sizeof(SYSBLK)); \
+    INIT_MSGLCK \
+    initialize_detach_attr (DETACHED); \
+    initialize_join_attr   (JOINABLE); \
+    set_codepage(NULL); \
+    init_hostinfo( &hostinfo ); \
+    INIT_UTILMSGLVL; \
   } while (0)
 
 /*-------------------------------------------------------------------*/

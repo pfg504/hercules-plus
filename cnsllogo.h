@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cnsllogo.h 7557 2011-07-13 21:40:47Z pgorlinsky $
+// $Id: cnsllogo.h 7748 2011-09-10 08:10:49Z jj $
 
 /* This is the default LOGO */
 
@@ -55,6 +55,7 @@ It is also possible to use any defined symbol or environment variable.
  */
 
 static char *herclogo[]={
+#if defined( OPTION_CONFIG_SYMBOLS )
 "@ALIGN NONE",
 "@SBA 0,0",
 "@SF P",
@@ -97,6 +98,7 @@ static char *herclogo[]={
 "@SF HP",
 "$(SUBCHAN)",
 "@SF P",
+#endif
 "@ALIGN LEFT",
 "",
 "",

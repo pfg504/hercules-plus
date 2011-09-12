@@ -7,7 +7,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: msgenu.h 7726 2011-08-28 11:41:48Z jj $
+// $Id: msgenu.h 7743 2011-09-04 11:37:40Z jj $
 
 /*-------------------------------------------------------------------*/
 /* This file contains the text of all of the messages issued by      */
@@ -84,7 +84,7 @@ always be manually overridden at any time via the "msglevel" command.
 #if defined (_MSVC_)
 #define MSGBUF( _buf, ... )           _snprintf_s( _buf, sizeof(_buf), sizeof(_buf)-1, ## __VA_ARGS__ )
 #else
-#define MSGBUF( _buf, ... )           snprintf(    _buf,               sizeof(_buf)-1, ## __VA_ARGS__ )
+#define MSGBUF( _buf, ... )           snprintf(_buf, sizeof(_buf), ## __VA_ARGS__ )
 #endif
 
 #define MSG(   id, s, ... )           #id s" " id "\n", ## __VA_ARGS__
@@ -219,6 +219,16 @@ always be manually overridden at any time via the "msglevel" command.
          free(_buf); \
     } while(0)
 #else
+#if !defined(OPTION_MSGCLR) && !defined(OPTION_MSGHLD)
+#define WRMSG(id, s, ...)            logmsg( _(#id s " " id "\n"), ## __VA_ARGS__)
+#define WRMSG_C(id, s, ...)          logmsg( _(#id s " " id ""), ## __VA_ARGS__)
+#define WRCMSG(color, id, s, ...)    logmsg( _(#id s " " id "\n"), ## __VA_ARGS__)
+#define WRCMSG_C(color, id, s, ...)  logmsg( _(#id s " " id ""), ## __VA_ARGS__)
+#define WRGMSG(id, s, ...)           logmsg( _(#id s " " id "\n"), ## __VA_ARGS__)
+#define WRGMSG_C(id, s, ...)         logmsg( _(#id s " " id ""), ## __VA_ARGS__)
+#define WRGCMSG(color, id, s, ...)   logmsg( _(#id s " " id "\n"), ## __VA_ARGS__)
+#define WRGCMSG_C(color, id, s, ...) logmsg( _(#id s " " id ""), ## __VA_ARGS__)
+#else /*!defined(OPTION_MSGCLR) && !defined(OPTION_MSGHLD)*/
 #define WRMSG(id, s, ...)            writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY), "", _(#id s " " id "\n"), ## __VA_ARGS__)
 #define WRMSG_C(id, s, ...)          writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY), "", _(#id s " " id ""), ## __VA_ARGS__)
 #define WRCMSG(color, id, s, ...)    writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY), color, _(#id s " " id "\n"), ## __VA_ARGS__)
@@ -230,6 +240,7 @@ always be manually overridden at any time via the "msglevel" command.
 #define WRGCMSG(color, id, s, ...)   writemsg(__FILE__, __LINE__, __FUNCTION__, 1, MLVL(ANY), color, _(#id s " " id "\n"), ## __VA_ARGS__)
 #define WRGCMSG_C(color, id, s, ...) writemsg(__FILE__, __LINE__, __FUNCTION__, 1, MLVL(ANY), color, _(#id s " " id ""), ## __VA_ARGS__)
 #endif
+#endif /*!defined(OPTION_MSGCLR) && !defined(OPTION_MSGHLD)*/
 
 #ifdef OPTION_MSGLCK
 #define WRGMSG_ON \
@@ -418,7 +429,7 @@ do { \
 #define HHC00317 "%1d:%04X CCKD file: device is not a cckd device"
 #define HHC00318 "%1d:%04X CCKD file[%d] '%s': error adding shadow file, sf command busy on device"
 #define HHC00319 "%1d:%04X CCKD file[%d] '%s': error adding shadow file"
-#define HHC00320 "%1d:%04X CCKD file[%d] '%s': shadow file succesfully added"
+#define HHC00320 "%1d:%04X CCKD file[%d] '%s': shadow file successfully added"
 #define HHC00321 "%1d:%04X CCKD file: merging shadow files..."
 #define HHC00322 "%1d:%04X CCKD file[%d] '%s': error merging shadow file, sf command busy on device"
 #define HHC00323 "%1d:%04X CCKD file[%d] '%s': cannot remove base file"
@@ -459,8 +470,8 @@ do { \
 #define HHC00356 "%1d:%04X CCKD file '%s': not a compressed dasd file"
 #define HHC00357 "%1d:%04X CCKD file '%s': converting to '%s'"
 #define HHC00358 "%1d:%04X CCKD file '%s': file already compressed"
-#define HHC00359 "%1d:%04X CCKD file '%s': compress succesful, %"I64_FMT"d bytes released"
-#define HHC00360 "%1d:%04X CCKD file '%s': compress succesful, L2 tables relocated"
+#define HHC00359 "%1d:%04X CCKD file '%s': compress successful, %"I64_FMT"d bytes released"
+#define HHC00360 "%1d:%04X CCKD file '%s': compress successful, L2 tables relocated"
 #define HHC00361 "%1d:%04X CCKD file '%s': dasd lookup error type %02X cylinders %d"
 #define HHC00362 "%1d:%04X CCKD file '%s': bad '%s' %d, expecting %d"
 #define HHC00363 "%1d:%04X CCKD file '%s': cdevhdr inconsistencies found, code %4.4X"
@@ -1445,7 +1456,7 @@ do { \
 #define HHC02417 "Invalid track header at offset %08X"
 #define HHC02418 "Expected CCHH %04X%04X, found CCHH %04X%04X"
 #define HHC02419 "Invalid record header (rc %d) at offset %04X in trk at CCHH %04X%04X at offset %08X in file '%s'"
-#define HHC02420 "%u cylinders succesfully written to file '%s'"
+#define HHC02420 "%u cylinders successfully written to file '%s'"
 #define HHC02421 "Cylinder count %u is outside range %u-%u"
 #define HHC02422 "Converting %04X volume '%s': %u cyls, %u trks/cyl, %u bytes/trk"
 #define HHC02423 "DASD operation completed"

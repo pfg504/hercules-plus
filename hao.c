@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hao.c 7728 2011-08-29 03:50:39Z jj $
+// $Id: hao.c 7748 2011-09-10 08:10:49Z jj $
 
 /*---------------------------------------------------------------------------*/
 /* file: hao.c                                                               */
@@ -514,12 +514,18 @@ static void* hao_thread(void* dummy)
 
   UNREFERENCED(dummy);
 
+  /* Do not start HAO if no logger is active 
+   * the next hao command will restart the thread
+   */
+  if(!logger_status())
+  {
+    haotid = 0;
+    return NULL;
+  }
+
   WRMSG(HHC00100, "I", (u_long)thread_id(), getpriority(PRIO_PROCESS,0), "Hercules Automatic Operator");
 
   /* Wait for panel thread to engage */
-  while(!sysblk.panel_init && !sysblk.shutdown && !logger_status() )
-    usleep( 10 * 1000 );
-
   /* Do until shutdown */
   while(!sysblk.shutdown && msgamt >= 0)
   {
@@ -569,7 +575,9 @@ static void* hao_thread(void* dummy)
 /*---------------------------------------------------------------------------*/
 static int hao_ignoremsg(char *msg)
 {
+#if defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)
   static int debuglen = 0;
+#endif
   char* nocolor = msg;
   int msglen;
 
@@ -583,6 +591,7 @@ static int hao_ignoremsg(char *msg)
   msglen = strlen(msg);
 #endif /* defined( OPTION_MSGCLR ) */
 
+#if defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)
   if (!debuglen)
   {
     char prefix[64] = {0};
@@ -593,6 +602,7 @@ static int hao_ignoremsg(char *msg)
   /* Get past debug prefix if msglevel DEBUG is active */
   if (MLVL( DEBUG ) && msglen >= debuglen)
     memmove( msg, msg + debuglen, (msglen -= debuglen)+1 );
+#endif
 
   /* Ignore our own messages (HHC0007xx, HHC0008xx and HHC0009xx
      are reserved so that hao.c can recognize its own messages) */

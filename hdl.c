@@ -120,7 +120,8 @@ DLL_EXPORT void hdl_shut (void)
 {
 HDLSHD *shdent;
 
-    WRMSG(HHC01500, "I");
+    if(MLVL(DEBUG))
+        WRMSG(HHC01500, "I");
     
     hdl_sdip = TRUE;
 
@@ -128,19 +129,16 @@ HDLSHD *shdent;
     {
         /* Remove shutdown call entry to ensure it is called once */
         hdl_shdlist = shdent->next;
-
-        {
+        if(MLVL(DEBUG))
             WRMSG(HHC01501, "I", shdent->shdname);
-            {
-                (shdent->shdcall) (shdent->shdarg);
-            }
+        (shdent->shdcall) (shdent->shdarg);
+        if(MLVL(DEBUG))
             WRMSG(HHC01502, "I", shdent->shdname);
-        }   
         free(shdent);
-        log_wakeup(NULL);
     }
 
-    WRMSG(HHC01504, "I");
+    if(MLVL(DEBUG))
+        WRMSG(HHC01504, "I");
 }
 
 #if defined(OPTION_DYNAMIC_LOAD)
@@ -213,13 +211,11 @@ void   *ret;
 size_t  fulllen = 0;
 
     if ( (ret = dlopen(filename,flag)) )       /* try filename as is first */
-    {
         return ret;
-    }
- 
+
     fulllen = strlen(filename) + strlen(hdl_modpath) + 2 + HDL_SUFFIX_LENGTH;
     fullname = (char *)calloc(1,fulllen);
-    
+
     if ( fullname == NULL ) 
         return NULL;
 
@@ -610,22 +606,24 @@ static void hdl_term (void *unused _HDL_UNUSED)
 {
 DLLENT *dllent;
 
-    WRMSG(HHC01512, "I");
+    if(MLVL(DEBUG))
+        WRMSG(HHC01512, "I");
 
     /* Call all final routines, in reverse load order */
     for(dllent = hdl_dll; dllent; dllent = dllent->dllnext)
     {
         if(dllent->hdlfini)
         {
-            WRMSG(HHC01513, "I", dllent->name);
-            {
-                (dllent->hdlfini)();
-            }
-            WRMSG(HHC01514, "I", dllent->name);
+            if(MLVL(DEBUG))
+                WRMSG(HHC01513, "I", dllent->name);
+            (dllent->hdlfini)();
+            if(MLVL(DEBUG))
+                WRMSG(HHC01514, "I", dllent->name);
         }
     }
 
-    WRMSG(HHC01515, "I");
+    if(MLVL(DEBUG))
+        WRMSG(HHC01515, "I");
 }
 
 
@@ -1008,8 +1006,8 @@ char *modname;
         {
             if((*dllent)->flags & (HDL_LOAD_MAIN | HDL_LOAD_NOUNLOAD))
             {
-                WRMSG(HHC01521, "E", (*dllent)->name);
                 release_lock(&hdl_lock);
+                WRMSG(HHC01521, "E", (*dllent)->name);
                 return -1;
             }
 
@@ -1018,8 +1016,8 @@ char *modname;
                     for(hnd = (*dllent)->hndent; hnd; hnd = hnd->next)
                         if(hnd->hnd == dev->hnd)
                         {
-                            WRMSG(HHC01522, "E",(*dllent)->name, SSID_TO_LCSS(dev->ssid), dev->devnum);
                             release_lock(&hdl_lock);
+                            WRMSG(HHC01522, "E",(*dllent)->name, SSID_TO_LCSS(dev->ssid), dev->devnum);
                             return -1;
                         }
 
@@ -1030,8 +1028,8 @@ char *modname;
                 
                 if((rc = ((*dllent)->hdlfini)()))
                 {
-                    WRMSG(HHC01523, "E", (*dllent)->name);
                     release_lock(&hdl_lock);
+                    WRMSG(HHC01523, "E", (*dllent)->name);
                     return rc;
                 }
             }

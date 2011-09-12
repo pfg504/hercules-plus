@@ -594,6 +594,7 @@ struct SYSBLK {
                                         /* lookup table              */
 #endif  /* FAST_DEVICE_LOOKUP */
         U16     highsubchan[FEATURE_LCSS_MAX];  /* Highest subchan+1 */
+        CHPBLK *firstchp;               /* -> First channel path     */
         u_int   dasdcache:1;            /* 0 = system cache off
                                            1 = system cache on       */
 
@@ -937,7 +938,7 @@ struct CHPBLK {
         U64     blkloc;                 /* Address of block    big-e */
         U32     blksiz;                 /* size of block       big-e */
 
-        CHPBLK *next;
+        CHPBLK *nextchp;
         BYTE    css;
         BYTE    chpid;
         BYTE    chptype;
