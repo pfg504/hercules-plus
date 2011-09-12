@@ -16,7 +16,7 @@
 /* z/Architecture emulator                                           */
 /*********************************************************************/
 
-// $Id: hscutl.c 7603 2011-07-22 17:17:13Z pgorlinsky $
+// $Id: hscutl.c 866 2011-09-12 21:30:43Z paulgorlinsky $
 
 #include "hstdinc.h"
 
@@ -529,7 +529,7 @@ DLL_EXPORT char *resolve_symbol_string(const char *text)
         return( strdup( text ) );
     }
 
-    memset(buf, 0, sizeof(buf));
+    __optimize_clear( buf, sizeof(buf) );
 
     while(1)
     {
@@ -587,7 +587,7 @@ DLL_EXPORT char *resolve_symbol_string(const char *text)
                             /* Substitute default if specified */
                             if (inc_equals >= 0)
                             {
-                                memset(dflt, 0, sizeof(dflt));
+                                __optimize_clear( dflt, sizeof(dflt) );
                                 strlcpy(dflt, &buf[inc_equals+1], sizeof(dflt));
                                 inc_envvar = dflt;
                             }
@@ -819,7 +819,7 @@ DLL_EXPORT int timed_wait_condition_relative_usecs
 
 #if !defined(_MSVC_)
 
-/* THIS module (hscutil.c) is to provide the below functionality.. */
+/* THIS module (hscutl.c) is to provide the below functionality.. */
 
 /*
   Returns outpath as a host filesystem compatible filename path.
@@ -830,10 +830,19 @@ DLL_EXPORT int timed_wait_condition_relative_usecs
 */
 DLL_EXPORT char *hostpath( char *outpath, const char *inpath, size_t buffsize )
 {
-    if (inpath && outpath && buffsize > 1)
+    if ( !outpath || !buffsize )
+        return NULL;
+
+    __optimize_clear(outpath, buffsize);
+
+    if (!inpath)
+        return outpath;
+
+    ASSERT( outpath && inpath && buffsize );
+
+    if ( buffsize > 1)
         strlcpy( outpath, inpath, buffsize );
-    else if (outpath && buffsize)
-        *outpath = 0;
+
     return outpath;
 }
 

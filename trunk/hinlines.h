@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hinlines.h 7622 2011-07-25 03:04:24Z fish $
+// $Id: hinlines.h 866 2011-09-12 21:30:43Z paulgorlinsky $
 
 #ifndef _HINLINES_H
 #define _HINLINES_H
@@ -131,6 +131,13 @@ INLINE void __clear_io_buffer(void *addr, size_t n)
 {
     register unsigned int x;
     register void *limit;
+
+    /* If less than 4096 bytes, do memset */
+    if ( n < 4096 )
+    {
+        __optimize_clear(addr, n);
+        return;
+    }
 
     /* Let the C compiler perform special case optimization */
     if ((x = (U64)(uintptr_t)addr & 0x00000FFF))
