@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: commadpt.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: commadpt.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* Hercules Communication Line Driver                                */
@@ -2174,7 +2174,7 @@ static void commadpt_query_device (DEVBLK *dev, char **devclass,
 {
     BEGIN_DEVICE_CLASS_QUERY( "LINE", dev, devclass, buflen, buffer );
 
-    snprintf(buffer,buflen-1,"%s STA=%s CN=%s, EIB=%s OP=%s IO[%" I64_FMT "u]",
+    snprintf(buffer,buflen,"%s STA=%s CN=%s, EIB=%s OP=%s IO[%" I64_FMT "u]",
             commadpt_lnctl_names[dev->commadpt->lnctl],
             dev->commadpt->enabled?"ENA":"DISA",
             dev->commadpt->connect?"YES":"NO",

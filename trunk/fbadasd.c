@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: fbadasd.c 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id: fbadasd.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* This module contains device handling functions for emulated       */
@@ -411,14 +411,14 @@ void fbadasd_query_device (DEVBLK *dev, char **devclass,
     cckd = dev->devunique.dasd_dev.cckd_ext;
     if (!cckd)
     {
-        snprintf( buffer, buflen-1, "%s [%"I64_FMT"d,%d] IO[%"I64_FMT"u]",
+        snprintf( buffer, buflen, "%s [%"I64_FMT"d,%d] IO[%"I64_FMT"u]",
                   devname,
                   dev->devunique.dasd_dev.fbaorigin, dev->devunique.dasd_dev.fbanumblk,
                   dev->excps);
     }
     else
     {
-        snprintf( buffer, buflen-1, "%s [%"I64_FMT"d,%d] [%d sfs] IO[%"I64_FMT"u]",
+        snprintf( buffer, buflen, "%s [%"I64_FMT"d,%d] [%d sfs] IO[%"I64_FMT"u]",
                   devname,
                   dev->devunique.dasd_dev.fbaorigin, dev->devunique.dasd_dev.fbanumblk,
                   cckd->sfn,

@@ -285,7 +285,7 @@ int  configure_tod_priority(int prio);
 int  configure_srv_priority(int prio);
 
 int  configure_shrdport(U16 shrdport);
-#define MAX_ARGS  12                    /* Max argv[] array size     */
+#define MAX_ARGS  24                    /* Max argv[] array size     */
 int parse_and_attach_devices(const char *devnums,const char *devtype,int ac,char **av);
 CONF_DLL_IMPORT int parse_single_devnum(const char *spec, U16 *lcss, U16 *devnum);
 int parse_single_devnum_silent(const char *spec, U16 *lcss, U16 *devnum);
@@ -340,8 +340,9 @@ CMDT_DLL_IMPORT int CallHercCmd (int argc, char **argv, char *cmdline);
 
 /* Functions in module losc.c */
 #if defined(OPTION_LPP_RESTRICT)
-void losc_set (int license_status);
-void losc_check(char *ostype);
+void losc_set   (int license_status);
+int  losc_query (void);
+void losc_check (char *ostype);
 #endif /*defined(OPTION_LPP_RESTRICT)*/
 
 #if defined(OPTION_DYNAMIC_LOAD)

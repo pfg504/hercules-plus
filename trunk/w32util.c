@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: w32util.c 866 2011-09-12 21:30:43Z paulgorlinsky $
+// $Id: w32util.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -2072,26 +2072,19 @@ DLL_EXPORT void w32_init_hostinfo( HOST_INFO* pHostInfo )
  #define HWIN32_SYSNAME         "Windows"
 #endif
 
-    _snprintf(
+    snprintf(
         pHostInfo->sysname, sizeof(
-        pHostInfo->sysname)-1,        HWIN32_SYSNAME );
-        pHostInfo->sysname[ sizeof(
-        pHostInfo->sysname)-1] = 0;
+        pHostInfo->sysname),        HWIN32_SYSNAME );
 
-    _snprintf(
+    snprintf(
         pHostInfo->release, sizeof(
-        pHostInfo->release)-1,       "%d.%d.%d",            vi.dwMajorVersion,
+        pHostInfo->release),       "%d.%d.%d",              vi.dwMajorVersion,
                                                             vi.dwMinorVersion,
                                                             vi.dwBuildNumber);
-        pHostInfo->release[ sizeof(
-        pHostInfo->release)-1] = 0;
 
-    _snprintf(
+    snprintf(
         pHostInfo->version, sizeof(
-        pHostInfo->version)-1,        "%s %s%s", psz, prod_id, prod_proc );
-        pHostInfo->version[ sizeof(
-        pHostInfo->version)-1] = 0;
-
+        pHostInfo->version),        "%s %s%s", psz, prod_id, prod_proc );
 
     switch ( si.wProcessorArchitecture )
     {
@@ -2103,11 +2096,9 @@ DLL_EXPORT void w32_init_hostinfo( HOST_INFO* pHostInfo )
             else if ( si.wProcessorLevel > 9 ) n = 6;
             else                               n = si.wProcessorLevel;
 
-            _snprintf(
+            snprintf(
                 pHostInfo->machine, sizeof(
-                pHostInfo->machine)-1,        "i%d86",  n );
-                pHostInfo->machine[ sizeof(
-                pHostInfo->machine)-1] = 0;
+                pHostInfo->machine),        "i%d86",  n );
         }
         break;
 
@@ -3476,6 +3467,7 @@ DLL_EXPORT pid_t w32_poor_mans_fork ( char* pszCommandLine, int* pnWriteToChildS
             DeleteCriticalSection( &pPipedProcessCtl->csLock );
             free( pPipedProcessCtl->pszBuffer );
             free( pPipedProcessCtl );
+            pPipedProcessCtl = NULL;
         }
         free( pPipedStdOutThreadCtl );
         free( pPipedStdErrThreadCtl );
@@ -3554,6 +3546,7 @@ DLL_EXPORT pid_t w32_poor_mans_fork ( char* pszCommandLine, int* pnWriteToChildS
         DeleteCriticalSection( &pPipedProcessCtl->csLock );
         free( pPipedProcessCtl->pszBuffer );
         free( pPipedProcessCtl );
+        pPipedProcessCtl = NULL;
     }
     else
     {
@@ -3695,7 +3688,7 @@ void w32_parse_piped_process_stdxxx_data ( PIPED_PROCESS_CTL* pPipedProcessCtl, 
         // its own thread. Otherwise root thread isn't interested in capturing
         // and thus we must issue the individual logmsg's ourselves...
 
-        if (!pPipedProcessCtl)
+        if (!pPipedProcessCtl || (int)pPipedProcessCtl->nStrLen <= 0)
         {
             logmsg("%s\n",pbeg);    // send all child's msgs to Herc console
         }
@@ -3906,6 +3899,17 @@ DLL_EXPORT int w32_mlock( void* addr, size_t len )
 DLL_EXPORT int w32_munlock( void* addr, size_t len )
 {
     return VirtualUnlock( addr, len ) ? 0 : -1;
+}
+
+DLL_EXPORT void * w32_valloc( const size_t bytes )
+{
+    return (_aligned_malloc( bytes, (size_t)w32_hpagesize()));
+}
+
+DLL_EXPORT void w32_vfree( void * maddr )
+{
+    _aligned_free( maddr );
+    return;
 }
 
 // Hercules low-level file open...

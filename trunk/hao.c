@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hao.c 7748 2011-09-10 08:10:49Z jj $
+// $Id: hao.c 867 2011-09-12 23:15:45Z paulgorlinsky $
 
 /*---------------------------------------------------------------------------*/
 /* file: hao.c                                                               */

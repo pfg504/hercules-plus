@@ -9,7 +9,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cmdtab.h 7748 2011-09-10 08:10:49Z jj $
+// $Id: cmdtab.h 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /*              Command descriptions and help text                   */
@@ -317,7 +317,8 @@
   "      (none)    - display current value(s)\n"                                \
   "\n"                                                                          \
   " Note: Multipliers 'T', 'P', and 'E' are not available on 32bit machines\n"  \
-  "       Expanded Storage is allocated in minimum of 1M units\n"
+  "       expanded storage is allocated in minimum of 1M units\n"               \
+  "    *S/370 mode supports up to 16M main and 0 expanded storage"
 
 #define defsym_cmd_desc         "Define symbol"
 #define defsym_cmd_help         \

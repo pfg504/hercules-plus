@@ -9,7 +9,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cmdtab.c 7735 2011-09-02 02:02:58Z jj $
+// $Id: cmdtab.c 867 2011-09-12 23:15:45Z paulgorlinsky $
 
 #include "hstdinc.h"
 

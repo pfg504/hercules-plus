@@ -33,13 +33,18 @@ static char *licensed_os[] = {
       "TPF", 
       NULL };
 
-static int    os_licensed = 0;
+static int    os_licensed = -1;
 static int    check_done = 0;
 
 void losc_set (int license_status)
 {
     os_licensed = license_status;
     check_done = 0;
+}
+
+int losc_query ( void )
+{
+    return( os_licensed );
 }
 
 void losc_check(char *ostype)

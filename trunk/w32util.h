@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: w32util.h 7722 2011-08-21 11:49:21Z jj $
+// $Id: w32util.h 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 #ifndef _W32UTIL_H
 #define _W32UTIL_H
@@ -210,8 +210,11 @@ W32_DLL_IMPORT void   w32_set_thread_name( TID tid, char* name );
 
 W32_DLL_IMPORT unsigned long  w32_hpagesize();
 
-W32_DLL_IMPORT int   w32_mlock   (const void *addr, size_t len);
-W32_DLL_IMPORT int   w32_munlock (const void *addr, size_t len);
+W32_DLL_IMPORT int    w32_mlock   (const void *addr, size_t len);
+W32_DLL_IMPORT int    w32_munlock (const void *addr, size_t len);
+
+W32_DLL_IMPORT void*  w32_valloc  (const size_t bytes );
+W32_DLL_IMPORT void   w32_vfree   (      void*  _maddr);
 
 // Hercules low-level file open...
 W32_DLL_IMPORT int    w32_hopen ( const char* path, int oflag, ... );

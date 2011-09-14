@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hmacros.h 7748 2011-09-10 08:10:49Z jj $
+// $Id: hmacros.h 867 2011-09-12 23:15:45Z paulgorlinsky $
 
 //      This header auto-#included by 'hercules.h'...
 //
@@ -330,6 +330,11 @@
     #define VALLOC      valloc
     #define VFREE       free
   #endif
+#else
+    #define PVALLOC     w32_valloc
+    #define VALLOC      w32_valloc
+    #define PVFREE      w32_vfree
+    #define VFREE       w32_vfree
 #endif
 
 /*-------------------------------------------------------------------*/
@@ -400,16 +405,18 @@
 
 #else // defined( OPTION_CALLOC_GUESTMEM )
 
-  #define      HPCALLOC(t,a)    hpcalloc((t),(a))
-  #define      HPCFREE(t,a)     hpcfree((t),(a))
-
   #if defined(_MSVC_)
 
+    #define    HPCALLOC(t,a)    hpcalloc((t),(a))
+    #define    HPCFREE(t,a)     hpcfree((t),(a))
     #define    HPAGESIZE        w32_hpagesize
     #define    MLOCK            w32_mlock
     #define    MUNLOCK          w32_munlock
 
   #else /* !defined(_MSVC_) */
+
+    #define    HPCALLOC(t,a)    hpcalloc((t),(a))
+    #define    HPCFREE(t,a)     hpcfree((t),(a))
 
     #define    HPAGESIZE        getpagesize
 
@@ -826,7 +833,7 @@ typedef U64  (*z900_trace_br_func) (int amode,  U64 ia, REGS *regs);
     SET_THREAD_NAME(name); \
     INITIALIZE_NLS(); \
     INITIALIZE_EXTERNAL_GUI(); \
-    memset (&sysblk, 0, sizeof(SYSBLK)); \
+    __optimize_clear( &sysblk, sizeof(SYSBLK) ); \
     INIT_MSGLCK \
     initialize_detach_attr (DETACHED); \
     initialize_join_attr   (JOINABLE); \

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: clock.h 7726 2011-08-28 11:41:48Z jj $
+// $Id: clock.h 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 
 #if !defined(_CLOCK_C_)
@@ -93,10 +93,10 @@ _CLOCK_EXTERN U64 hw_tod;               /* Hardware clock            */
 
 
 #define ITIMER_TO_TOD(_units) \
-    ((S64)(625*((S64)(_units))/3))
+    ((S64)((625LL*(S64)(_units))/3LL))
 
 #define TOD_TO_ITIMER(_units) \
-    ((S32)(3*(_units)/625))
+    ((S32)(((3LL*(_units))/625LL) & 0xffffffff))
 
 #define TOD_CLOCK(_regs) \
     (tod_value + (_regs)->tod_epoch)

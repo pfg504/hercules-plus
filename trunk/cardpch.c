@@ -159,7 +159,7 @@ static void cardpch_query_device (DEVBLK *dev, char **devclass,
 
     BEGIN_DEVICE_CLASS_QUERY( "PCH", dev, devclass, buflen, buffer );
 
-    snprintf (buffer, buflen-1, "%s%s%s%s%s IO[%" I64_FMT "u]",
+    snprintf (buffer, buflen, "%s%s%s%s%s IO[%" I64_FMT "u]",
                 dev->filename,
                 (dev->devunique.cpch_dev.ascii ? " ascii" : " ebcdic"),
                 ((dev->devunique.cpch_dev.ascii && dev->devunique.cpch_dev.crlf) ? " crlf" : ""),

@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hstructs.h 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id: hstructs.h 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 //      This header auto-#included by 'hercules.h'...
 //
@@ -1180,6 +1180,7 @@ struct DEVBLK {                         /* Device configuration block*/
             struct _cons_dev            /*Device dependent fields for console*/
             {        
                 struct in_addr ipaddr;          /* Client IP address         */
+                u_int   port;                   /* Client port address       */
                 in_addr_t  acc_ipaddr;          /* Allowable clients IP addr */
                 in_addr_t  acc_ipmask;          /* Allowable clients IP mask */
                 U32     rlen3270;               /* Length of data in buffer  */

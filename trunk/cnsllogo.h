@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cnsllogo.h 7748 2011-09-10 08:10:49Z jj $
+// $Id: cnsllogo.h 867 2011-09-12 23:15:45Z paulgorlinsky $
 
 /* This is the default LOGO */
 

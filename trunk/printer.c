@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: printer.c 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id: printer.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* This module contains device handling functions for emulated       */
@@ -180,8 +180,10 @@ static void fcb_dump(DEVBLK* dev, char *buf, unsigned int buflen)
     char wrk[16];
     char sep[1];
     sep[0] = '=';
-    snprintf(buf, buflen-1, "LOADED lpi=%d index=%d lpp=%d fcb", 
-                            dev->devunique.cprt_dev.lpi, dev->devunique.cprt_dev.index, dev->devunique.cprt_dev.lpp );
+    snprintf(buf, buflen, "LOADED lpi=%d index=%d lpp=%d fcb",
+                          dev->devunique.cprt_dev.lpi,
+                          dev->devunique.cprt_dev.index,
+                          dev->devunique.cprt_dev.lpp );
     for (i = 1; i <= dev->devunique.cprt_dev.lpp; i++)
     {
         if (dev->devunique.cprt_dev.fcb[i] != 0)
@@ -230,8 +232,7 @@ static void* spthread (DEVBLK* dev)
     /* Fix thread name */
     {
         char thread_name[32];
-        thread_name[sizeof(thread_name)-1] = 0;
-        snprintf( thread_name, sizeof(thread_name)-1,
+        snprintf( thread_name, sizeof(thread_name),
             "spthread %1d:%04X", SSID_TO_LCSS(dev->ssid), dev->devnum );
         SET_THREAD_NAME( thread_name );
     }
@@ -651,7 +652,7 @@ static void printer_query_device (DEVBLK *dev, char **devclass,
 {
     BEGIN_DEVICE_CLASS_QUERY( "PRT", dev, devclass, buflen, buffer );
 
-    snprintf (buffer, buflen-1, "%s%s%s%s%s%s%s IO[%" I64_FMT "u]",
+    snprintf (buffer, buflen, "%s%s%s%s%s%s%s IO[%" I64_FMT "u]",
                  dev->filename,
                 (dev->bs                            ? " sockdev"      : ""),
                 (dev->devunique.cprt_dev.crlf       ? " crlf"         : ""),
