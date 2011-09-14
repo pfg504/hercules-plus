@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2011      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2011      */
 
-// $Id: cpu.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: cpu.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* This module implements the CPU instruction execution function of  */
@@ -1850,7 +1850,7 @@ QWORD   qword;                            /* quadword work area      */
     if( regs->arch_mode != ARCH_900 )
     {
         copy_psw (regs, qword);
-        return(snprintf(buf, buflen-1,
+        return(snprintf(buf, buflen,
                 "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X",
                 qword[0], qword[1], qword[2], qword[3],
                 qword[4], qword[5], qword[6], qword[7]));
@@ -1858,7 +1858,7 @@ QWORD   qword;                            /* quadword work area      */
     else
     {
         copy_psw (regs, qword);
-        return(snprintf(buf, buflen-1,
+        return(snprintf(buf, buflen,
                 "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X "
                 "%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X%2.2X",
                 qword[0], qword[1], qword[2], qword[3],

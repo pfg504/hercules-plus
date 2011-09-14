@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: vmfplc2.c 7613 2011-07-23 06:42:44Z fish $
+// $Id: vmfplc2.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 #include "hstdinc.h"
 
@@ -706,7 +706,7 @@ struct FST_BLOCK *format_fst(char *fn,char *ft,char *fm,char recfm,int lrecl,int
     fstb->fst.dt[1]=to_dcb(ttm->tm_mday);
     fstb->fst.dt[2]=to_dcb(ttm->tm_hour);
     fstb->fst.dt[3]=to_dcb(ttm->tm_min);
-    snprintf(bfr,3,"%2.2u",ttm->tm_year%100);
+    snprintf(bfr,sizeof(bfr),"%2.2u",ttm->tm_year%100);
     bfr[2]=0;
     host_to_guest_str(fstb->fst.year,bfr);
 

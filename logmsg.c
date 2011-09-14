@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: logmsg.c 7748 2011-09-10 08:10:49Z jj $
+// $Id: logmsg.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 #include "hstdinc.h"
 
@@ -277,9 +277,9 @@ DLL_EXPORT void writemsg(const char *srcfile, int line, const char* function,
         if (msgbuf)
         {
             if ( strlen(bfr) > 10 && SNCMP(bfr, "HHC", 3) )
-                snprintf( msgbuf, l-1, "%s%s", prefix, ( sysblk.emsg & EMSG_TEXT ) ? &bfr[10] : bfr );
+                snprintf( msgbuf, l, "%s%s", prefix, ( sysblk.emsg & EMSG_TEXT ) ? &bfr[10] : bfr );
             else
-                snprintf( msgbuf, l-1, "%s%s", prefix, bfr );
+                snprintf( msgbuf, l, "%s%s", prefix, bfr );
             log_write( 0, msgbuf );
             free(msgbuf);
         }

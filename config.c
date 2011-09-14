@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: config.c 862 2011-08-29 18:47:05Z paulgorlinsky $
+// $Id: config.c 867 2011-09-12 23:15:45Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* The original configuration builder is now called bldcfg.c         */
@@ -633,7 +633,10 @@ int     i;                              /* Loop index                */
 
     for (i = 0; i < dev->argc; i++)
         if (dev->argv[i])
+        {
             free(dev->argv[i]);
+            dev->argv[i] = NULL;
+        }
     if (dev->argv)
     {
         free(dev->argv);
@@ -641,6 +644,7 @@ int     i;                              /* Loop index                */
     }
 
     free(dev->typname);
+    dev->typname = NULL;
 
     // detach all devices in group
     if(dev->group)
@@ -1148,11 +1152,18 @@ int     i;                              /* Loop index                */
 
         for (i = 0; i < dev->argc; i++)
             if (dev->argv[i])
+            {
                 free(dev->argv[i]);
+                dev->argv[i] = NULL;
+            }
         if (dev->argv)
+        {
             free(dev->argv);
+            dev->argv = NULL;
+        }
 
         free(dev->typname);
+        dev->typname = NULL;
 
         ret_devblk(dev);
 
@@ -1172,11 +1183,18 @@ int     i;                              /* Loop index                */
 
             for (i = 0; i < dev->argc; i++)
                 if (dev->argv[i])
+                {
                     free(dev->argv[i]);
+                    dev->argv[i] = NULL;
+                }
             if (dev->argv)
+            {
                 free(dev->argv);
+                dev->argv = NULL;
+            }
 
             free(dev->typname);
+            dev->typname = NULL;
 
             ret_devblk(dev);
 
@@ -1893,6 +1911,7 @@ parse_and_attach_devices(const char *sdevnum,
                for(j=0;j<addargc;j++)
                {
                    free(orig_newargv[j]);
+                   orig_newargv[j] = NULL;
                }
 #else /* #if defined(OPTION_CONFIG_SYMBOLS) */
                 /* Build the device configuration block (no syms) */
@@ -1911,9 +1930,12 @@ parse_and_attach_devices(const char *sdevnum,
         }
 #if defined(OPTION_CONFIG_SYMBOLS)
         free(newargv);
+        newargv = NULL;
         free(orig_newargv);
+        orig_newargv = NULL;
 #endif /* #if defined(OPTION_CONFIG_SYMBOLS) */
         free(dnd.da);
+        dnd.da = NULL;
         return baddev?-1:0;
 }
 #endif /*defined(OPTION_ENHANCED_DEVICE_ATTACH)*/

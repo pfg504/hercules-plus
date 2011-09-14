@@ -332,7 +332,7 @@ static void cardrdr_query_device (DEVBLK *dev, char **devclass,
 {
     BEGIN_DEVICE_CLASS_QUERY( "RDR", dev, devclass, buflen, buffer );
 
-    snprintf (buffer, buflen-1, "%s%s%s%s%s%s%s%s IO[%" I64_FMT "u]",
+    snprintf (buffer, buflen, "%s%s%s%s%s%s%s%s IO[%" I64_FMT "u]",
         ((dev->filename[0] == '\0') ? "*"          : (char *)dev->filename),
         (dev->bs ?                    " sockdev"   : ""),
         (dev->devunique.crdr_dev.multifile ?             " multifile" : ""),

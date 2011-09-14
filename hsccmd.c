@@ -7,7 +7,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hsccmd.c 7698 2011-08-17 21:01:37Z pgorlinsky $
+// $Id: hsccmd.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* This module implements the various Hercules System Console        */
@@ -1067,7 +1067,7 @@ static void fcb_dump(DEVBLK* dev, char *buf, unsigned int buflen)
     char wrk[16];
     char sep[1];
     sep[0] = '=';
-    snprintf( buf, buflen-1, "lpi=%d index=%d lpp=%d fcb", dev->devunique.cprt_dev.lpi, dev->devunique.cprt_dev.index, dev->devunique.cprt_dev.lpp );
+    snprintf( buf, buflen, "lpi=%d index=%d lpp=%d fcb", dev->devunique.cprt_dev.lpi, dev->devunique.cprt_dev.index, dev->devunique.cprt_dev.lpp );
     for (i = 1; i <= dev->devunique.cprt_dev.lpp; i++)
     {
         if (dev->devunique.cprt_dev.fcb[i] != 0)
@@ -2781,8 +2781,10 @@ u_int   locktype = 0;
         mainsize <<= SHIFT_MEGABYTE;
 
     if ( ( ( mainsize || sysblk.maxcpu ) &&                                             // 0 only valid if MAXCPU 0
-           ( (sysblk.arch_mode == ARCH_370 && mainsize < (U64)(_64_KILOBYTE) ) ||       // 64K minimum for S/370
-             (sysblk.arch_mode != ARCH_370 && mainsize < (U64)(ONE_MEGABYTE) ) ) ) ||   // Else 1M minimum
+           ( (sysblk.arch_mode == ARCH_370 && 
+                      ( mainsize < (U64)(_64_KILOBYTE) || 
+                        mainsize > (U64)(ONE_MEGABYTE * 16) ) ) ||                      // 64K min & 16M Max for S/370
+             (sysblk.arch_mode != ARCH_370 && mainsize < (U64)(ONE_MEGABYTE) ) ) ) ||   // Else 1M min
          ( (mainsize > (U64)(((U64)ONE_MEGABYTE << 12)-1)) &&                           // Check for 32-bit addressing limits
            ( sizeof(sysblk.mainsize) < 8 || sizeof(size_t) < 8 ) ) )
     {
@@ -2907,7 +2909,7 @@ u_int   locktype = 0;
 #if SIZEOF_SIZE_T >= 8
     else
     {
-        if (xpndsize > (RADR)((RADR)16 << SHIFT_TERABYTE) )
+        if (xpndsize > (RADR)((RADR)16 << SHIFT_TERABYTE) || sysblk.arch_mode == ARCH_370 )
         {
             WRMSG( HHC01451, "E", argv[1], argv[0]);
             return -1;
@@ -3990,6 +3992,23 @@ int pgmprdos_cmd(int argc, char *argv[], char *cmdline)
 
     UNREFERENCED(cmdline);
 
+    if ( argc == 1 )
+    {
+        int rc = losc_query();
+        char msgbuf[32];
+
+        if ( rc == -1 )
+            MSGBUF( msgbuf, "%s", "not set" );
+        else if ( rc == PGM_PRD_OS_LICENSED )
+            MSGBUF( msgbuf, "%s", "licensed" );
+        else if ( rc == PGM_PRD_OS_RESTRICTED )
+            MSGBUF( msgbuf, "%s", "restricted" );
+        else
+            MSGBUF( msgbuf, "%s", "unknown" );
+        WRMSG( HHC02204, "I", argv[0], msgbuf );
+        return rc;
+    }
+    else
     /* Parse program product OS allowed */
     if (argc == 2)
     {
@@ -5035,18 +5054,23 @@ int devlist_cmd(int argc, char *argv[], char *cmdline)
 
                 if (clientip)
                 {
-                    MSGBUF( buf, "     (client %s (%s) connected)",
-                            clientip, clientname
-                          );
-                    WRMSG(HHC02279, "I", buf);
+                    MSGBUF( buf, "%1d:%04X %4.4X  (client %s (%s) connected)",
+                            SSID_TO_LCSS(dev->ssid),
+                            dev->devnum, dev->devtype, 
+                            clientip, clientname );
                 }
                 else
                 {
-                    WRMSG(HHC02279, "I", "     (no one currently connected)");
+                    MSGBUF( buf, "%1d:%04X %4.4X  (no one currently connected)",
+                            SSID_TO_LCSS(dev->ssid),
+                            dev->devnum, dev->devtype );
                 }
+                WRMSG(HHC02279, "I", buf);
 
-                if (clientip)   free(clientip);
-                if (clientname) free(clientname);
+                if (clientip)
+                    free(clientip);
+                if (clientname)
+                    free(clientname);
             }
         }
     }

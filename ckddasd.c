@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ckddasd.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: ckddasd.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* This module contains device handling functions for emulated       */
@@ -731,7 +731,7 @@ void ckddasd_query_device (DEVBLK *dev, char **devclass,
     {
         if ( dev->devunique.dasd_dev.ckdnumfd > 1)
         {
-            snprintf( buffer, buflen-1, "%s [%d cyls] [%d segs] IO[%" I64_FMT "u]",
+            snprintf( buffer, buflen, "%s [%d cyls] [%d segs] IO[%" I64_FMT "u]",
                       devname,
                       dev->devunique.dasd_dev.ckdcyls,
                       dev->devunique.dasd_dev.ckdnumfd,
@@ -739,7 +739,7 @@ void ckddasd_query_device (DEVBLK *dev, char **devclass,
         }
         else
         {
-            snprintf( buffer, buflen-1, "%s [%d cyls] IO[%" I64_FMT "u]",
+            snprintf( buffer, buflen, "%s [%d cyls] IO[%" I64_FMT "u]",
                       devname,
                       dev->devunique.dasd_dev.ckdcyls,
                       dev->excps );
@@ -747,7 +747,7 @@ void ckddasd_query_device (DEVBLK *dev, char **devclass,
     }
     else
     {
-        snprintf( buffer, buflen-1, "%s [%d cyls] [%d sfs] IO[%" I64_FMT "u]",
+        snprintf( buffer, buflen, "%s [%d cyls] [%d sfs] IO[%" I64_FMT "u]",
                   devname,
                   dev->devunique.dasd_dev.ckdcyls,
                   cckd->sfn,

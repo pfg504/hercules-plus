@@ -8,7 +8,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ctcadpt.c 7722 2011-08-21 11:49:21Z jj $
+// $Id: ctcadpt.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 // Hercules Channel-to-Channel Emulation Support
 // ====================================================================
@@ -212,7 +212,7 @@ void  CTCX_Query( DEVBLK* pDEVBLK,
 {
     BEGIN_DEVICE_CLASS_QUERY( "CTCA", pDEVBLK, ppszClass, iBufLen, pBuffer );
 
-    snprintf( pBuffer, iBufLen-1, "%s IO[%" I64_FMT "u]", pDEVBLK->filename, pDEVBLK->excps );
+    snprintf( pBuffer, iBufLen, "%s IO[%" I64_FMT "u]", pDEVBLK->filename, pDEVBLK->excps );
 }
 
 // -------------------------------------------------------------------
@@ -1372,7 +1372,6 @@ void packet_trace( BYTE* pAddr, int iLen, BYTE bDir )
         memset( print_line, 0, sizeof( print_line ) );
 
         snprintf((char *) print_line, sizeof(print_line), "+%4.4X%c ", offset, bDir );
-        print_line[sizeof(print_line)-1] = '\0'; /* force null termination */
 
         for( i = 0; i < 16; i++ )
         {

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hdl.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: hdl.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 #include "hstdinc.h"
 
@@ -383,7 +383,7 @@ int len;
         HDLDEV *hndent;
             len = 0;
             for(hndent = dllent->hndent; hndent; hndent = hndent->next)
-                len += snprintf(buf + len, sizeof(buf) - len - 1, " %s",hndent->name);
+                len += snprintf(buf + len, sizeof(buf) - len, " %s",hndent->name);
             WRMSG(HHC01533, "I", buf);
 
         }
@@ -396,15 +396,15 @@ int len;
                 len = 0;
 #if defined(_370)
                 if(insent->archflags & HDL_INSTARCH_370)
-                    len += snprintf(buf + len, sizeof(buf) - len - 1, ", archmode = " _ARCH_370_NAME);
+                    len += snprintf(buf + len, sizeof(buf) - len, ", archmode = " _ARCH_370_NAME);
 #endif
 #if defined(_390)
                 if(insent->archflags & HDL_INSTARCH_390)
-                    len += snprintf(buf + len, sizeof(buf) - len - 1, ", archmode = " _ARCH_390_NAME);
+                    len += snprintf(buf + len, sizeof(buf) - len, ", archmode = " _ARCH_390_NAME);
 #endif
 #if defined(_900)
                 if(insent->archflags & HDL_INSTARCH_900)
-                    len += snprintf(buf + len, sizeof(buf) - len - 1, ", archmode = " _ARCH_900_NAME);
+                    len += snprintf(buf + len, sizeof(buf) - len, ", archmode = " _ARCH_900_NAME);
 #endif
                 WRMSG( HHC01534, "I"
                     ,insent->instname

@@ -16,7 +16,7 @@
 /* z/Architecture emulator                                           */
 /*********************************************************************/
 
-// $Id: hscutl.c 866 2011-09-12 21:30:43Z paulgorlinsky $
+// $Id: hscutl.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 #include "hstdinc.h"
 
@@ -371,25 +371,11 @@ DLL_EXPORT void set_symbol(const char *sym,const char *value)
 
 #if defined ( _MSVC_ )
     {
-        size_t   evl = strlen(sym)+strlen(value)+2;
-        char    *ev=malloc(evl);
+        int rc;
 
-        if ( !ev )
-        {
-            WRMSG(HHC00136, "W", "malloc()", strerror(errno));
-        }
-        else
-        {
-            int rc;
-
-            strlcpy( ev, sym, evl );
-            strlcat( ev, "=", evl );
-            strlcat( ev, value, evl );
-            rc = putenv( ev );
-            free( ev );
-            if ( rc )
-                WRMSG(HHC00136, "W", "putenv()", strerror(errno));
-        }
+        rc = (int)_putenv_s(sym,value);
+        if ( rc )
+            WRMSG(HHC00136, "W", "_putenv_s()", strerror(rc));
     }
 
 #else
@@ -605,7 +591,7 @@ DLL_EXPORT char *resolve_symbol_string(const char *text)
 
                             /* Copy to buffer and update index */
                             stmtlen += snprintf( &buf[stmtlen],
-                                                 (sizeof(buf) - stmtlen) - 1,
+                                                 (sizeof(buf) - stmtlen),
                                                  "%s", inc_envvar );
                         }
                         memset(&buf[stmtlen], 0, (sizeof(buf) - stmtlen));
@@ -1027,7 +1013,18 @@ DLL_EXPORT void* hpcalloc( BYTE type, size_t size )
 {
     /* PROGRAMMING NOTE: we presume the host page size
        will never be smaller than the guest page size */
-
+#if defined(_MSVC_)
+    void*      ptr        = PVALLOC( size );
+    if ( ptr != NULL )
+    {
+        clear_storage( ptr, size );
+        if ( type == HPC_MAINSTOR ) sysblk.main_clear = 1;
+        if ( type == HPC_XPNDSTOR ) sysblk.xpnd_clear = 1;
+    }
+    return ptr;
+#else
+    /* PROGRAMMING NOTE: we presume the host page size
+       will never be smaller than the guest page size */
     void*      ptr        = NULL;       /* (aligned)   */
     void*      p          = NULL;       /* (unaligned) */
     size_t     bytes      = 0;
@@ -1053,17 +1050,21 @@ DLL_EXPORT void* hpcalloc( BYTE type, size_t size )
         if (HPC_XPNDSTOR == type) sysblk.xpnd_clear = 1;
     }
     return ptr;   /* Return page-aligned allocation */
+#endif
 }
 
 DLL_EXPORT void hpcfree( BYTE type, void* ptr )
 {
+#if defined(_MSVC_)
+    PVFREE( ptr );
+#else
     /* Retrieve the original ptr that hpcalloc() saved
        immediately preceding the original allocation */
     void* p = *(void**)((uintptr_t)ptr - sizeof(void*));
 
     /* Free the original calloc() allocated memory */
     free( p );
-
+#endif
     /* Indicate guest storage is no longer cleared */
     if (HPC_MAINSTOR == type) sysblk.main_clear = 0;
     if (HPC_XPNDSTOR == type) sysblk.xpnd_clear = 0;

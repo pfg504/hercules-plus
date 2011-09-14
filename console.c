@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: console.c 7701 2011-08-18 01:20:14Z pgorlinsky $
+// $Id: console.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* This module contains device handling functions for console        */
@@ -1590,6 +1590,7 @@ char                    *logoout;
             dev->connected = 1;
             dev->fd = csock;
             dev->devunique.cons_dev.ipaddr = client.sin_addr;
+            dev->devunique.cons_dev.port = ntohs(client.sin_port);
             dev->devunique.cons_dev.mod3270 = model;
             dev->devunique.cons_dev.eab3270 = (extended == 'Y' ? 1 : 0);
 
@@ -1719,10 +1720,10 @@ char                    *logoout;
     else
     {
         MSGBUF( devmsg, MSG(HHC01018, "I",
-                  SSID_TO_LCSS(dev->ssid), dev->devnum, clientip, dev->devtype));
+                  SSID_TO_LCSS(dev->ssid), dev->devnum, clientip, dev->devtype, ntohs(client.sin_port)));
     }
 
-    WRMSG(HHC01018, "I", SSID_TO_LCSS(dev->ssid), dev->devnum, clientip, dev->devtype);
+    WRMSG(HHC01018, "I", SSID_TO_LCSS(dev->ssid), dev->devnum, clientip, dev->devtype, ntohs(client.sin_port));
 
     /* Send connection message to client */
     if (devclass != 'K')
@@ -2412,9 +2413,8 @@ loc3270_query_device (DEVBLK *dev, char **devclass,
 
     if (dev->connected)
     {
-        snprintf (buffer, buflen, "%s IO[%" I64_FMT "u]",
-            inet_ntoa(dev->devunique.cons_dev.ipaddr), dev->excps );
-        buffer[buflen-1] = '\0';
+        snprintf (buffer, buflen, "%s:%u IO[%" I64_FMT "u]",
+            inet_ntoa(dev->devunique.cons_dev.ipaddr), dev->devunique.cons_dev.port, dev->excps );
     }
     else
     {
@@ -2444,21 +2444,16 @@ loc3270_query_device (DEVBLK *dev, char **devclass,
             snprintf(buffer, buflen,
                 "GROUP=%s%s%s IO[%" I64_FMT "u]",
                 dev->devunique.cons_dev.szgroupip, acc[0] ? " " : "", acc, dev->excps );
-            buffer[buflen-1] = '\0';
         }
         else
         {
             if (acc[0])
             {
-                snprintf(buffer, buflen,
-                    "* %s IO[%" I64_FMT "u]", acc, dev->excps );
-                buffer[buflen-1] = '\0';
+                snprintf(buffer, buflen, "* %s IO[%" I64_FMT "u]", acc, dev->excps );
             }
             else
             {
-                snprintf(buffer, buflen,
-                    "* IO[%" I64_FMT "u]", dev->excps );
-                buffer[buflen-1] = '\0';
+                snprintf(buffer, buflen, "* IO[%" I64_FMT "u]", dev->excps );
             }
         }
     }
@@ -2713,11 +2708,11 @@ constty_query_device (DEVBLK *dev, char **devclass,
 
     if (dev->connected)
     {
-        snprintf (buffer, buflen, "%s%s IO[%" I64_FMT "u]",
+        snprintf (buffer, buflen, "%s:%u%s IO[%" I64_FMT "u]",
             inet_ntoa(dev->devunique.cons_dev.ipaddr),
+            dev->devunique.cons_dev.port,
             dev->devunique.cons_dev.prompt1052 ? "" : " noprompt",
             dev->excps );
-        buffer[buflen-1] = '\0';
     }
     else
     {
@@ -2750,7 +2745,6 @@ constty_query_device (DEVBLK *dev, char **devclass,
                 !dev->devunique.cons_dev.prompt1052 ? " noprompt" : "",
                 acc[0] ? " " : "", acc,
                 dev->excps );
-            buffer[buflen-1] = '\0';
         }
         else
         {
@@ -2758,27 +2752,23 @@ constty_query_device (DEVBLK *dev, char **devclass,
             {
                 if (!dev->devunique.cons_dev.prompt1052)
                 {
-                    snprintf(buffer, buflen, "noprompt %s IO[%" I64_FMT "u]", 
+                    snprintf(buffer, buflen, "* noprompt %s IO[%" I64_FMT "u]", 
                                              acc, dev->excps );
-                    buffer[buflen-1] = '\0';
                 }
                 else
                 {
-                    snprintf(buffer, buflen, "* %s", acc);
-                    buffer[buflen-1] = '\0';
+                    snprintf(buffer, buflen, "* %s IO[%" I64_FMT "u]", acc, dev->excps );
                 }
             }
             else
             {
                 if (!dev->devunique.cons_dev.prompt1052)
                 {
-                    snprintf( buffer, buflen, "noprompt IO[%" I64_FMT "u]", dev->excps );
-                    buffer[buflen-1] = '\0';
+                    snprintf( buffer, buflen, "* noprompt IO[%" I64_FMT "u]", dev->excps );
                 }
                 else
                 {
-                    snprintf( buffer, buflen, "IO[%" I64_FMT "u]", dev->excps );
-                    buffer[buflen-1] = '\0';
+                    snprintf( buffer, buflen, "* IO[%" I64_FMT "u]", dev->excps );
                 }
             }
         }
@@ -3504,7 +3494,6 @@ BYTE    stat;                           /* Unit status               */
             {
                 snprintf ((char *)dev->buf, dev->bufsize,
                         MSG(HHC01026, "A", SSID_TO_LCSS(dev->ssid), dev->devnum));
-                dev->buf[dev->bufsize-1] = '\0';
                 len = (int)strlen((char *)dev->buf);
                 rc = send_packet (dev->fd, dev->buf, len, NULL);
                 if (rc < 0)

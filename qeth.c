@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: qeth.c 7730 2011-08-29 13:03:10Z jj $
+// $Id: qeth.c 867 2011-09-12 23:15:45Z paulgorlinsky $
 
 /* This module contains device handling functions for the            */
 /* OSA Express emulated card                                         */

@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ctc_lcs.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: ctc_lcs.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 #include "hstdinc.h"
 
@@ -740,7 +740,7 @@ void  LCS_Query( DEVBLK* pDEVBLK, char** ppszClass,
         return;
     }
 
-    snprintf( pBuffer, iBufLen-1, "LCS Port %2.2X %s%s (%s)%s IO[%" I64_FMT "u]",
+    snprintf( pBuffer, iBufLen, "LCS Port %2.2X %s%s (%s)%s IO[%" I64_FMT "u]",
               pLCSDEV->bPort,
               pLCSDEV->bMode == LCSDEV_MODE_IP ? "IP" : "SNA",
               sType[pLCSDEV->bType],
@@ -1575,7 +1575,7 @@ static void  LCS_LanStats( PLCSDEV pLCSDEV, PLCSCMDHDR pCmdFrame )
 
         memcpy( pPortMAC, pIFaceMAC, IFHWADDRLEN );
 
-        snprintf(pLCSPORT->szMACAddress, sizeof(pLCSPORT->szMACAddress)-1,
+        snprintf(pLCSPORT->szMACAddress, sizeof(pLCSPORT->szMACAddress),
             "%2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X", *(pPortMAC+0), *(pPortMAC+1),
             *(pPortMAC+2), *(pPortMAC+3), *(pPortMAC+4), *(pPortMAC+5));
     }
@@ -2056,11 +2056,14 @@ static int  LCS_EnqueueReplyFrame( PLCSDEV pLCSDEV, PLCSCMDHDR pReply,
 // ====================================================================
 
 int  ParseArgs( DEVBLK* pDEVBLK, PLCSBLK pLCSBLK,
-                int argc, char** argv )
+                int argi, char** argx )
 {
     struct in_addr  addr;               // Work area for addresses
     MAC             mac;
     int             i;
+    char           *argn[MAX_ARGS+1];   // Our copy of pointers
+    char          **argv = argn;        // Our copy of the ptr to pointers
+    int             argc;               // Our copy
 #if defined(OPTION_W32_CTCI)
     int             iKernBuff;
     int             iIOBuff;
@@ -2068,6 +2071,11 @@ int  ParseArgs( DEVBLK* pDEVBLK, PLCSBLK pLCSBLK,
 
     // Housekeeping
     memset( &addr, 0, sizeof( struct in_addr ) );
+    memset( &mac, 0, sizeof( MAC ) );
+    VERIFY( argi <= MAX_ARGS );                     // This should always be true
+    argc = ( argi <= MAX_ARGS ? argi : MAX_ARGS );
+    for( i=0; i<argc; i++ )
+        argn[i] = argx[i];
 
     // Set some initial defaults
 #if defined( WIN32 )
@@ -2094,10 +2102,6 @@ int  ParseArgs( DEVBLK* pDEVBLK, PLCSBLK pLCSBLK,
     // as the program name and ignored). Now that argv[0] is a valid
     // argument, we need to shift the arguments and insert a dummy
     // argv[0];
-
-    // Don't allow us to exceed the allocated storage (sanity check)
-    if( argc > (MAX_ARGS-1))
-        argc = (MAX_ARGS-1);
 
     for( i = argc; i > 0; i-- )
         argv[i] = argv[i - 1];

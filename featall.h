@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: featall.h 7734 2011-08-31 12:38:58Z jj $
+// $Id: featall.h 867 2011-09-12 23:15:45Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* Default features                                                  */
@@ -98,18 +98,35 @@
 #define OPTION_TAPE_AUTOMOUNT           /* "Automount" CCWs support  */
 
 #if !defined(OPTION_CMDSER) && !defined(NO_CMDSER)
-    #define NO_CMDSER                   /* Serialise all commands    */
+    #define OPTION_CMDSER               /* Serialise all commands    */
 #endif
 
-#define OPTION_BUILTIN_SYMBOLS
-#define OPTION_CONFIG_SYMBOLS
-#define OPTION_CMDTGT                   /* the cmdtgt command        */
-#define OPTION_MSGCLR                   /* Colored messages          */
-#define OPTION_MSGHLD                   /* Sticky messages           */
-#define OPTION_MSGLCK                   /* Lock during msg write     */
+#if !defined(OPTION_BUILTIN_SYMBOLS) && !defined(NO_BUILTIN_SYMBOLS)
+    #define OPTION_BUILTIN_SYMBOLS
+#endif
+
+#if !defined(OPTION_CONFIG_SYMBOLS) && !defined(NO_CONFIG_SYMBOLS)
+    #define OPTION_CONFIG_SYMBOLS
+#endif
+
+#if !defined(OPTION_CMDTGT) && !defined(NO_CMDTGT)
+    #define OPTION_CMDTGT               /* the cmdtgt command        */
+#endif
+
+#if !defined(OPTION_MSGCLR) && !defined(NO_MSGCLR)
+    #define OPTION_MSGCLR               /* Colored messages          */
+#endif
+
+#if !defined(OPTION_MSGHLD) && !defined(NO_MSGHLD)
+    #define OPTION_MSGHLD               /* Sticky messages           */
+#endif
+
+#if !defined(OPTION_MSGLCK) && !defined(NO_MSGLCK)
+    #define OPTION_MSGLCK               /* Lock during msg write     */
+#endif
 
 #if !defined(OPTION_SCP_MSG_PREFIX) && !defined(NO_SCP_MSG_PREFIX)
-#define NO_SCP_MSG_PREFIX               /* Prefix scp msg with HHC*  */
+    #define NO_SCP_MSG_PREFIX           /* Prefix scp msg with HHC*  */
 #endif
 
 #if !defined(OPTION_WINDOWS_HOST_FILENAMES) && !defined(NO_WINDOWS_HOST_FILENAMES)

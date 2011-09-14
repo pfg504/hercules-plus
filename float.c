@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: float.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id: float.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* This module implements the ESA/390 Hex Floatingpoint Instructions */
@@ -512,8 +512,8 @@ static inline void store_ef( EXTENDED_FLOAT *fl, U32 *fpr )
     fpr[0] = ((U32)fl->sign << 31)
            | ((U32)fl->expo << 24)
            | (fl->ms_fract >> 24);
-    fpr[1] = (fl->ms_fract << 8)
-           | (fl->ls_fract >> 56);
+    fpr[1] = (   (fl->ms_fract << 8)
+               | (fl->ls_fract >> 56) ) & 0xffffffff;
     fpr[FPREX] = ((U32)fl->sign << 31)
                | ((fl->ls_fract >> 32) & 0x00FFFFFF);
     fpr[FPREX+1] = fl->ls_fract & 0xffffffff;

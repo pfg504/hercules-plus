@@ -9,7 +9,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ctc_ctci.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: ctc_ctci.c 868 2011-09-14 01:01:47Z paulgorlinsky $
 
 
 #include "hstdinc.h"
@@ -607,7 +607,7 @@ void  CTCI_Query( DEVBLK* pDEVBLK, char** ppszClass,
     }
     else
     {
-        snprintf( pBuffer, iBufLen-1, "CTCI %s/%s (%s)%s IO[%" I64_FMT "u]",
+        snprintf( pBuffer, iBufLen, "CTCI %s/%s (%s)%s IO[%" I64_FMT "u]",
                   pCTCBLK->szGuestIPAddr,
                   pCTCBLK->szDriveIPAddr,
                   pCTCBLK->szTUNDevName,
@@ -1122,12 +1122,15 @@ static int  CTCI_EnqueueIPFrame( DEVBLK* pDEVBLK,
 //
 
 static int  ParseArgs( DEVBLK* pDEVBLK, PCTCBLK pCTCBLK,
-                       int argc, char** argv )
+                       int argi, char** argx )
 {
     struct in_addr  addr;               // Work area for addresses
     int             iMTU;
     int             i;
     MAC             mac;                // Work area for MAC address
+    char           *argn[MAX_ARGS+1];   // Our copy of pointers
+    char          **argv = argn;        // Our copy of the ptr to pointers
+    int             argc;               // Our copy
 #if defined(OPTION_W32_CTCI)
     int             iKernBuff;
     int             iIOBuff;
@@ -1136,6 +1139,10 @@ static int  ParseArgs( DEVBLK* pDEVBLK, PCTCBLK pCTCBLK,
     // Housekeeping
     memset( &addr, 0, sizeof( struct in_addr ) );
     memset( &mac, 0, sizeof( MAC ) );
+    VERIFY( argi <= MAX_ARGS );                     // This should always be true
+    argc = ( argi <= MAX_ARGS ? argi : MAX_ARGS );
+    for( i=0; i<argc; i++ )
+        argn[i] = argx[i];
 
     // Set some initial defaults
     strlcpy( pCTCBLK->szMTU,     "1500",            sizeof(pCTCBLK->szMTU) );
@@ -1182,10 +1189,6 @@ static int  ParseArgs( DEVBLK* pDEVBLK, PCTCBLK pCTCBLK,
         // as the program name and ignored). Now that argv[0] is a valid
         // argument, we need to shift the arguments and insert a dummy
         // argv[0];
-
-        // Don't allow us to exceed the allocated storage (sanity check)
-        if( argc > (MAX_ARGS-1) )
-            argc = (MAX_ARGS-1);
 
         for( i = argc; i > 0; i-- )
             argv[i] = argv[i - 1];
