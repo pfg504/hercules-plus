@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: panel.c 867 2011-09-12 23:15:45Z paulgorlinsky $
+// $Id: panel.c 870 2011-09-15 22:52:49Z paulgorlinsky $
 
 /*              Modified for New Panel Display =NP=                  */
 /*-------------------------------------------------------------------*/
@@ -1709,7 +1709,8 @@ static void NP_update(REGS *regs)
         if (i >= cons_rows - 3) break;
         if (!dev->allocated) continue;
 
-        online = (dev->console && dev->connected) || strlen(dev->filename) > 0;
+        online = (dev->console && dev->connected) || 
+                  ( dev->filename != NULL && ( strlen(dev->filename) > 0) );
         busy   = dev->busy != 0 || IOPENDING(dev) != 0;
         open   = dev->fd > 2;
 

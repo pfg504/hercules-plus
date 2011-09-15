@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: tapedev.c 866 2011-09-12 21:30:43Z paulgorlinsky $
+// $Id: tapedev.c 870 2011-09-15 22:52:49Z paulgorlinsky $
 
 /* Original Author: Roger Bowler                                     */
 /* Prime Maintainer: Ivan Warren                                     */
@@ -1151,11 +1151,7 @@ int  mountnewtape ( DEVBLK *dev, int argc, char **argv )
     }
 
     /* Release the previous filename if allocated */
-    if (dev->filename != NULL)
-    {
-        free (dev->filename);
-        dev->filename = NULL;
-    }
+    HFREE(dev->filename);
 
     /* The first argument is the file name */
     if (argc == 0 || strlen(argv[0]) >= sizeof(pathname) )

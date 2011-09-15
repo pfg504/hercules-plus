@@ -46,6 +46,7 @@ static int cardrdr_init_handler ( DEVBLK *dev, int argc, char *argv[] )
 {
 int     i;                              /* Array subscript           */
 int     fc;                             /* File counter              */
+char    c;
 char    pathname[PATH_MAX];             /* file path in host format  */
 
     int sockdev = 0;
@@ -73,7 +74,7 @@ char    pathname[PATH_MAX];             /* file path in host format  */
 
     dev->excps = 0;
 
-    if(!sscanf(dev->typname,"%hx",&(dev->devtype)))
+    if(!sscanf(dev->typname,"%hx%c",&(dev->devtype),&c))
         dev->devtype = 0x2501;
 
     fc = 0;
@@ -247,11 +248,7 @@ char    pathname[PATH_MAX];             /* file path in host format  */
 
     /* The first argument is the file name */
 
-    if ( dev->filename != NULL )
-    {
-        free( dev->filename );
-        dev->filename = NULL;
-    }
+    HFREE( dev->filename );
 
     if (argc > 0)
     {
@@ -297,7 +294,19 @@ char    pathname[PATH_MAX];             /* file path in host format  */
 
     /* ISW 20030307 : Empirical knowledge : DOS/VS R34 Erep */
     /*                indicates 4 bytes in 3505 sense       */
-    dev->numsense = 4;
+    if      ( dev->devtype == 0x3504 )
+        dev->numsense = 4;
+    if      ( dev->devtype == 0x3505 )
+        dev->numsense = 4;
+    else if ( dev->devtype == 0x2540 )
+        dev->numsense = 1;
+    else if ( dev->devtype == 0x1442 )
+        dev->numsense = 4;
+    else if ( dev->devtype == 0x2501 )
+        dev->numsense = 4;
+    else
+        dev->numsense = 4;
+
 
     /* Initialize the device identifier bytes */
 
@@ -307,8 +316,30 @@ char    pathname[PATH_MAX];             /* file path in host format  */
     dev->devid[3] = 0x01;
     dev->devid[4] = dev->devtype >> 8;
     dev->devid[5] = dev->devtype & 0xFF;
-    dev->devid[6] = 0x01;
-    dev->numdevid = 7;
+    if ( dev->devtype == 0x2540 )
+        dev->devid[6] = 0xd9;       // EBCDIC 'R'
+    else
+        dev->devid[6] = 0x01;
+
+    if ( sysblk.legacysenseid )
+    {
+        dev->numdevid = 7;                  // (allow for this legacy device)
+    }
+    else
+    {
+        if      ( dev->devtype == 0x3504 )
+            dev->numdevid = 7;
+        if      ( dev->devtype == 0x3505 )
+            dev->numdevid = 7;
+        else if ( dev->devtype == 0x2540 )
+            dev->numdevid = 0;
+        else if ( dev->devtype == 0x1442 )
+            dev->numdevid = 0;
+        else if ( dev->devtype == 0x2501 )
+            dev->numdevid = 0;
+        else
+            dev->numdevid = 0;
+    }
 
     // If socket device, create a listening socket
     // to accept connections on.
@@ -332,9 +363,9 @@ static void cardrdr_query_device (DEVBLK *dev, char **devclass,
 {
     BEGIN_DEVICE_CLASS_QUERY( "RDR", dev, devclass, buflen, buffer );
 
-    snprintf (buffer, buflen, "%s%s%s%s%s%s%s%s IO[%" I64_FMT "u]",
-        ((dev->filename[0] == '\0') ? "*"          : (char *)dev->filename),
-        (dev->bs ?                    " sockdev"   : ""),
+    snprintf (buffer, buflen, "%s%s%s%s%s%s%s%s%s IO[%" I64_FMT "u]",
+        ( !dev->filename ? "*" : dev->filename[0] == '\0' ? "*" : dev->filename),
+        (dev->bs ?                                       " sockdev"   : ""),
         (dev->devunique.crdr_dev.multifile ?             " multifile" : ""),
         (dev->devunique.crdr_dev.ascii ?                 " ascii"     : ""),
         (dev->devunique.crdr_dev.ebcdic ?                " ebcdic"    : ""),
@@ -342,6 +373,7 @@ static void cardrdr_query_device (DEVBLK *dev, char **devclass,
         ((dev->devunique.crdr_dev.ascii && 
           dev->devunique.crdr_dev.trunc) ?               " trunc"     : ""),
         (dev->devunique.crdr_dev.rdreof ?                " eof"       : " intrq"),
+        (dev->devtype == 0x2540 ?                        " reader"    : ""),
         dev->excps );
 
 } /* end function cardrdr_query_device */
@@ -382,25 +414,37 @@ static int cardrdr_close_device ( DEVBLK *dev )
 /*-------------------------------------------------------------------*/
 static int clear_cardrdr ( DEVBLK *dev )
 {
-    char pathname[PATH_MAX];
-
     /* Close the card image file */
     if (cardrdr_close_device(dev) != 0) return -1;
 
     if (dev->bs) return 0;
 
     /* Clear the file name */
-    if ( dev->filename != NULL )
-    {
-        free( dev->filename );
-        dev->filename = NULL;
-    }
+    HFREE( dev->filename );
 
     /* If next file is available, open it */
-    if (dev->devunique.crdr_dev.current_file && *(dev->devunique.crdr_dev.current_file))
+    if ( dev->devunique.crdr_dev.current_file
+      && *(dev->devunique.crdr_dev.current_file) )
     {
-        hostpath(pathname, *(dev->devunique.crdr_dev.current_file++), sizeof(pathname));
-        dev->filename = strdup(pathname);
+        char *pathname = calloc(1,FILENAME_MAX);
+        if (pathname)
+        {
+            hostpath(pathname, *(dev->devunique.crdr_dev.current_file++), FILENAME_MAX);
+            dev->filename = strdup(pathname);
+            free(pathname);
+            if ( !dev->filename )
+            {
+                WRMSG (HHC01200, "E", SSID_TO_LCSS(dev->ssid), dev->devnum, 
+                       "strdup(pathname)", strerror(errno));
+            }
+        }
+        else
+        {
+            char msgbuf[64];
+            MSGBUF( msgbuf, "calloc(1,%d)", FILENAME_MAX );
+            WRMSG (HHC01200, "E", SSID_TO_LCSS(dev->ssid), dev->devnum, 
+                   msgbuf, strerror(errno));
+        }
     }
     else
     {
@@ -412,13 +456,6 @@ static int clear_cardrdr ( DEVBLK *dev )
 //      dev->devunique.crdr_dev.rdreof = 0;
         dev->devunique.crdr_dev.trunc = 0;
         dev->devunique.crdr_dev.autopad = 0;
-    }
-
-    if ( dev->filename == NULL )
-    {
-        char buf[PATH_MAX+8];
-        MSGBUF(buf, "strdup(%s)", pathname);
-        WRMSG (HHC01200, "E", SSID_TO_LCSS(dev->ssid), dev->devnum, buf, strerror(errno));
     }
 
     return 0;
@@ -826,9 +863,10 @@ int     num;                            /* Number of bytes to move   */
         /* Put an IR sense - so that an unsolicited sense can see the intreq */
         if(dev->sense[0]==0)
         {
-            if( dev->filename == NULL  ||
-                dev->filename[0]==0x00 ||
-                    (dev->bs && dev->fd==-1))
+            if( dev->filename == NULL    ||
+                dev->filename[0] == '\0' ||
+                ( strlen(dev->filename) == 1 && dev->filename[0] == '*' ) ||
+                ( dev->bs && dev->fd == -1 ) )
             {
                 dev->sense[0] = SENSE_IR;
                 dev->sense[1] = SENSE1_RDR_RAIC; /* Retry when IntReq Cleared */
@@ -938,9 +976,11 @@ END_DEPENDENCY_SECTION
 
 HDL_DEVICE_SECTION;
 {
-    HDL_DEVICE(1442, cardrdr_device_hndinfo );
-    HDL_DEVICE(2501, cardrdr_device_hndinfo );
-    HDL_DEVICE(3505, cardrdr_device_hndinfo );
+    HDL_DEVICE(1442,  cardrdr_device_hndinfo );
+    HDL_DEVICE(2501,  cardrdr_device_hndinfo );
+    HDL_DEVICE(2540R, cardrdr_device_hndinfo );
+    HDL_DEVICE(3504,  cardrdr_device_hndinfo );
+    HDL_DEVICE(3505,  cardrdr_device_hndinfo );
 }
 END_DEVICE_SECTION
 #endif
