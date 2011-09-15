@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hdteq.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: hdteq.c 870 2011-09-15 22:52:49Z paulgorlinsky $
 
 #include "hstdinc.h"
 
@@ -47,7 +47,12 @@ static DTEQ dteq[] = {
 
     { "1442",   "3505"  },
     { "2501",   "3505"  },
+    { "2540R",  "3505"  },
+    { "3504",   "3505"  },
 
+    { "2540P",  "3525"  },
+
+    { "3203",   "1403"  },
     { "3211",   "1403"  },
 
     { "3410",   "3420"  },

@@ -53,6 +53,7 @@ static int cardpch_init_handler (DEVBLK *dev, int argc, char *argv[])
 {
 char    pathname[PATH_MAX];
 int     i;                              /* Array subscript           */
+char    c;
 
     /* The first argument is the file name */
     if ( argc == 0 )
@@ -94,7 +95,7 @@ int     i;                              /* Array subscript           */
 
     dev->excps = 0;
 
-    if(!sscanf(dev->typname,"%hx",&(dev->devtype)))
+    if(!sscanf(dev->typname,"%hx%c",&(dev->devtype),&c ))
         dev->devtype = 0x3525;
 
     /* Process the driver arguments */
@@ -132,7 +133,12 @@ int     i;                              /* Array subscript           */
     dev->bufsize = CARD_LENGTH + 2;
 
     /* Set number of sense bytes */
-    dev->numsense = 1;
+    if      ( dev->devtype == 0x3525 )
+        dev->numsense = 1;
+    else if ( dev->devtype == 0x2540 )
+        dev->numsense = 1;
+    else
+        dev->numsense = 1;
 
     /* Initialize the device identifier bytes */
     dev->devid[0] = 0xFF;
@@ -141,9 +147,24 @@ int     i;                              /* Array subscript           */
     dev->devid[3] = 0x01;
     dev->devid[4] = dev->devtype >> 8;
     dev->devid[5] = dev->devtype & 0xFF;
-    dev->devid[6] = 0x01;
-    dev->numdevid = 7;
+    if ( dev->devtype == 0x2540 )
+        dev->devid[6] = 0xd7;       // EBCDIC 'P'
+    else
+        dev->devid[6] = 0x01;
 
+    if ( sysblk.legacysenseid )
+    {
+        dev->numdevid = 7;                  // (allow for this legacy device)
+    }
+    else
+    {
+        if      ( dev->devtype == 0x3525 )
+            dev->numdevid = 7;
+        else if ( dev->devtype == 0x2540 )
+            dev->numdevid = 0;
+        else
+            dev->numdevid = 0;
+    }
     /* Activate I/O tracing */
 //  dev->ccwtrace = 1;
 
@@ -159,12 +180,13 @@ static void cardpch_query_device (DEVBLK *dev, char **devclass,
 
     BEGIN_DEVICE_CLASS_QUERY( "PCH", dev, devclass, buflen, buffer );
 
-    snprintf (buffer, buflen, "%s%s%s%s%s IO[%" I64_FMT "u]",
+    snprintf (buffer, buflen, "%s%s%s%s%s%s IO[%" I64_FMT "u]",
                 dev->filename,
                 (dev->devunique.cpch_dev.ascii ? " ascii" : " ebcdic"),
                 ((dev->devunique.cpch_dev.ascii && dev->devunique.cpch_dev.crlf) ? " crlf" : ""),
                 (dev->devunique.cpch_dev.notrunc ? " notrunc" : ""),
                 (dev->devunique.cpch_dev.stopdev    ? " (stopped)"    : ""),
+                (dev->devtype == 0x2540 ? " punch" : ""),
                 dev->excps );
 
 } /* end function cardpch_query_device */
@@ -412,7 +434,8 @@ END_DEPENDENCY_SECTION
 
 HDL_DEVICE_SECTION;
 {
-    HDL_DEVICE(3525, cardpch_device_hndinfo );
+    HDL_DEVICE(2540P, cardpch_device_hndinfo );
+    HDL_DEVICE(3525,  cardpch_device_hndinfo );
 }
 END_DEVICE_SECTION
 #endif

@@ -9,7 +9,7 @@
 /* Prime Maintainer: Ivan Warren                                     */
 /* Secondary Maintainer: "Fish" (David B. Trout)                     */
 
-// $Id: hettape.c 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id: hettape.c 870 2011-09-15 22:52:49Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* This module contains the HET emulated tape format support.        */
@@ -91,11 +91,7 @@ char            pathname[MAX_PATH];     /* file path in host format  */
                     dev->filename, "het", "het_open()", msgbuf );
         }
 
-        if ( dev->filename != NULL )
-        {
-            free( dev->filename );
-            dev->filename = NULL;
-        }
+        HFREE( dev->filename );
 
         dev->filename = strdup( TAPE_UNLOADED );
         build_senseX(TAPE_BSENSE_TAPELOADFAIL,dev,unitstat,code);
@@ -133,11 +129,7 @@ void close_het (DEVBLK *dev)
     het_close (&dev->devunique.tape_dev.hetb);
 
     /* Reinitialize the DEV fields */
-    if ( dev->filename != NULL )
-    {
-        free( dev->filename );
-        dev->filename = NULL;
-    }
+    HFREE( dev->filename );
 
     dev->filename = strdup( TAPE_UNLOADED );
     

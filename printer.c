@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: printer.c 868 2011-09-14 01:01:47Z paulgorlinsky $
+// $Id: printer.c 870 2011-09-15 22:52:49Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* This module contains device handling functions for emulated       */
@@ -340,11 +340,7 @@ char  pathname[PATH_MAX+1];
     /* Save the file name in the device block */
     hostpath(pathname, argv[0], sizeof(pathname) );
 
-    if ( dev->filename != NULL )
-    {
-        free( dev->filename );
-        dev->filename = NULL;
-    }
+    HFREE( dev->filename );
 
     dev->filename = strdup(pathname);
 
@@ -1443,6 +1439,7 @@ END_DEPENDENCY_SECTION
 HDL_DEVICE_SECTION;
 {
     HDL_DEVICE(1403, printer_device_hndinfo );
+    HDL_DEVICE(3203, printer_device_hndinfo );
     HDL_DEVICE(3211, printer_device_hndinfo );
 }
 END_DEVICE_SECTION
