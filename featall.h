@@ -156,6 +156,10 @@
   #error OPTION_BUILTIN_SYMBOLS requires OPTION_CONFIG_SYMBOLS
 #endif
 
+#if defined(OPTION_FEATURE_HYPERVISOR) && !defined(NO_FEATURE_HYPERVISOR)
+#define OPTION_FEATURE_HYPERVISOR       /* Tell Guest it is Hypervised */
+#endif
+
 #if defined(OPTION_DYNAMIC_LOAD)
   #define OPTION_DYNAMIC_RESOLVE_REXX   /* Dynamically load REXX     */
 #endif /*defined(OPTION_DYNAMIC_LOAD)*/
@@ -201,6 +205,14 @@
 #endif
 #if defined(OPTION_900_MODE) && defined(NO_900_MODE)
   #undef    OPTION_900_MODE
+#endif
+
+#if defined(OPTION_FEATURE_HYPERVISOR) && !defined(NO_FEATURE_HYPERVISOR)
+  #define FEATURE_HYPERVISOR
+#else
+  #if defined(FEATURE_HYPERVISOR)
+    #undef FEATURE_HYPERVISOR
+  #endif
 #endif
 
 #undef FEATURE_4K_STORAGE_KEYS
