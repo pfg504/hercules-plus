@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: vm.c 7698 2011-08-17 21:01:37Z pgorlinsky $
+// $Id$
 
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 

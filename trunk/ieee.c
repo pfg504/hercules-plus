@@ -7,7 +7,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ieee.c 7709 2011-08-20 02:41:18Z jj $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module implements ESA/390 Binary Floating-Point (IEEE 754)   */

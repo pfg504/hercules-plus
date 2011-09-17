@@ -4,7 +4,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: conspawn.c 7613 2011-07-23 06:42:44Z fish $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* CONSPAWN.C   (c) "Fish" (David B. Trout), 2005-2006               */

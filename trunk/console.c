@@ -1,11 +1,12 @@
 /* CONSOLE.C    (c)Copyright Roger Bowler, 1999-2011                 */
+/*              (c)Copyright Silence Dogood 2011                     */
 /*              Hercules Console Device Handler                      */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: console.c 868 2011-09-14 01:01:47Z paulgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module contains device handling functions for console        */

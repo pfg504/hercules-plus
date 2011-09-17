@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: dasdpdsu.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This program unloads members of a partitioned dataset from        */

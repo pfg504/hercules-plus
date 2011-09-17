@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: codepage.h 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 
 #ifndef _HERCULES_CODEPAGE_H

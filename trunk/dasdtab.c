@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: dasdtab.c 7698 2011-08-17 21:01:37Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module contains the tables that define the attributes of     */

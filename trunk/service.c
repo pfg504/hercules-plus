@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: service.c 7731 2011-08-30 12:26:30Z jj $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module implements service processor functions                */

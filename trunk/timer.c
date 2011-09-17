@@ -7,7 +7,7 @@
 
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: timer.c 7696 2011-08-17 13:48:28Z jj $
+// $Id$
 
 #include "hstdinc.h"
 

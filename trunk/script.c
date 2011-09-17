@@ -9,7 +9,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: script.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id$
 
 /* This module contains all hercules specific config and command     */
 /* scripting routines.                                               */

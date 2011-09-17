@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: machdep.h 7671 2011-08-07 10:39:13Z jj $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /*                                                                   */

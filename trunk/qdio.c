@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: qdio.c 7734 2011-08-31 12:38:58Z jj $
+// $Id$
 
 /*      This module contains the Signal Adapter instruction          */
 /*      and QEBSM EQBS and SQBS instructions                         */

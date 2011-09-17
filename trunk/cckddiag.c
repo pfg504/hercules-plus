@@ -8,7 +8,7 @@
 /* 2003-02-07 James M. Morrison initial implementation               */
 /* portions borrowed from cckdcdsk & other CCKD code                 */
 
-// $Id: cckddiag.c 7603 2011-07-22 17:17:13Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* Diagnostic tool to display various CCKD data                      */

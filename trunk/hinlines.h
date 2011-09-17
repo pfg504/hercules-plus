@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hinlines.h 866 2011-09-12 21:30:43Z paulgorlinsky $
+// $Id$
 
 #ifndef _HINLINES_H
 #define _HINLINES_H

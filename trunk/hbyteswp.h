@@ -10,7 +10,7 @@
 /* compile option -DNO_ASM_BYTESWAP will expand 'C' code             */
 /* otherwise Intel (486+) assember will be generated  (Jan Jaeger)   */
 
-// $Id: hbyteswp.h 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 
 #ifndef _BYTESWAP_H

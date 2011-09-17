@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hchan.h 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 #ifndef __HCHAN_H__
 #define __HCHAN_H__

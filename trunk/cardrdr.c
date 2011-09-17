@@ -1,4 +1,5 @@
 /* CARDRDR.C    (c) Copyright Roger Bowler, 1999-2011                */
+/*              (c)Copyright Silence Dogood 2011                     */
 /*              ESA/390 Card Reader Device Handler                   */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */

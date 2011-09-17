@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: dasdinit.c 7589 2011-07-18 19:13:01Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This program creates a disk image file and initializes it as      */

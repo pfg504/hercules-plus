@@ -8,7 +8,7 @@
 /* DYN76   (c) Copyright Jason Paul Winter, 2010                      */
 /*             See license_dyn76.txt for licensing                    */
 
-// $Id: dyn76.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id$
 
 
 #include "hstdinc.h"

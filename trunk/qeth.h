@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: qeth.h 7726 2011-08-28 11:41:48Z jj $
+// $Id$
 
 /* This implementation is based on the S/390 Linux implementation    */
 

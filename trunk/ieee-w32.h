@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ieee-w32.h 7674 2011-08-07 22:20:39Z fish $
+// $Id$
 
 
 #ifndef _IEEE_W32_H

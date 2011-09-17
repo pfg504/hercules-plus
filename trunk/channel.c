@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: channel.c 7729 2011-08-29 05:35:33Z jj $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module contains the channel subsystem functions for the      */

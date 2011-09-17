@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: version.h 7410 2011-04-10 04:35:42Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* Header file defining the Hercules version number.                 */

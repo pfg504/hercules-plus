@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: devtype.h 7726 2011-08-28 11:41:48Z jj $
+// $Id$
 
 
 #if !defined(_DEVICES_H)

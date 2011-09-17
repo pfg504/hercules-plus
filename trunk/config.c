@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: config.c 869 2011-09-14 23:33:07Z paulgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* The original configuration builder is now called bldcfg.c         */

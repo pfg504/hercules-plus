@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to   */
 /*   Hercules.                                                        */
 
-// $Id: hdiagf18.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id$
 
 /*--------------------------------------------------------------------*/
 /* This module implements Hercules DIAGNOSE code X'F18'               */

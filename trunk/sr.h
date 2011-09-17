@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: sr.h 7726 2011-08-28 11:41:48Z jj $
+// $Id$
 
 /*
  * The suspend/resume functions allow a hercules instance to be

@@ -7,7 +7,7 @@
 
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: vstore.c 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 #include "hstdinc.h"
 

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cckdfix.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id$
 
 #include "hercules.h"
 int main ( int argc, char *argv[])

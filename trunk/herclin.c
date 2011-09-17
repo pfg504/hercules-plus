@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: herclin.c 7722 2011-08-21 11:49:21Z jj $
+// $Id$
 
 /************************************************/
 /* (C) Copyright 2005-2009 Roger Bowler & Others*/

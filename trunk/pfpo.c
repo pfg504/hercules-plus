@@ -8,7 +8,7 @@
 /*              (c) Copyright Bernard van der Helm, 2009-2011        */
 /*              Noordwijkerhout, The Netherlands                     */ 
 
-// $Id: pfpo.c 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module implements the Perform Floating Point Operation       */

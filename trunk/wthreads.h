@@ -7,7 +7,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: wthreads.h 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 #ifndef _WTHREADS_H_
 #define _WTHREADS_H_

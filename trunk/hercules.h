@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: hercules.h 7670 2011-08-07 10:22:11Z jj $
+// $Id$
 
 #ifdef HAVE_CONFIG_H
   #include <config.h> // Hercules build configuration options/settings

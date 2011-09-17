@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: logger.c 866 2011-09-12 21:30:43Z paulgorlinsky $
+// $Id$
 
 /* If standard output or standard error is redirected then the log   */
 /* is written to the redirection.                                    */

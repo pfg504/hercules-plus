@@ -9,7 +9,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ctcadpt.h 7722 2011-08-21 11:49:21Z jj $
+// $Id$
 
 #ifndef __CTCADPT_H_
 #define __CTCADPT_H_

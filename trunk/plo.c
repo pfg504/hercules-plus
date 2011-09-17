@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: plo.c 7726 2011-08-28 11:41:48Z jj $
+// $Id$
 
 
 #include "hstdinc.h"

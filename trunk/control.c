@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: control.c 7688 2011-08-12 23:28:17Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module implements all control instructions of the            */

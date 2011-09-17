@@ -9,7 +9,7 @@
 /* Code borrowed from dasdpdsu Copyright 1999-2009 Roger Bowler      */
 /* Changes and additions Copyright 2001-2009, James M. Morrison      */
 
-// $Id: dasdseq.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /*                                                                   */

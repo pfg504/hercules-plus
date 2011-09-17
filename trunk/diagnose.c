@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: diagnose.c 855 2011-08-17 00:07:30Z paulgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module implements miscellaneous diagnose functions           */
