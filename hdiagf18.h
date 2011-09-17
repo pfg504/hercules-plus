@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hdiagf18.h 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 #if !defined(__HDIAGF18_H__)
 #define __HDIAGF18_H__

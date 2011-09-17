@@ -8,7 +8,7 @@
 /*                                                                   */
 /*********************************************************************/
 
-// $Id: extstring.h 7600 2011-07-19 23:00:18Z pgorlinsky $
+// $Id$
 
 #ifndef _EXTSTRING_H_
 #define _EXTSTRING_H_

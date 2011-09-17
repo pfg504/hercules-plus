@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2011      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2011      */
 
-// $Id: io.c 7726 2011-08-28 11:41:48Z jj $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module implements all I/O instructions of the                */

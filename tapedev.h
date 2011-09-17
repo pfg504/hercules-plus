@@ -11,7 +11,7 @@
 /* for the Hercules ESA/390 emulator.                                */
 /*-------------------------------------------------------------------*/
 
-// $Id: tapedev.h 7698 2011-08-17 21:01:37Z pgorlinsky $
+// $Id$
 
 #ifndef __TAPEDEV_H__
 #define __TAPEDEV_H__

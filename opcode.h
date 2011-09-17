@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: opcode.h 7734 2011-08-31 12:38:58Z jj $
+// $Id$
 
 #ifndef _OPCODE_H
 #define _OPCODE_H

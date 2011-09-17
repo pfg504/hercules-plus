@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: service.h 7613 2011-07-23 06:42:44Z fish $
+// $Id$
 
 #if !defined(_SERVICE_H)
 

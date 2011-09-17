@@ -1,11 +1,12 @@
 /* CNSLLOGO.H   (c)Copyright Roger Bowler, 1999-2011                 */
+/*              (c)Copyright Silence Dogood 2011                     */
 /*              Hercules Console Logo                                */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cnsllogo.h 867 2011-09-12 23:15:45Z paulgorlinsky $
+// $Id$
 
 /* This is the default LOGO */
 
@@ -105,16 +106,18 @@ static char *herclogo[]={
 "           HHH          HHH   The S/370, ESA/390 and z/Architecture",
 "           HHH          HHH                 Emulator",
 "           HHH          HHH",
-"           HHH          HHH  EEEE RRR   CCC U  U L    EEEE  SSS",
-"           HHHHHHHHHHHHHHHH  E    R  R C    U  U L    E    S",
-"           HHHHHHHHHHHHHHHH  EEE  RRR  C    U  U L    EEE   SS",
-"           HHHHHHHHHHHHHHHH  E    R R  C    U  U L    E       S",
-"           HHH          HHH  EEEE R  R  CCC  UU  LLLL EEEE SSS",
+"           HHH          HHH  EEEE RRR   CCC U  U L    EEEE  SSS   +",
+"           HHHHHHHHHHHHHHHH  E    R  R C    U  U L    E    S      +",
+"           HHHHHHHHHHHHHHHH  EEE  RRR  C    U  U L    EEE   SS  +++++",
+"           HHHHHHHHHHHHHHHH  E    R R  C    U  U L    E       S   +",
+"           HHH          HHH  EEEE R  R  CCC  UU  LLLL EEEE SSS    +",
 "           HHH          HHH",
 "           HHH          HHH",
-"           HHH          HHH     My PC thinks it's a MAINFRAME",
+"           HHH          HHH     The Cheaper, Faster, Better MAINFRAME",
 "",
-"           Copyright (C) 1999-2011 Roger Bowler, Jan Jaeger, and others"
+"           Copyright (C) 1999-2011 Roger Bowler, Jan Jaeger, and others",
+"           Copyright (C) 2011 Silence Dogood"
+
 };
 
 

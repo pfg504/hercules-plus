@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: vmd250.h 7598 2011-07-19 01:56:27Z pgorlinsky $
+// $Id$
 
 #if !defined(__VMD250_H__)
 #define __VMD250_H__

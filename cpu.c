@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2011      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2011      */
 
-// $Id: cpu.c 868 2011-09-14 01:01:47Z paulgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module implements the CPU instruction execution function of  */

@@ -9,7 +9,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cmdtab.h 868 2011-09-14 01:01:47Z paulgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /*              Command descriptions and help text                   */

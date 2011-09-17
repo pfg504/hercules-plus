@@ -9,7 +9,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: opcode.c 867 2011-09-12 23:15:45Z paulgorlinsky $
+// $Id$
 
 #include "hstdinc.h"
 

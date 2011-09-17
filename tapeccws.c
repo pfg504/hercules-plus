@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: tapeccws.c 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module contains the CCW handling functions for tape devices. */

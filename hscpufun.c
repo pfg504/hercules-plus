@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hscpufun.c 848 2011-08-08 18:22:54Z paulgorlinsky $
+// $Id$
 
 #include "hstdinc.h"
 

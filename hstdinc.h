@@ -9,7 +9,7 @@
 /* files which are not dependent on the mainframe architectural      */
 /* features selected and thus are eligible for precompilation        */
 
-// $Id: hstdinc.h 7614 2011-07-23 12:18:25Z fish $
+// $Id$
 
 #ifndef _HSTDINC_H
 #define _HSTDINC_H

@@ -7,7 +7,7 @@
 /* This notice applies only to the portions modified by the Hercules */
 /* Project                                                           */
 
-// $Id: ltdl.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id$
 
 /* ltdl.c -- system independent dlopen wrapper
    Copyright (C) 1998, 1999, 2000 Free Software Foundation, Inc.

@@ -1,11 +1,12 @@
 /* PRINTER.C    (c) Copyright Roger Bowler, 1999-2011                */
+/*              (c)Copyright Silence Dogood 2011                     */
 /*              ESA/390 Line Printer Device Handler                  */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: printer.c 870 2011-09-15 22:52:49Z paulgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module contains device handling functions for emulated       */

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: dfp.c 7596 2011-07-19 01:36:06Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module implements the Decimal Floating Point instructions    */

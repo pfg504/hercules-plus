@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: ftlib.h 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 #if !defined( _FTLIB_H_ )
 #define _FTLIB_H_

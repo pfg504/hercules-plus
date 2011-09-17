@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: tapecopy.c 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 /*              Read from AWSTAPE and write to SCSI tape mods        */
 /*              Copyright 2005-2009 James R. Maynard III             */

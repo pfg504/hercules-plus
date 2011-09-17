@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: cckdcomp.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* Remove all free space on a compressed ckd file                    */

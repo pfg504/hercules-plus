@@ -1,7 +1,7 @@
 /* LOGGER.H     (c) Copyright Jan Jaeger, 2003-2011                  */
 /*              System logger functions                              */
 
-// $Id: logger.h 867 2011-09-12 23:15:45Z paulgorlinsky $
+// $Id$
 
 #ifndef __LOGGER_H__
 #define __LOGGER_H__

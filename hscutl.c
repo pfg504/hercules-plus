@@ -16,7 +16,7 @@
 /* z/Architecture emulator                                           */
 /*********************************************************************/
 
-// $Id: hscutl.c 868 2011-09-14 01:01:47Z paulgorlinsky $
+// $Id$
 
 #include "hstdinc.h"
 

@@ -7,7 +7,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: hetmap.c 7722 2011-08-21 11:49:21Z jj $
+// $Id$
 
 /*
 || ----------------------------------------------------------------------------

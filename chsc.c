@@ -8,7 +8,7 @@
 /* Interpretive Execution - (c) Copyright Jan Jaeger, 1999-2009      */
 /* z/Architecture support - (c) Copyright Jan Jaeger, 1999-2009      */
 
-// $Id: chsc.c 867 2011-09-12 23:15:45Z paulgorlinsky $
+// $Id$
 
 /* This module implements channel subsystem interface functions      */
 /* for the Hercules ESA/390 emulator.                                */

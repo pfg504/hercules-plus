@@ -7,7 +7,7 @@
 /*   Hercules.                                                       */
 /*   The above notice applies only to the Hercules Project changes.  */
 
-// $Id: getopt.c 7593 2011-07-18 22:19:10Z pgorlinsky $
+// $Id$
 
 /*      $NetBSD: getopt_long.c,v 1.15 2002/01/31 22:43:40 tv Exp $      */
 

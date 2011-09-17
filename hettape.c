@@ -9,7 +9,7 @@
 /* Prime Maintainer: Ivan Warren                                     */
 /* Secondary Maintainer: "Fish" (David B. Trout)                     */
 
-// $Id: hettape.c 870 2011-09-15 22:52:49Z paulgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module contains the HET emulated tape format support.        */

@@ -1,11 +1,12 @@
 /* CON1052.C    (c)Copyright Jan Jaeger, 2004-2011                   */
+/*              (c)Copyright Silence Dogood 2011                     */
 /*              Emulated 1052 on hercules console                    */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: con1052c.c 862 2011-08-29 18:47:05Z paulgorlinsky $
+// $Id$
 
 #include "hstdinc.h"
 

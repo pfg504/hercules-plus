@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: dasdcat.c 7592 2011-07-18 21:38:52Z pgorlinsky $
+// $Id$
 
 /*
  * dasdcat

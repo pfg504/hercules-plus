@@ -8,7 +8,7 @@
 /*  This header file contains equates for the socket functions       */
 /*  and constants whose values differ between Unix and Winsock       */
 
-// $Id: hsocket.h 7722 2011-08-21 11:49:21Z jj $
+// $Id$
 
 #if !defined(_HSOCKET_H)
 #define _HSOCKET_H

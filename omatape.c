@@ -9,7 +9,7 @@
 /* Prime Maintainer: Ivan Warren                                     */
 /* Secondary Maintainer: "Fish" (David B. Trout)                     */
 
-// $Id: omatape.c 7700 2011-08-17 22:58:40Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This module contains the OMATAPE emulated tape format support.    */

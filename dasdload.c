@@ -6,7 +6,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: dasdload.c 7698 2011-08-17 21:01:37Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This program creates a virtual DASD volume from a list of         */

@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: dasdconv.c 7604 2011-07-22 19:23:35Z pgorlinsky $
+// $Id$
 
 /*-------------------------------------------------------------------*/
 /* This program converts a CKD disk image from HDR-30 format         */
