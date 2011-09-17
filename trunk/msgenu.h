@@ -287,7 +287,7 @@ do { \
 #define HHC00013 "Herc command: '%s'"
 #define HHC00014 "select: %s"
 #define HHC00015 "keyboard read: %s"
-#define HHC00016 "Message lock hold longer than 1 second, release forced"
+#define HHC00016 "Message lock hold longer than 5 second, release forced"
 #define HHC00017 "Message:\n" \
        "HHC00017I     %s\n" \
        "HHC00017I Explanation:\n" \
