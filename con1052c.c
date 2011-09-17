@@ -1,5 +1,4 @@
 /* CON1052.C    (c)Copyright Jan Jaeger, 2004-2011                   */
-/*              (c)Copyright Silence Dogood 2011                     */
 /*              Emulated 1052 on hercules console                    */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
@@ -96,8 +95,10 @@ con1052_init_handler ( DEVBLK *dev, int argc, char *argv[] )
         dev->devunique.cons_dev.prompt1052 = FALSE;
         dev->devunique.cons_dev.szCmdPrefix[0] = '\0';
         if ( argc > 0 )
+        {
             WRMSG( HHC01017, "E", argv[ac] );
-        return -1;
+            return -1;
+        }
     }
     else
     {
@@ -149,26 +150,34 @@ con1052_init_handler ( DEVBLK *dev, int argc, char *argv[] )
 
 
 /*-------------------------------------------------------------------*/
-/* QUERY THE 1052/3215 DEVICE DEFINITION                             */
+/* QUERY THE 1052/1053/3215 DEVICE DEFINITION                        */
 /*-------------------------------------------------------------------*/
 static void
 con1052_query_device (DEVBLK *dev, char **devclass,
                 int buflen, char *buffer)
 {
+char msgbuf[32];
+
     BEGIN_DEVICE_CLASS_QUERY( "CON", dev, devclass, buflen, buffer );
+    if (strlen(dev->devunique.cons_dev.szCmdPrefix) == 1)
+        MSGBUF( msgbuf, " cmdpref(%s)", dev->devunique.cons_dev.szCmdPrefix );
+    else
+        msgbuf[0] = '\0';
 
     snprintf(buffer, buflen,
-        "*syscons cmdpref(%s)%s IO[%" I64_FMT "u]",
-        ( strlen(dev->devunique.cons_dev.szCmdPrefix) == 1 ? 
-              dev->devunique.cons_dev.szCmdPrefix : "n/a" ),
-        ( dev->devunique.cons_dev.prompt1052 ? "" : " noprompt" ),
+        "*syscons%s%s IO[%" I64_FMT "u]",
+        msgbuf,
+        ( dev->devtype != 0x1053 ? 
+            ( dev->devunique.cons_dev.prompt1052 ? "" 
+                                                 : " noprompt" ) 
+                                                 : " printer" ),
         dev->excps );
 
 } /* end function con1052_query_device */
 
 
 /*-------------------------------------------------------------------*/
-/* CLOSE THE 1052/3215 DEVICE HANDLER                                */
+/* CLOSE THE 1052/1053/3215 DEVICE HANDLER                           */
 /*-------------------------------------------------------------------*/
 static int
 con1052_close_device ( DEVBLK *dev )
@@ -418,6 +427,8 @@ int  i;
     {
         if(dev->allocated
           && dev->hnd == &con1052_device_hndinfo
+          && dev->devtype != 0x1053
+          && strlen(dev->devunique.cons_dev.szCmdPrefix) != 0
           && !strncasecmp(cmd,dev->devunique.cons_dev.szCmdPrefix,strlen(dev->devunique.cons_dev.szCmdPrefix)) )
         {
             input = cmd + strlen(dev->devunique.cons_dev.szCmdPrefix);
