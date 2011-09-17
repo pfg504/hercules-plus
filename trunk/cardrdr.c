@@ -301,11 +301,11 @@ char    pathname[PATH_MAX];             /* file path in host format  */
     else if ( dev->devtype == 0x2540 )
         dev->numsense = 1;
     else if ( dev->devtype == 0x1442 )
-        dev->numsense = 4;
+        dev->numsense = 1;
     else if ( dev->devtype == 0x2501 )
-        dev->numsense = 4;
+        dev->numsense = 1;
     else
-        dev->numsense = 4;
+        dev->numsense = 1;
 
 
     /* Initialize the device identifier bytes */
@@ -316,30 +316,12 @@ char    pathname[PATH_MAX];             /* file path in host format  */
     dev->devid[3] = 0x01;
     dev->devid[4] = dev->devtype >> 8;
     dev->devid[5] = dev->devtype & 0xFF;
-    if ( dev->devtype == 0x2540 )
+    if ( dev->devtype == 0x1442 || dev->devtype == 0x2520 ||dev->devtype == 0x2540 )
         dev->devid[6] = 0xd9;       // EBCDIC 'R'
     else
         dev->devid[6] = 0x01;
 
-    if ( sysblk.legacysenseid )
-    {
-        dev->numdevid = 7;                  // (allow for this legacy device)
-    }
-    else
-    {
-        if      ( dev->devtype == 0x3504 )
-            dev->numdevid = 7;
-        if      ( dev->devtype == 0x3505 )
-            dev->numdevid = 7;
-        else if ( dev->devtype == 0x2540 )
-            dev->numdevid = 0;
-        else if ( dev->devtype == 0x1442 )
-            dev->numdevid = 0;
-        else if ( dev->devtype == 0x2501 )
-            dev->numdevid = 0;
-        else
-            dev->numdevid = 0;
-    }
+    dev->numdevid = 7;                  // (allow for this legacy device)
 
     // If socket device, create a listening socket
     // to accept connections on.
@@ -373,7 +355,9 @@ static void cardrdr_query_device (DEVBLK *dev, char **devclass,
         ((dev->devunique.crdr_dev.ascii && 
           dev->devunique.crdr_dev.trunc) ?               " trunc"     : ""),
         (dev->devunique.crdr_dev.rdreof ?                " eof"       : " intrq"),
-        (dev->devtype == 0x2540 ?                        " reader"    : ""),
+        ( ( dev->devtype == 0x1442 || 
+            dev->devtype == 0x2520 || 
+            dev->devtype == 0x2540 ) ?                   " reader"    : ""),
         dev->excps );
 
 } /* end function cardrdr_query_device */
@@ -887,6 +871,14 @@ int     num;                            /* Number of bytes to move   */
     /*---------------------------------------------------------------*/
     /* SENSE ID                                                      */
     /*---------------------------------------------------------------*/
+        if ( sysblk.legacysenseid == FALSE && (dev->devtype & 0xFFF4)!= 0x3504 )
+        {
+            /* Set command reject sense byte, and unit check status */
+            dev->sense[0] = SENSE_CR;
+            *unitstat = CSW_CE | CSW_DE | CSW_UC;
+            break;
+        }
+
         /* Calculate residual byte count */
         num = (count < dev->numdevid) ? count : dev->numdevid;
         *residual = count - num;
@@ -976,8 +968,9 @@ END_DEPENDENCY_SECTION
 
 HDL_DEVICE_SECTION;
 {
-    HDL_DEVICE(1442,  cardrdr_device_hndinfo );
+    HDL_DEVICE(1442R, cardrdr_device_hndinfo );
     HDL_DEVICE(2501,  cardrdr_device_hndinfo );
+    HDL_DEVICE(2520R, cardrdr_device_hndinfo );
     HDL_DEVICE(2540R, cardrdr_device_hndinfo );
     HDL_DEVICE(3504,  cardrdr_device_hndinfo );
     HDL_DEVICE(3505,  cardrdr_device_hndinfo );

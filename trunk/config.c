@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: config.c 867 2011-09-12 23:15:45Z paulgorlinsky $
+// $Id: config.c 869 2011-09-14 23:33:07Z paulgorlinsky $
 
 /*-------------------------------------------------------------------*/
 /* The original configuration builder is now called bldcfg.c         */
@@ -286,7 +286,7 @@ int was_locked = sysblk.xpndstor_locked;
         {
             if (sysblk.xpndstor_locked)
             {
-                WRMSG(HHC01428, "I", "expanded"); // "Locking %s storage"
+                WRMSG(HHC01429, "I", "expanded"); // "UnLocking %s storage"
                 log_wakeup(NULL);
                 MUNLOCK(sysblk.xpndstor, ((RADR)config_allocxsize << XSTORE_PAGESHIFT) );
                 sysblk.xpndstor_locked = 0;

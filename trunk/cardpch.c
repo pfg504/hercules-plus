@@ -147,26 +147,12 @@ char    c;
     dev->devid[3] = 0x01;
     dev->devid[4] = dev->devtype >> 8;
     dev->devid[5] = dev->devtype & 0xFF;
-    if ( dev->devtype == 0x2540 )
+    if ( dev->devtype == 0x1442 || dev->devtype == 0x2520 ||dev->devtype == 0x2540 )
         dev->devid[6] = 0xd7;       // EBCDIC 'P'
     else
         dev->devid[6] = 0x01;
 
-    if ( sysblk.legacysenseid )
-    {
-        dev->numdevid = 7;                  // (allow for this legacy device)
-    }
-    else
-    {
-        if      ( dev->devtype == 0x3525 )
-            dev->numdevid = 7;
-        else if ( dev->devtype == 0x2540 )
-            dev->numdevid = 0;
-        else
-            dev->numdevid = 0;
-    }
-    /* Activate I/O tracing */
-//  dev->ccwtrace = 1;
+    dev->numdevid = 7;                  // (allow for this legacy device)
 
     return 0;
 } /* end function cardpch_init_handler */
@@ -186,8 +172,10 @@ static void cardpch_query_device (DEVBLK *dev, char **devclass,
                 ((dev->devunique.cpch_dev.ascii && dev->devunique.cpch_dev.crlf) ? " crlf" : ""),
                 (dev->devunique.cpch_dev.notrunc ? " notrunc" : ""),
                 (dev->devunique.cpch_dev.stopdev    ? " (stopped)"    : ""),
-                (dev->devtype == 0x2540 ? " punch" : ""),
-                dev->excps );
+                ( ( dev->devtype == 0x1442 || 
+                    dev->devtype == 0x2520 || 
+                    dev->devtype == 0x2540 ) ?        " punch"    : ""),
+            dev->excps );
 
 } /* end function cardpch_query_device */
 
@@ -356,6 +344,13 @@ BYTE            c;                      /* Output character          */
     /*---------------------------------------------------------------*/
     /* SENSE ID                                                      */
     /*---------------------------------------------------------------*/
+        if ( sysblk.legacysenseid == FALSE && dev->devtype != 0x3525 )
+        {
+            /* Set command reject sense byte, and unit check status */
+            dev->sense[0] = SENSE_CR;
+            *unitstat = CSW_CE | CSW_DE | CSW_UC;
+            break;
+        }
         /* Calculate residual byte count */
         num = (count < dev->numdevid) ? count : dev->numdevid;
         *residual = count - num;
@@ -434,6 +429,8 @@ END_DEPENDENCY_SECTION
 
 HDL_DEVICE_SECTION;
 {
+    HDL_DEVICE(1442P, cardpch_device_hndinfo );
+    HDL_DEVICE(2520P, cardpch_device_hndinfo );
     HDL_DEVICE(2540P, cardpch_device_hndinfo );
     HDL_DEVICE(3525,  cardpch_device_hndinfo );
 }

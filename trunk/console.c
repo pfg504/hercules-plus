@@ -2294,7 +2294,7 @@ loc3270_init_handler ( DEVBLK *dev, int argc, char *argv[] )
     dev->devid[2] = 0x74;
     dev->devid[3] = 0x1D;
     dev->devid[4] = 0x32; /* Device type is 3278-2 */
-    if ((dev->devtype & 0xFF)==0x70)
+    if ((dev->devtype & 0xF0)==0x70 || ( dev->devtype & 0xFF0F) == 0x3108 )
     {
         dev->devid[5] = 0x78;
         dev->devid[6] = 0x02;
@@ -2619,23 +2619,34 @@ constty_init_handler ( DEVBLK *dev, int argc, char *argv[] )
     /* Set length of print buffer */
     dev->bufsize = BUFLEN_1052;
 
-    /* Assume we want to prompt */
-    dev->devunique.cons_dev.prompt1052 = 1;
-
-    /* Is there an argument? */
-    if (argc > 0)
-    {
-        /* Look at the argument and set noprompt flag if specified. */
-        if (strcasecmp(argv[ac], "noprompt") == 0)
-        {
-            dev->devunique.cons_dev.prompt1052 = 0;
-            ac++; argc--;
-        }
-        // (else it's a group name...)
-    }
-
     if(!sscanf(dev->typname,"%hx",&(dev->devtype)))
         dev->devtype = 0x1052;
+
+    if ( dev->devtype == 0x1053 )
+    {
+        dev->devunique.cons_dev.prompt1052 = FALSE;
+        if (argc > 0 && strcasecmp(argv[ac], "noprompt") == 0)
+        {
+            WRMSG( HHC01017, "E", argv[ac] );
+            return -1;
+        }
+    }
+    else
+    {
+        /* Assume we want to prompt */
+        dev->devunique.cons_dev.prompt1052 = TRUE;
+
+        /* Is there an argument? */
+        if (argc > 0)
+        {
+            /* Look at the argument and set noprompt flag if specified. */
+            if (strcasecmp(argv[ac], "noprompt") == 0)
+            {
+                dev->devunique.cons_dev.prompt1052 = FALSE;
+                ac++; argc--;
+            }
+        }
+    }
 
     /* Initialize the device identifier bytes */
     dev->devid[0] = 0xFF;
@@ -3395,7 +3406,7 @@ BYTE            buf[BUFLEN_3270];       /* tn3270 write buffer       */
 
 
 /*-------------------------------------------------------------------*/
-/* EXECUTE A 1052/3215 CHANNEL COMMAND WORD                          */
+/* EXECUTE A 1052/1053/3215 CHANNEL COMMAND WORD                     */
 /*-------------------------------------------------------------------*/
 static void
 constty_execute_ccw ( DEVBLK *dev, BYTE code, BYTE flags,
@@ -3485,7 +3496,13 @@ BYTE    stat;                           /* Unit status               */
     /*---------------------------------------------------------------*/
     /* READ INQUIRY                                                  */
     /*---------------------------------------------------------------*/
-
+        if ( dev->devtype == 0x1053 )
+        {
+            /* Set command reject sense byte, and unit check status */
+            dev->sense[0] = SENSE_CR;
+            *unitstat = CSW_CE | CSW_DE | CSW_UC;
+            break;
+        }
         /* Solicit console input if no data in the device buffer */
         if (!dev->devunique.cons_dev.keybdrem)
         {
@@ -3583,6 +3600,17 @@ BYTE    stat;                           /* Unit status               */
     /*---------------------------------------------------------------*/
     /* SENSE ID                                                      */
     /*---------------------------------------------------------------*/
+        if ( sysblk.legacysenseid == FALSE && 
+             ( dev->devtype == 0x1052 || 
+               dev->devtype == 0x1053    )
+           )
+        {
+            /* Set command reject sense byte, and unit check status */
+            dev->sense[0] = SENSE_CR;
+            *unitstat = CSW_CE | CSW_DE | CSW_UC;
+            break;
+        }
+
         /* Calculate residual byte count */
         num = (count < dev->numdevid) ? count : dev->numdevid;
         *residual = count - num;
@@ -3706,9 +3734,21 @@ END_DEPENDENCY_SECTION
 HDL_DEVICE_SECTION
 {
     HDL_DEVICE(1052, constty_device_hndinfo );
+    HDL_DEVICE(1053, constty_device_hndinfo );
     HDL_DEVICE(3215, constty_device_hndinfo );
+    HDL_DEVICE(3138, loc3270_device_hndinfo );
+    HDL_DEVICE(3148, loc3270_device_hndinfo );
+    HDL_DEVICE(3158, loc3270_device_hndinfo );
     HDL_DEVICE(3270, loc3270_device_hndinfo );
+    HDL_DEVICE(3277, loc3270_device_hndinfo );
+    HDL_DEVICE(3278, loc3270_device_hndinfo );
+    HDL_DEVICE(3279, loc3270_device_hndinfo );
+    HDL_DEVICE(3284, loc3270_device_hndinfo );
+    HDL_DEVICE(3286, loc3270_device_hndinfo );
     HDL_DEVICE(3287, loc3270_device_hndinfo );
+    HDL_DEVICE(3288, loc3270_device_hndinfo );
+    HDL_DEVICE(3289, loc3270_device_hndinfo );
+    HDL_DEVICE(4250, loc3270_device_hndinfo );
 
   #if defined(_FEATURE_INTEGRATED_3270_CONSOLE)
     HDL_DEVICE(SYSG, loc3270_device_hndinfo );
