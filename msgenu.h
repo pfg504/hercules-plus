@@ -245,7 +245,7 @@ always be manually overridden at any time via the "msglevel" command.
 #ifdef OPTION_MSGLCK
 #define WRGMSG_ON \
 do { \
-  int have_lock = 0, try_lock = 10; \
+  int have_lock = 0, try_lock = 50; \
   while(!have_lock) \
   { \
     obtain_lock(&sysblk.msglock); \
@@ -835,7 +835,7 @@ do { \
        "                  Errors %12" I64_FMT "d"
 
 // reserve 010xx for communication adapter specific component messages
-/* comm3705.c and commadpt.c console.c */
+/* comm3705.c, commadpt.c, console.c, con1052c.c */
 #define HHC01000 "%1d:%04X COMM: error in function '%s': '%s'"
 #define HHC01001 "%1d:%04X COMM: connect out to %s:%d failed during initial status: '%s'"
 #define HHC01002 "%1d:%04X COMM: cannot obtain socket for incoming calls: '%s'"

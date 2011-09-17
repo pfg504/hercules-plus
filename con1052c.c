@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: con1052c.c 7726 2011-08-28 11:41:48Z jj $
+// $Id: con1052c.c 862 2011-08-29 18:47:05Z paulgorlinsky $
 
 #include "hstdinc.h"
 
@@ -65,7 +65,7 @@ static BYTE con1052_immed[256]=
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; /* F0 */
 
 /*-------------------------------------------------------------------*/
-/* INITIALIZE THE 1052/3215 DEVICE HANDLER                           */
+/* INITIALIZE THE 1052/1053/3215 DEVICE HANDLER                      */
 /*-------------------------------------------------------------------*/
 static int
 con1052_init_handler ( DEVBLK *dev, int argc, char *argv[] )
@@ -87,28 +87,51 @@ con1052_init_handler ( DEVBLK *dev, int argc, char *argv[] )
     /* Set length of print buffer */
     dev->bufsize = BUFLEN_1052;
 
-    /* Assume we want to prompt */
-    dev->devunique.cons_dev.prompt1052 = 1;
-
-    /* Default command character is "/" */
-    strlcpy(dev->devunique.cons_dev.szCmdPrefix,"/",sizeof(dev->devunique.cons_dev.szCmdPrefix));
-
-    /* Is there an argument? */
-    if (argc > 0)
-    {
-        /* Look at the argument and set noprompt flag if specified. */
-        if (strcasecmp(argv[ac], "noprompt") == 0)
-        {
-            dev->devunique.cons_dev.prompt1052 = 0;
-            ac++; argc--;
-        }
-        else
-            strlcpy(dev->devunique.cons_dev.szCmdPrefix,argv[ac],sizeof(dev->devunique.cons_dev.szCmdPrefix));
-// ZZ:FIX ME this needs to error if length is not 1
-    }
-
     if(!sscanf(dev->typname,"%hx",&(dev->devtype)))
         dev->devtype = 0x1052;
+
+    if ( dev->devtype == 0x1053 )
+    {
+        dev->devunique.cons_dev.prompt1052 = FALSE;
+        dev->devunique.cons_dev.szCmdPrefix[0] = '\0';
+        if ( argc > 0 )
+            WRMSG( HHC01017, "E", argv[ac] );
+        return -1;
+    }
+    else
+    {
+        /* Assume we want to prompt */
+        dev->devunique.cons_dev.prompt1052 = TRUE;
+
+        /* Default command character is "/" */
+        strlcpy(dev->devunique.cons_dev.szCmdPrefix,"/",
+                sizeof(dev->devunique.cons_dev.szCmdPrefix));
+
+        /* Is there an argument? */
+        if (argc > 0)
+        {
+            /* Look at the argument and set noprompt flag if specified. */
+            if (strcasecmp(argv[ac], "noprompt") == 0)
+            {
+                dev->devunique.cons_dev.prompt1052 = FALSE;
+                ac++; argc--;
+            }
+            else
+            {
+                if ( strlen( argv[ac] ) == 1 )
+                {
+                    strlcpy( dev->devunique.cons_dev.szCmdPrefix, 
+                             argv[ac], 
+                             sizeof(dev->devunique.cons_dev.szCmdPrefix) );
+                }
+                else
+                {
+                    WRMSG( HHC01017, "E", argv[ac] );
+                    return -1;
+                }
+            }
+        }
+    }
 
     /* Initialize the device identifier bytes */
     dev->devid[0] = 0xFF;
@@ -133,10 +156,11 @@ con1052_query_device (DEVBLK *dev, char **devclass,
 {
     BEGIN_DEVICE_CLASS_QUERY( "CON", dev, devclass, buflen, buffer );
 
-    snprintf(buffer, buflen-1,
+    snprintf(buffer, buflen,
         "*syscons cmdpref(%s)%s IO[%" I64_FMT "u]",
-        dev->devunique.cons_dev.szCmdPrefix,
-        !dev->devunique.cons_dev.prompt1052 ? " noprompt" : "",
+        ( strlen(dev->devunique.cons_dev.szCmdPrefix) == 1 ? 
+              dev->devunique.cons_dev.szCmdPrefix : "n/a" ),
+        ( dev->devunique.cons_dev.prompt1052 ? "" : " noprompt" ),
         dev->excps );
 
 } /* end function con1052_query_device */
@@ -316,6 +340,13 @@ BYTE    c;                              /* Print character           */
     /*---------------------------------------------------------------*/
     /* SENSE ID                                                      */
     /*---------------------------------------------------------------*/
+        if ( sysblk.legacysenseid == FALSE && dev->devtype != 0x3215 )
+        {
+            /* Set command reject sense byte, and unit check status */
+            dev->sense[0] = SENSE_CR;
+            *unitstat = CSW_CE | CSW_DE | CSW_UC;
+            break;
+        }
         /* Calculate residual byte count */
         num = (count < dev->numdevid) ? count : dev->numdevid;
         *residual = count - num;
@@ -453,6 +484,7 @@ END_RESOLVER_SECTION
 HDL_DEVICE_SECTION;
 {
     HDL_DEVICE(1052-C, con1052_device_hndinfo);
+    HDL_DEVICE(1053-C, con1052_device_hndinfo);
     HDL_DEVICE(3215-C, con1052_device_hndinfo);
 }
 END_DEVICE_SECTION

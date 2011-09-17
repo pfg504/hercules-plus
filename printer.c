@@ -162,7 +162,7 @@ do { \
         } \
         else \
         { \
-            dev->sense[0] = (dev->devtype == 0x1403 ) ? SENSE_EC :SENSE_EC ; \
+            dev->sense[0] = ((dev->devtype & 0xFF0F) == 0x1403 ) ? SENSE_EC :SENSE_EC ; \
             *unitstat = CSW_CE | CSW_DE | CSW_UC; \
             return; \
         } \
@@ -1179,7 +1179,8 @@ char            wbuf[150];
     /* DIAGNOSTIC CHECK READ                                         */
     /*---------------------------------------------------------------*/
         /* If not 1403, reject if not preceded by DIAGNOSTIC GATE */
-        if (dev->devtype != 0x1403 && dev->devunique.cprt_dev.diaggate == 0)
+        if ((dev->devtype & 0xFF0F) == 0x1403 && 
+             dev->devunique.cprt_dev.diaggate == 0)
         {
             dev->sense[0] = SENSE_CR;
             *unitstat = CSW_CE | CSW_DE | CSW_UC;
@@ -1196,7 +1197,7 @@ char            wbuf[150];
     /*---------------------------------------------------------------*/
         /* Command reject if 1403, or if chained to another CCW
            except a no-operation at the start of the CCW chain */
-        if (dev->devtype == 0x1403 || ccwseq > 1
+        if ((dev->devtype & 0xFF0F) == 0x1403 || ccwseq > 1
             || (chained && prevcode != 0x03))
         {
             dev->sense[0] = SENSE_CR;
@@ -1216,7 +1217,7 @@ char            wbuf[150];
     /* DIAGNOSTIC READ UCS BUFFER                                    */
     /*---------------------------------------------------------------*/
         /* Reject if 1403 or not preceded by DIAGNOSTIC GATE */
-        if (dev->devtype == 0x1403 || dev->devunique.cprt_dev.diaggate == 0)
+        if ((dev->devtype & 0xFF0F) == 0x1403 || dev->devunique.cprt_dev.diaggate == 0)
         {
             dev->sense[0] = SENSE_CR;
             *unitstat = CSW_CE | CSW_DE | CSW_UC;
@@ -1232,7 +1233,7 @@ char            wbuf[150];
     /* DIAGNOSTIC READ fcb                                           */
     /*---------------------------------------------------------------*/
         /* Reject if 1403 or not preceded by DIAGNOSTIC GATE */
-        if (dev->devtype == 0x1403 || dev->devunique.cprt_dev.diaggate == 0)
+        if ((dev->devtype & 0xFF0F) == 0x1403 || dev->devunique.cprt_dev.diaggate == 0)
         {
             dev->sense[0] = SENSE_CR;
             *unitstat = CSW_CE | CSW_DE | CSW_UC;
@@ -1302,7 +1303,7 @@ char            wbuf[150];
         /* For 1403, command reject if not chained to UCS GATE */
         /* Also allow ALLOW DATA CHECK to get TSS/370 working  */
         /* -- JRM 11/28/2007 */
-        if (dev->devtype == 0x1403 &&
+        if ((dev->devtype & 0xFF0F) == 0x1403 &&
             ((prevcode != 0xEB) && (prevcode != 0x7B)))
         {
             dev->sense[0] = SENSE_CR;
@@ -1323,7 +1324,7 @@ char            wbuf[150];
     /* LOAD UCS BUFFER (NO FOLD)                                     */
     /*---------------------------------------------------------------*/
         /* For 1403, command reject if not chained to UCS GATE */
-        if (dev->devtype == 0x1403 && prevcode != 0xEB)
+        if ((dev->devtype & 0xFF0F) == 0x1403 && prevcode != 0xEB)
         {
             dev->sense[0] = SENSE_CR;
             *unitstat = CSW_CE | CSW_DE | CSW_UC;
@@ -1361,6 +1362,13 @@ char            wbuf[150];
     /*---------------------------------------------------------------*/
     /* SENSE ID                                                      */
     /*---------------------------------------------------------------*/
+        if ( sysblk.legacysenseid == FALSE && (dev->devtype & 0xFF0F) == 0x1403 )
+        {
+            /* Set command reject sense byte, and unit check status */
+            dev->sense[0] = SENSE_CR;
+            *unitstat = CSW_CE | CSW_DE | CSW_UC;
+            break;
+        }
         /* Calculate residual byte count */
         num = (count < dev->numdevid) ? count : dev->numdevid;
         *residual = count - num;
@@ -1439,8 +1447,13 @@ END_DEPENDENCY_SECTION
 HDL_DEVICE_SECTION;
 {
     HDL_DEVICE(1403, printer_device_hndinfo );
+    HDL_DEVICE(1443, printer_device_hndinfo );
     HDL_DEVICE(3203, printer_device_hndinfo );
     HDL_DEVICE(3211, printer_device_hndinfo );
+    HDL_DEVICE(3262, printer_device_hndinfo );
+    HDL_DEVICE(3289E,printer_device_hndinfo );
+    HDL_DEVICE(4245, printer_device_hndinfo );
+    HDL_DEVICE(4248, printer_device_hndinfo );
 }
 END_DEVICE_SECTION
 #endif
