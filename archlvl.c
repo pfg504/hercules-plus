@@ -573,8 +573,7 @@ BYTE fac_changed = FALSE;
 
     if (request_pending)
     {
-        if(MLVL(VERBOSE))
-            WRMSG( HHC00888, "I" );
+        WRMSG( HHC00888, "I" );
     }
 
     return;
@@ -802,6 +801,9 @@ int archlvl_cmd(int argc, char *argv[], char *cmdline)
         if ( MLVL(VERBOSE) )
             WRMSG(HHC02204, "I", "archmode", get_arch_mode_string(NULL) );
     }
+
+    if ( request_pending )
+        WRMSG( HHC00889, "I" );
 
     return 0;
 }
