@@ -2744,14 +2744,19 @@ static void
 constty_query_device (DEVBLK *dev, char **devclass,
                 int buflen, char *buffer)
 {
+char prompt[10];
     BEGIN_DEVICE_CLASS_QUERY( "CON", dev, devclass, buflen, buffer );
 
+    MSGBUF(prompt, "%s", ( dev->devtype != 0x1053 ? 
+                            ( dev->devunique.cons_dev.prompt1052 ? "" : " noprompt" ) 
+                           : " printer" ) );
+ 
     if (dev->connected)
     {
         snprintf (buffer, buflen, "%s:%u%s IO[%" I64_FMT "u]",
             inet_ntoa(dev->devunique.cons_dev.ipaddr),
             dev->devunique.cons_dev.port,
-            dev->devunique.cons_dev.prompt1052 ? "" : " noprompt",
+            prompt,
             dev->excps );
     }
     else
@@ -2765,11 +2770,9 @@ constty_query_device (DEVBLK *dev, char **devclass,
             struct in_addr  xxxx;
 
             xxxx.s_addr = dev->devunique.cons_dev.acc_ipaddr;
-
             MSGBUF( ip, "%s", inet_ntoa( xxxx ));
 
             xxxx.s_addr = dev->devunique.cons_dev.acc_ipmask;
-
             MSGBUF( mask, "%s", inet_ntoa( xxxx ));
 
             MSGBUF( acc, "%s mask %s", ip, mask );
@@ -2778,39 +2781,19 @@ constty_query_device (DEVBLK *dev, char **devclass,
             acc[0] = 0;
 
         if (dev->devunique.cons_dev.szgroupip[0])
-        {
             snprintf(buffer, buflen,
                 "GROUP=%s%s%s%s IO[%" I64_FMT "u]",
                 dev->devunique.cons_dev.szgroupip,
-                !dev->devunique.cons_dev.prompt1052 ? " noprompt" : "",
                 acc[0] ? " " : "", acc,
+                prompt,
                 dev->excps );
-        }
         else
         {
             if (acc[0])
-            {
-                if (!dev->devunique.cons_dev.prompt1052)
-                {
-                    snprintf(buffer, buflen, "* noprompt %s IO[%" I64_FMT "u]", 
-                                             acc, dev->excps );
-                }
-                else
-                {
-                    snprintf(buffer, buflen, "* %s IO[%" I64_FMT "u]", acc, dev->excps );
-                }
-            }
+                snprintf( buffer, buflen, "* %s%s IO[%" I64_FMT "u]", 
+                          acc, prompt, dev->excps );
             else
-            {
-                if (!dev->devunique.cons_dev.prompt1052)
-                {
-                    snprintf( buffer, buflen, "* noprompt IO[%" I64_FMT "u]", dev->excps );
-                }
-                else
-                {
-                    snprintf( buffer, buflen, "* IO[%" I64_FMT "u]", dev->excps );
-                }
-            }
+                snprintf( buffer, buflen, "*%s IO[%" I64_FMT "u]", prompt, dev->excps );
         }
     }
 } /* end function constty_query_device */
