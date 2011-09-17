@@ -1,0 +1,33 @@
+All materials in this distribution are
+copyrighted by Roger Bowler and others.
+
+Hercules may be distributed under the terms
+of the Q Public License Version 1.0
+
+Please refer to:
+http://www.hercules-390.org/herclic.html
+for details.
+
+In the context of this license, the initial developers of
+the software are Roger Bowler, Jan Jaeger, and Jay Maynard.
+
+==========================================
+
+$Id$
+
+Hercules-Plus (Hercules+) incorporates copyrighted materials 
+beyond those provided by the above distribution.
+
+Hercules-Plus is based upon Hercules SVN 7701 as of 
+August 19, 2011. 
+
+Hercules-Plus is Copyright (C) 2011 by Silence Dogood, owner of
+the Hercules-plus svn repository on googlecode.com.
+
+Hercules-Plus is distributed unter the terms of the 
+Q Public License Version 1.0 as with the base Hercules code.
+
+
+S. Dogood
+
+
