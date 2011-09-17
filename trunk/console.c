@@ -16,6 +16,7 @@
 /* - local non-SNA 3270 display consoles via tn3270                  */
 /* - local non-SNA 3270 printers         via tn3270                  */
 /* - 1052 and 3215 console printer keyboards via regular telnet      */
+/* - 1053 console printer via regular telnet                         */
 /*-------------------------------------------------------------------*/
 
 /*-------------------------------------------------------------------*/
@@ -617,8 +618,8 @@ static BYTE will_bin[] = { IAC, WILL, BINARY, IAC, DO, BINARY };
 /* SUBROUTINE TO NEGOTIATE TELNET PARAMETERS                         */
 /* This subroutine negotiates the terminal type with the client      */
 /* and uses the terminal type to determine whether the client        */
-/* is to be supported as a 3270 display console or as a 1052/3215    */
-/* printer-keyboard console.                                         */
+/* is to be supported as a 3270 display console, as a 1052/3215      */
+/* printer-keyboard console, or as a 1053 printer.                   */
 /*                                                                   */
 /* Valid display terminal types are "IBM-NNNN", "IBM-NNNN-M", and    */
 /* "IBM-NNNN-M-E", where NNNN is 3270, 3277, 3278, 3279, 3178, 3179, */
@@ -636,7 +637,8 @@ static BYTE will_bin[] = { IAC, WILL, BINARY, IAC, DO, BINARY };
 /* Input:                                                            */
 /*      csock   Socket number for client connection                  */
 /* Output:                                                           */
-/*      class   D=3270 display console, K=printer-keyboard console   */
+/*      class   D=3270 display console                               */
+/*              K=printer-keyboard console (1052/1053/3215)          */
 /*              P=3270 printer                                       */
 /*      model   3270 model indicator (2,3,4,5,X)                     */
 /*      extatr  3270 extended attributes (Y,N)                       */
@@ -764,7 +766,7 @@ static BYTE will_naws[] = { IAC, WILL, NAWS };
             if (rc < 0) return -1;
         }
 
-        /* Return printer-keyboard terminal class */
+        /* Return printer-keyboard/printer terminal class */
         *devclass = 'K';
         *model = '-';
         *extatr = '-';
@@ -776,14 +778,22 @@ static BYTE will_naws[] = { IAC, WILL, NAWS };
         *model = 'X';
         *extatr = 'Y';
     } else {
-        if (!(memcmp(termtype+4, "3277", 4) == 0
-              || memcmp(termtype+4, "3270", 4) == 0
-              || memcmp(termtype+4, "3178", 4) == 0
-              || memcmp(termtype+4, "3278", 4) == 0
-              || memcmp(termtype+4, "3179", 4) == 0
-              || memcmp(termtype+4, "3180", 4) == 0
-              || memcmp(termtype+4, "3287", 4) == 0
-              || memcmp(termtype+4, "3279", 4) == 0))
+        if (!(   memcmp(termtype+4, "3270", 4) == 0 // CRT generic
+              || memcmp(termtype+4, "3277", 4) == 0 // CRT 1st gen
+              || memcmp(termtype+4, "3278", 4) == 0 // CRT 2nd gen
+              || memcmp(termtype+4, "3279", 4) == 0 // CRT 2nd gen color
+              || memcmp(termtype+4, "3138", 4) == 0 // integrated processor crt
+              || memcmp(termtype+4, "3148", 4) == 0 // integrated processor crt
+              || memcmp(termtype+4, "3158", 4) == 0 // integrated processor crt
+              || memcmp(termtype+4, "3178", 4) == 0 // CRT 3rd gen
+              || memcmp(termtype+4, "3179", 4) == 0 // CRT 3rd gen color
+              || memcmp(termtype+4, "3180", 4) == 0 // CRT 3rd gen
+              || memcmp(termtype+4, "3284", 4) == 0 // PRT
+              || memcmp(termtype+4, "3286", 4) == 0 // PRT
+              || memcmp(termtype+4, "3287", 4) == 0 // PRT
+              || memcmp(termtype+4, "3288", 4) == 0 // PRT
+              || memcmp(termtype+4, "3289", 4) == 0 // PRT
+              || memcmp(termtype+4, "4250", 4) == 0 ) ) // PRT
             return -1;
 
         *model = '2';
@@ -794,6 +804,7 @@ static BYTE will_naws[] = { IAC, WILL, NAWS };
                 return -1;
             *model = termtype[9];
             if (memcmp(termtype+4, "328",3) == 0) *model = '2';
+            if (memcmp(termtype+4, "4250",4) == 0) *model = '1';
             if (memcmp(termtype+10, "-E", 2) == 0)
                 *extatr = 'Y';
         }
@@ -818,8 +829,11 @@ static BYTE will_naws[] = { IAC, WILL, NAWS };
     if (rc < 0) return -1;
 
     /* Return display terminal class */
-    if (memcmp(termtype+4,"3287",4)==0) *devclass='P';
-    else *devclass = 'D';
+    if ( memcmp(termtype+4,"328",3)==0 ||
+         memcmp(termtype+4,"4250",4)==0 )
+        *devclass = 'P';
+    else
+        *devclass = 'D';
     return 0;
 
 } /* end function negotiate */
@@ -1018,7 +1032,7 @@ BYTE            buf[32];                /* tn3270 write buffer       */
     /* Close the connection if an error occurred */
     if (rc & CSW_UC)
     {
-        dev->connected = 0;
+        dev->connected = FALSE;
         dev->fd = -1;
         dev->sense[0] = SENSE_DC;
 
@@ -1477,7 +1491,8 @@ struct sockaddr_in      client;         /* Client address structure  */
 socklen_t               namelen;        /* Length of client structure*/
 char                   *clientip;       /* Addr of client ip address */
 U16                     devnum;         /* Requested device number   */
-BYTE                    devclass;       /* D=3270, P=3287, K=3215/1052 */
+BYTE                    devclass;       /* D=3270, P=3287, K=3215/1052
+                                           K=1053                    */
 BYTE                    model;          /* 3270 model (2,3,4,5,X)    */
 BYTE                    extended;       /* Extended attributes (Y,N) */
 char                    buf[1920];       /* Message buffer            */
@@ -1551,7 +1566,8 @@ char                    *logoout;
             continue;
 
         if (devclass == 'K' && dev->devtype != 0x1052
-            && dev->devtype != 0x3215)
+                            && dev->devtype != 0x1053
+                            && dev->devtype != 0x3215 )
             continue;
 
         /* Loop if a specific device number was requested and
@@ -1575,7 +1591,7 @@ char                    *logoout;
         obtain_lock (&dev->lock);
 
         /* Test for available device */
-        if (dev->connected == 0)
+        if (!dev->connected)
         {
             /* Check ipaddr mask to see if client allowed on this device */
             if ( (client.sin_addr.s_addr & dev->devunique.cons_dev.acc_ipmask) != dev->devunique.cons_dev.acc_ipaddr )
@@ -1588,8 +1604,6 @@ char                    *logoout;
             }
 
             /* Claim this device for the client */
-            dev->connected = 1;
-            dev->fd = csock;
             dev->devunique.cons_dev.ipaddr = client.sin_addr;
             dev->devunique.cons_dev.port = ntohs(client.sin_port);
             dev->devunique.cons_dev.mod3270 = model;
@@ -1605,6 +1619,8 @@ char                    *logoout;
             dev->busy = dev->reserved = dev->suspended =
             dev->pending = dev->pcipending = dev->attnpending = 0;
 
+            dev->fd = csock;
+            dev->connected = 1;
             release_lock (&dev->lock);
 
             break;
@@ -1653,16 +1669,24 @@ char                    *logoout;
             if(!group[0])
             {
                 MSGBUF( rejmsg, MSG(HHC01028, "E", 
-                        (devclass=='D' ? "3270" : (devclass=='P' ? "3287" : "1052 or 3215"))));
-                WRMSG( HHC01028, "E", 
-                        (devclass=='D' ? "3270" : (devclass=='P' ? "3287" : "1052 or 3215")));
+                                    devclass == 'D' ? "3270" 
+                                  : devclass == 'P' ? "3287"
+                                  : "1052/1053/3215" ) );
+                WRMSG( HHC01028, "E", (
+                                    devclass == 'D' ? "3270" 
+                                  : devclass == 'P' ? "3287"
+                                  : "1052/1053/3215" ) );
             }
             else
             {
                 MSGBUF( rejmsg, MSG(HHC01029, "E",
-                        (devclass=='D' ? "3270" : (devclass=='P' ? "3287" : "1052 or 3215")),group));
-                WRMSG(HHC01029, "E",
-                        (devclass=='D' ? "3270" : (devclass=='P' ? "3287" : "1052 or 3215")),group);
+                                    devclass == 'D' ? "3270" 
+                                  : devclass == 'P' ? "3287"
+                                  : "1052/1053/3215" ) );
+                WRMSG(HHC01029, "E", (
+                                    devclass == 'D' ? "3270" 
+                                  : devclass == 'P' ? "3287"
+                                  : "1052/1053/3215" ) );
             }
         }
         else
@@ -1674,7 +1698,7 @@ char                    *logoout;
         TNSDEBUG1( "DBG019: %s\n", rejmsg);
 
         /* Send connection rejection message to client */
-        if (devclass != 'K')
+        if ( !(devclass == 'K') )
         {
             len = MSGBUF( buf,
                         "\xF5\x40\x11\x40\x40\x1D\x60%s"
@@ -1727,7 +1751,7 @@ char                    *logoout;
     WRMSG(HHC01018, "I", SSID_TO_LCSS(dev->ssid), dev->devnum, clientip, dev->devtype, ntohs(client.sin_port));
 
     /* Send connection message to client */
-    if (devclass != 'K')
+    if ( !(devclass == 'K') )
     {
 #if defined(OPTION_CONFIG_SYMBOLS)
 
@@ -1967,7 +1991,7 @@ BYTE                   unitstat;        /* Status after receive data */
                                 "'connected', but dev->fd = %d", dev->devnum,
                                 dev->fd );
                             WRMSG( HHC90000, "D",msgbuf);
-                            dev->connected = 0;  // (since it's not connected!)
+                            dev->connected = FALSE;  // (since it's not connected!)
                         }
                         else
                         {
@@ -2111,12 +2135,12 @@ BYTE                   unitstat;        /* Status after receive data */
                 {
                     close_socket (dev->fd);
                     dev->fd = -1;
-                    dev->connected = 0;
+                    dev->connected = FALSE;
                 }
 
                 /* Indicate that data is available at the device */
                 if(dev->devunique.cons_dev.rlen3270)
-                    dev->readpending = 1;
+                    dev->readpending = TRUE;
 
                 /* Release the device lock */
                 release_lock (&dev->lock);
@@ -2138,9 +2162,10 @@ BYTE                   unitstat;        /* Status after receive data */
                 /* Do NOT raise attention interrupt if this is */
                 /* the System-370 mode initial power-on state */
 
-                if (1
+                if ( TRUE
                     && dev->connected
-                    && dev->devtype != 0x3287
+                    && (dev->devtype & 0xfff0) != 0x3280
+                    && dev->devtype != 0x4250
               #if defined(_FEATURE_INTEGRATED_3270_CONSOLE)
                     && dev != sysblk.sysgdev
               #endif /*defined(_FEATURE_INTEGRATED_3270_CONSOLE)*/
@@ -2186,8 +2211,8 @@ BYTE                   unitstat;        /* Status after receive data */
             && dev->fd>=0)
         {
             close_socket(dev->fd);
-            dev->connected=0;
             dev->fd=-1;
+            dev->connected=FALSE;
         }
         release_lock (&dev->lock);
     }
@@ -2232,8 +2257,8 @@ console_initialise()
 static void
 console_remove(DEVBLK *dev)
 {
-    dev->connected = 0;
-    dev->console = 0;
+    dev->connected = FALSE;
+    dev->console = FALSE;
     dev->fd = -1;
 
     console_cnslcnt--;
@@ -2262,10 +2287,10 @@ loc3270_init_handler ( DEVBLK *dev, int argc, char *argv[] )
     dev->excps = 0;
 
     /* Indicate that this is a console device */
-    dev->console = 1;
+    dev->console = TRUE;
 
     /* Reset device dependent flags */
-    dev->connected = 0;
+    dev->connected = FALSE;
 
     /* Set number of sense bytes */
     dev->numsense = 1;
@@ -2598,7 +2623,7 @@ loc3270_hresume(DEVBLK *dev, void *file)
 
 
 /*-------------------------------------------------------------------*/
-/* INITIALIZE THE 1052/3215 DEVICE HANDLER                           */
+/* INITIALIZE THE 1052/1053/3215 DEVICE HANDLER                      */
 /*-------------------------------------------------------------------*/
 static int
 constty_init_handler ( DEVBLK *dev, int argc, char *argv[] )
@@ -2609,7 +2634,10 @@ constty_init_handler ( DEVBLK *dev, int argc, char *argv[] )
     dev->excps = 0;
 
     /* Indicate that this is a console device */
-    dev->console = 1;
+    dev->console = TRUE;
+
+    /* Indicate that this is not connected */
+    dev->connected = FALSE;
 
     /* Set number of sense bytes */
     dev->numsense = 1;
@@ -2710,7 +2738,7 @@ constty_init_handler ( DEVBLK *dev, int argc, char *argv[] )
 
 
 /*-------------------------------------------------------------------*/
-/* QUERY THE 1052/3215 DEVICE DEFINITION                             */
+/* QUERY THE 1052/1053/3215 DEVICE DEFINITION                        */
 /*-------------------------------------------------------------------*/
 static void
 constty_query_device (DEVBLK *dev, char **devclass,
@@ -2789,7 +2817,7 @@ constty_query_device (DEVBLK *dev, char **devclass,
 
 
 /*-------------------------------------------------------------------*/
-/* CLOSE THE 1052/3215 DEVICE HANDLER                                */
+/* CLOSE THE 1052/1053/3215 DEVICE HANDLER                           */
 /*-------------------------------------------------------------------*/
 static int
 constty_close_device ( DEVBLK *dev )
@@ -3425,7 +3453,7 @@ BYTE    stat;                           /* Unit status               */
     UNREFERENCED(ccwseq);
 
     /* Unit check with intervention required if no client connected */
-    if (dev->connected == 0 && !IS_CCW_SENSE(code))
+    if (!dev->connected && !IS_CCW_SENSE(code))
     {
         dev->sense[0] = SENSE_IR;
         *unitstat = CSW_UC;
