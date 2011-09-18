@@ -9,7 +9,7 @@
 #    in the 'hercules.m4' file in the 'autoconf' subdirectory.
 
 AC_INIT(hercules.h)                     # (package, version, bugreport email, etc)
-AC_REVISION($Revision$)            # (the version of this configure.ac)
+AC_REVISION($Revision$)          # (the version of this configure.ac)
 AC_CONFIG_AUX_DIR(autoconf)             # (directory containing auxillary build tools)
 AM_INIT_AUTOMAKE(hercules,3.07.1)       # (the version of our software package)
 AM_CONFIG_HEADER(config.h)              # (the file the resulting configure script will produce)
@@ -706,10 +706,19 @@ AC_CHECK_LIB( bz2,    BZ2_bzBuffToBuffDecompress,
             [ hc_cv_have_libbz2=yes ],
             [ hc_cv_have_libbz2=no  ] )
 AC_CHECK_LIB( iconv,  iconv          )
+
+# ADD CHECK FOR SOLARIS STARTING HERE
 # jbs 10/15/2003 Solaris requires -lrt for sched_yield() and fdatasync()
 AC_CHECK_LIB( rt,     sched_yield    )
 # rbowler 2008/03/10 rev 1.196 Solaris 2.9 requires -lpthread
+# jj 18sep2011 The below checklib forces a -lpthread to be included which
+#              appears to break the latest combination of the pthread library
+#              and libtool on linux-64; it is at this stage unclear where the
+#              error lies or if the statement is still required for Solaris
+#              To be further investigate...
 AC_CHECK_LIB( pthread,pthread_create )
+# ADD CHECK FOR SOLARIS ENDING HERE
+
 AC_CHECK_LIB( regina, RexxStart      )
 
 AC_CACHE_SAVE()
