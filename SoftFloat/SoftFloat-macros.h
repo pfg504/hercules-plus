@@ -1,14 +1,11 @@
 /* SoftFloat-macros.h (C) John R. Hauser, 1998-2002                  */
 /*             This module is part of the SoftFloat package.         */
 /*                                                                   */
-/*             Released under "The Q Public License Version 1"       */
-/*             (http://www.hercules-390.org/herclic.html)            */
-/*             as modifications to Hercules.                         */
 
 // $Id$
 
-/* This module is a UNMODIFIED modified version of John R. Hauser's  */
-/* 'softfloat-macros.h' module, and is wholly copyright by him.     */
+/* This module is an UNMODIFIED version of John R. Hauser's          */
+/* 'softfloat-macros.h' module, and is wholly copyright by him.      */
 /* Refer to the documents "SoftFloat.txt", "SoftFloat-source.txt",   */
 /* and "SoftFloat-history.txt" for detailed SoftFloat information.   */
 

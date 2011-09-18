@@ -2,6 +2,7 @@
 /*             (C) Copyright "Fish" (David B. Trout), 2011           */
 /*             This module is part of the SoftFloat package.         */
 /*                                                                   */
+/* "Fish" changes only:                                              */
 /*             Released under "The Q Public License Version 1"       */
 /*             (http://www.hercules-390.org/herclic.html)            */
 /*             as modifications to Hercules.                         */
