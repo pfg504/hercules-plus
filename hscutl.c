@@ -1,5 +1,6 @@
 /*  HSCUTL.C    (c) Copyright Ivan Warren & Others, 2003-2011        */
 /*              (c) Copyright TurboHercules, SAS 2010-2011           */
+/*              (c) Copyright Silence Dogood, 2011                   */
 /*              Hercules Platform Port & Misc Functions              */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
@@ -1157,3 +1158,79 @@ DLL_EXPORT int drop_all_caps(void)
     return failed;
 }
 #endif
+DLL_EXPORT int split_logs(char *dest, const char *src)
+{
+    char    msgid[10];
+    char    sev[2] = { 0, 0 };
+    u_int   u;
+
+    int     cnt;
+    char   *text;
+    char   *dupstr = NULL;
+    int     line_cnt = 0;
+    char   **lines = malloc(300*sizeof(char *)); // maximum of 300 lines
+
+    VERIFY(dest == NULL);
+
+    if ( strlen(src) <= 0 )
+        return 0;
+
+    if ( strchr(src, '\n') == NULL || *lines == NULL )
+    {
+        dest = strdup(src);
+        if ( dest == NULL )
+            dest = (char *)src;                 // be careful freeing this
+        return((int)strlen(dest));
+    }
+
+    cnt = sscanf(src, "HHC%5u%c ", &u, sev);
+
+    if ( cnt != 2 ) 
+    {
+        dest = strdup(src);
+        return((int)strlen(dest));
+    }
+
+    MSGBUF(msgid, "HHC%5.5u%c ", u, sev);
+    text = (char*)src;
+    text += 9;
+
+    dupstr = strdup(text);
+    if ( dupstr != NULL )
+    {
+        size_t  strcnt = 0;
+        int     i;
+
+        line_cnt = 0;
+        lines[line_cnt] = strtok(dupstr, "\n");
+        strcnt += strlen(lines[line_cnt]);
+        while( lines[line_cnt] != NULL && line_cnt < 300 )
+        {
+            line_cnt++;
+            lines[line_cnt] = strtok( NULL, "\n" );
+            strcnt += strlen(lines[line_cnt]);
+        }
+        HFREE(dupstr);
+        strcnt += line_cnt * strlen(msgid);
+        dest = malloc( (strcnt * 120) / 100 ); // 20% extra
+        if ( dest != NULL )
+        {
+            dest[0] = '\0';
+            for( i = 0; i < line_cnt; i++ )
+            {
+                strlcat( dest, msgid, strlen(dest) );
+                strlcat( dest, lines[i], strlen(dest) );
+            }
+        }
+        else
+        {
+            dest = (char *)src;
+        }
+    }
+    else
+    {
+        dest = (char *)src;
+    }
+
+    return((int)strlen(dest));
+}

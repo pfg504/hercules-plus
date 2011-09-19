@@ -1151,19 +1151,11 @@ int     i;                              /* Loop index                */
         WRMSG (HHC01463, "E", lcss, devnum);
 
         for (i = 0; i < dev->argc; i++)
-            if (dev->argv[i])
-            {
-                free(dev->argv[i]);
-                dev->argv[i] = NULL;
-            }
-        if (dev->argv)
-        {
-            free(dev->argv);
-            dev->argv = NULL;
-        }
+            HFREE(dev->argv[i]);
 
-        free(dev->typname);
-        dev->typname = NULL;
+        HFREE(dev->argv);
+
+        HFREE(dev->typname);
 
         ret_devblk(dev);
 
@@ -1182,19 +1174,11 @@ int     i;                              /* Loop index                */
             WRMSG (HHC01460, "E", lcss, dev->devnum, buf, strerror(errno));
 
             for (i = 0; i < dev->argc; i++)
-                if (dev->argv[i])
-                {
-                    free(dev->argv[i]);
-                    dev->argv[i] = NULL;
-                }
-            if (dev->argv)
-            {
-                free(dev->argv);
-                dev->argv = NULL;
-            }
+                HFREE(dev->argv[i]);
 
-            free(dev->typname);
-            dev->typname = NULL;
+            HFREE(dev->argv);
+
+            HFREE(dev->typname);
 
             ret_devblk(dev);
 
