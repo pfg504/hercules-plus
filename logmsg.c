@@ -236,7 +236,8 @@ DLL_EXPORT void writemsg(const char *srcfile, int line, const char* function,
         return;
     }
 
-    if ( strlen(bfr) > 10 && SNCMP(bfr,"HHC",3) && (bfr[8] == 'S' || bfr[8] == 'E' || bfr[8] == 'W') )
+    if ( strlen(bfr) > 10 && SNCMP(bfr,"HHC",3) && 
+         (bfr[8] == 'S' || bfr[8] == 'E' || bfr[8] == 'W') )
         errmsg = TRUE;
 
 #if defined( OPTION_MSGCLR )
@@ -276,6 +277,15 @@ DLL_EXPORT void writemsg(const char *srcfile, int line, const char* function,
         msgbuf = calloc(1,l);
         if (msgbuf)
         {
+            char *dest = NULL;
+
+            if ( split_logs( &dest, bfr, prefix ) > 0 )
+            {
+                HFREE(bfr);
+                bfr = dest;
+                prefix[0] = '\0';
+            }
+
             if ( strlen(bfr) > 10 && SNCMP(bfr, "HHC", 3) )
                 snprintf( msgbuf, l, "%s%s", prefix, ( sysblk.emsg & EMSG_TEXT ) ? &bfr[10] : bfr );
             else
@@ -283,7 +293,7 @@ DLL_EXPORT void writemsg(const char *srcfile, int line, const char* function,
             log_write( 0, msgbuf );
             free(msgbuf);
         }
-        free(bfr);
+        HFREE(bfr);
     }
 
     if ( errmsg && !MLVL(DEBUG) )
