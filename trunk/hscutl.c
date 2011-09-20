@@ -1158,9 +1158,9 @@ DLL_EXPORT int drop_all_caps(void)
     return failed;
 }
 #endif
-DLL_EXPORT int split_logs(char *dest, const char *src)
+DLL_EXPORT size_t split_logs(char **dest, const char *src, const char *prefix)
 {
-    char    msgid[10];
+    char    msgid[11];
     char    sev[2] = { 0, 0 };
     u_int   u;
 
@@ -1168,34 +1168,37 @@ DLL_EXPORT int split_logs(char *dest, const char *src)
     char   *text;
     char   *dupstr = NULL;
     int     line_cnt = 0;
-    char   **lines = malloc(300*sizeof(char *)); // maximum of 300 lines
+    char   *lines[300]; // maximum of 300 lines (0-299)
 
-    VERIFY(dest == NULL);
+    VERIFY(*dest == NULL);
+
+    memset(lines, 0,sizeof(lines));
 
     if ( strlen(src) <= 0 )
         return 0;
 
-    if ( strchr(src, '\n') == NULL || *lines == NULL )
+    if ( strchr(src, '\n') == NULL )
     {
-        dest = strdup(src);
-        if ( dest == NULL )
-            dest = (char *)src;                 // be careful freeing this
-        return((int)strlen(dest));
+        *dest = strdup(src);
+        if ( *dest == NULL )
+            *dest = (char *)src;                 // be careful freeing this
+        return(strlen(*dest));
     }
 
     cnt = sscanf(src, "HHC%5u%c ", &u, sev);
 
     if ( cnt != 2 ) 
     {
-        dest = strdup(src);
-        return((int)strlen(dest));
+        *dest = strdup(src);
+        return(strlen(*dest));
     }
 
-    MSGBUF(msgid, "HHC%5.5u%c ", u, sev);
+    MSGBUF(msgid, "HHC%5.5u%s ", u, sev);
     text = (char*)src;
-    text += 9;
+    text += 10;
 
     dupstr = strdup(text);
+
     if ( dupstr != NULL )
     {
         size_t  strcnt = 0;
@@ -1203,34 +1206,47 @@ DLL_EXPORT int split_logs(char *dest, const char *src)
 
         line_cnt = 0;
         lines[line_cnt] = strtok(dupstr, "\n");
-        strcnt += strlen(lines[line_cnt]);
+        if ( lines[line_cnt] != NULL )
+            strcnt += strlen(lines[line_cnt]);
         while( lines[line_cnt] != NULL && line_cnt < 300 )
         {
             line_cnt++;
             lines[line_cnt] = strtok( NULL, "\n" );
-            strcnt += strlen(lines[line_cnt]);
+            if ( lines[line_cnt] != NULL )
+                strcnt += strlen(lines[line_cnt]);
         }
-        HFREE(dupstr);
-        strcnt += line_cnt * strlen(msgid);
-        dest = malloc( (strcnt * 120) / 100 ); // 20% extra
-        if ( dest != NULL )
+        strcnt += line_cnt * ( strlen(msgid) + strlen(prefix) );
+        strcnt = ( strcnt * 120) / 100; // 20% extra
         {
-            dest[0] = '\0';
+            char *ptr = malloc( strcnt );
+            *dest = ptr;
+        }
+
+        if ( *dest != NULL )
+        {
+            *dest[0] = '\0';
             for( i = 0; i < line_cnt; i++ )
             {
-                strlcat( dest, msgid, strlen(dest) );
-                strlcat( dest, lines[i], strlen(dest) );
+                strlcat(*dest, prefix, strcnt);
+                if (!SNCMP(lines[i], "HHC", 3 ) && !(sysblk.emsg & EMSG_TEXT) )
+                    strlcat( *dest, msgid, strcnt );
+                if (SNCMP(lines[i], "HHC", 3 ) && (sysblk.emsg & EMSG_TEXT) )
+                    strlcat( *dest, &lines[i][10], strcnt );
+                else
+                    strlcat( *dest, lines[i], strcnt );
+                strlcat( *dest, "\n", strcnt );
             }
         }
         else
         {
-            dest = (char *)src;
+            *dest = (char *)src;
         }
+        HFREE(dupstr);
     }
     else
     {
-        dest = (char *)src;
+        *dest = (char *)src;
     }
 
-    return((int)strlen(dest));
+    return(strlen(*dest));
 }

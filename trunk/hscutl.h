@@ -232,4 +232,6 @@ HUT_DLL_IMPORT  void   hpcfree  ( BYTE type, void*  ptr  );
 /* Hercules low-level file open */
 HUT_DLL_IMPORT  int hopen( const char* path, int oflag, ... );
 
+HUT_DLL_IMPORT  size_t split_logs(char **dest, const char *src, const char *prefix);
+
 #endif /* __HSCUTL_H__ */

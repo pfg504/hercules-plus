@@ -1139,8 +1139,8 @@ BYTE    c;                              /* Character work area       */
 
     n += snprintf (buf+n, bufl-n, "K:%2.2X=", STORAGE_KEY(aaddr, regs));
 
-    memset (hbuf, 0, sizeof(hbuf));
-    memset (cbuf, 0, sizeof(cbuf));
+    memset (hbuf, SPACE, sizeof(hbuf));
+    memset (cbuf, SPACE, sizeof(cbuf));
 
     for (i = 0, j = 0; i < 16; i++)
     {
