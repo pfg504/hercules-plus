@@ -850,7 +850,7 @@ do { \
 #define HHC01015 "%1d:%04X COMM: BSC communication thread did not initialize"
 #define HHC01016 "COMM: unable to determine '%s' from '%s'"
 #define HHC01017 "COMM: invalid parameter '%s'"
-#define HHC01018 "%1d:%04X COMM: client %s devtype %4.4X: connected; port %d"
+#define HHC01018 "%1d:%04X COMM: client %s:%d devtype %4.4X: connected"
 #define HHC01019 "%1d:%04X COMM: unrecognized parameter '%s'"
 #define HHC01020 "%1d:%04X COMM: no buffers trying to send '%s'"
 #define HHC01021 "%1d:%04X COMM: client %s devtype %4.4X: connection closed"

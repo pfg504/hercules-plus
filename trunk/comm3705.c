@@ -841,10 +841,10 @@ U16                     devnum;         /* Requested device number   */
 BYTE                    class;          /* D=3270, P=3287, K=3215/1052 */
 BYTE                    model;          /* 3270 model (2,3,4,5,X)    */
 BYTE                    extended;       /* Extended attributes (Y,N) */
-char                    buf[256];       /* Message buffer            */
-char                    conmsg[256];    /* Connection message        */
+char                    buf[512];       /* Message buffer            */
+char                    conmsg[512];    /* Connection message        */
 char                    devmsg[25];     /* Device message            */
-char                    hostmsg[256];   /* Host ID message           */
+char                    hostmsg[512];   /* Host ID message           */
 char                    num_procs[16];  /* #of processors string     */
 char                    group[16];      /* Console group             */
 
@@ -899,9 +899,9 @@ char                    group[16];      /* Console group             */
     else
         strlcpy( num_procs, "UP", sizeof(num_procs) );
 
-    snprintf
+    MSGBUF
     (
-        hostmsg, sizeof(hostmsg),
+        hostmsg,
 
         "running on %s (%s-%s.%s %s %s)"
 
@@ -912,20 +912,20 @@ char                    group[16];      /* Console group             */
         ,cons_hostinfo.machine
         ,num_procs
     );
-    snprintf (conmsg, sizeof(conmsg),
+    MSGBUF( conmsg,
                 "Hercules version %s built on %s %s",
                 VERSION, __DATE__, __TIME__);
 
     {
-        snprintf (devmsg, sizeof(devmsg), "Connected to device %4.4X", 0);
+        MSGBUF( devmsg, "Connected to device %1d:%4.4X", 0, 0);
     }
 
-    WRMSG(HHC01018, "I", 0, 0, clientip, 0x3270, ntohs(client.sin_port));
+    WRMSG(HHC01018, "I", 0, 0, clientip, ntohs(client.sin_port), 0x3270);
 
     /* Send connection message to client */
     if (class != 'K')
     {
-        len = snprintf (buf, sizeof(buf),
+        len = MSGBUF (buf, 
                     "\xF5\x40\x11\x40\x40\x1D\x60%s"
                     "\x11\xC1\x50\x1D\x60%s"
                     "\x11\xC2\x60\x1D\x60%s",

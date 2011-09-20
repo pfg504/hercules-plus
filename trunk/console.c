@@ -1745,10 +1745,10 @@ char                    *logoout;
     else
     {
         MSGBUF( devmsg, MSG(HHC01018, "I",
-                  SSID_TO_LCSS(dev->ssid), dev->devnum, clientip, dev->devtype, ntohs(client.sin_port)));
+                  SSID_TO_LCSS(dev->ssid), dev->devnum, clientip, ntohs(client.sin_port), dev->devtype ));
     }
 
-    WRMSG(HHC01018, "I", SSID_TO_LCSS(dev->ssid), dev->devnum, clientip, dev->devtype, ntohs(client.sin_port));
+    WRMSG(HHC01018, "I", SSID_TO_LCSS(dev->ssid), dev->devnum, clientip, ntohs(client.sin_port), dev->devtype);
 
     /* Send connection message to client */
     if ( !(devclass == 'K') )
