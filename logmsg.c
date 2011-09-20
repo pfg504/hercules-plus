@@ -314,7 +314,6 @@ DLL_EXPORT void writemsg(const char *srcfile, int line, const char* function,
 
 /*-------------------------------------------------------------------*/
 /* Log message: Normal routing (panel or buffer, as appropriate)     */
-/* was logmsg; replaced with macro logmsg                            */
 /*-------------------------------------------------------------------*/
 DLL_EXPORT void logmsg(char *msg,...)
 {
@@ -329,6 +328,14 @@ DLL_EXPORT void logmsg(char *msg,...)
     BFR_VSNPRINTF();
     if ( bfr )
     {
+        char *dest = NULL;
+
+        if ( split_logs( &dest, bfr, NULL ) > 0 )
+        {
+            HFREE(bfr);
+            bfr = dest;
+        }
+
         if ( !strncmp(bfr, "HHC", 3) && strlen(bfr) > 10 )
             log_write( 0, ( sysblk.emsg & EMSG_TEXT ) ? &bfr[10] : bfr );
         else
@@ -337,10 +344,7 @@ DLL_EXPORT void logmsg(char *msg,...)
 #ifdef NEED_LOGMSG_FFLUSH
     fflush(stdout);
 #endif
-    if ( bfr )
-    {
-        free(bfr);
-    }
+    HFREE(bfr);
 }
 
 // BHe I want to remove these functions for simplification
@@ -361,6 +365,14 @@ DLL_EXPORT void logmsgp(char *msg,...)
     BFR_VSNPRINTF();
     if(bfr)
     {
+        char *dest = NULL;
+
+        if ( split_logs( &dest, bfr, NULL ) > 0 )
+        {
+            HFREE(bfr);
+            bfr = dest;
+        }
+
         if ( !strncmp(bfr, "HHC", 3) && strlen(bfr) > 10 )
             log_write( 1, ( sysblk.emsg & EMSG_TEXT ) ? &bfr[10] : bfr );
         else
@@ -369,10 +381,7 @@ DLL_EXPORT void logmsgp(char *msg,...)
   #ifdef NEED_LOGMSG_FFLUSH
     fflush(stdout);
   #endif
-    if(bfr)
-    {
-        free(bfr);
-    }
+    HFREE(bfr);
 }
 
 /*-------------------------------------------------------------------*/
@@ -391,6 +400,14 @@ DLL_EXPORT void logmsgb(char *msg,...)
     BFR_VSNPRINTF();
     if(bfr)
     {
+        char *dest = NULL;
+
+        if ( split_logs( &dest, bfr, NULL ) > 0 )
+        {
+            HFREE(bfr);
+            bfr = dest;
+        }
+
         if ( !strncmp(bfr, "HHC", 3) && strlen(bfr) > 10 )
             log_write( 2, ( sysblk.emsg & EMSG_TEXT ) ? &bfr[10] : bfr );
         else
@@ -399,10 +416,7 @@ DLL_EXPORT void logmsgb(char *msg,...)
   #ifdef NEED_LOGMSG_FFLUSH
     fflush(stdout);
   #endif
-    if(bfr)
-    {
-        free(bfr);
-    }
+    HFREE(bfr);
 }
 #endif
 
@@ -421,7 +435,16 @@ DLL_EXPORT void logdevtr(DEVBLK *dev,char *msg,...)
   #endif
     if(dev->ccwtrace||dev->ccwstep)
     {
+        char *dest = NULL;
+
         BFR_VSNPRINTF();
+
+        if ( split_logs( &dest, bfr, NULL ) > 0 )
+        {
+            HFREE(bfr);
+            bfr = dest;
+        }
+
         if(bfr)
         {
             if ( !strncmp(bfr, "HHC", 3) && strlen(bfr) > 10 )
@@ -433,10 +456,9 @@ DLL_EXPORT void logdevtr(DEVBLK *dev,char *msg,...)
   #ifdef NEED_LOGMSG_FFLUSH
     fflush(stdout);
   #endif
-    if(bfr)
-    {
-        free(bfr);
-    }
+    HFREE(bfr);
+
+    return;
 } /* end function logdevtr */
 #endif /*defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)*/
 

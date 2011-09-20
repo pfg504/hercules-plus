@@ -854,12 +854,12 @@ char range[256];
     /* Build range for message */
     range[0] = '\0';
     if (trace && (sysblk.traceaddr[0] != 0 || sysblk.traceaddr[1] != 0))
-        sprintf(range, "range %" I64_FMT "x%c%" I64_FMT "x",
+        MSGBUF(range, "range 0x%08" I64_FMT "x%c0x%08" I64_FMT "x",
                 sysblk.traceaddr[0], c[0],
                 c[0] != '.' ? sysblk.traceaddr[1] :
                 sysblk.traceaddr[1] - sysblk.traceaddr[0]);
     else if (!trace && (sysblk.stepaddr[0] != 0 || sysblk.stepaddr[1] != 0))
-        sprintf(range, "range %" I64_FMT "x%c%" I64_FMT "x",
+        MSGBUF(range, "range 0x%08" I64_FMT "x%c0x%08" I64_FMT "x",
                 sysblk.stepaddr[0], c[0],
                 c[0] != '.' ? sysblk.stepaddr[1] :
                 sysblk.stepaddr[1] - sysblk.stepaddr[0]);
