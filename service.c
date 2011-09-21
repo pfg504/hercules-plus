@@ -41,10 +41,6 @@
 #include "inline.h"
 #include "sr.h"
 
-#if defined(__GNUC__) && __GNUC__ > 3 && __GNUC_MINOR__ > 5
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#endif
-
 #if !defined(_SERVICE_C)
 
 #define _SERVICE_C
@@ -897,7 +893,7 @@ BYTE ARCH_DEP(scpinfo_ifm)[8] = {
 BYTE ARCH_DEP(scpinfo_cfg)[6] = {
                         0
 #if defined(FEATURE_HYPERVISOR)
-//                        | SCCB_CFG0_LOGICALLY_PARTITIONED
+//                      | SCCB_CFG0_LOGICALLY_PARTITIONED
 #endif /*defined(FEATURE_HYPERVISOR)*/
 #ifdef FEATURE_SUPPRESSION_ON_PROTECTION
                         | SCCB_CFG0_SUPPRESSION_ON_PROTECTION

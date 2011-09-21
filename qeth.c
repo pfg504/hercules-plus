@@ -61,8 +61,6 @@
 
 #if defined( _MSVC_ ) && defined( NO_QETH_OPTIMIZE )
   #pragma optimize( "", off )           // disable optimizations for reliable breakpoints
-  #pragma warning( push )               // save current settings
-  #pragma warning( disable: 4748 )      // C4748:  /GS can not ... because optimizations are disabled...
 #endif
 
 #if defined( QETH_TIMING_DEBUG ) || defined( OPTION_WTHREADS )
@@ -1908,6 +1906,9 @@ OSA_GRP *grp = (OSA_GRP*)dev->group->grp_data;
 /*-------------------------------------------------------------------*/
 static int qeth_do_sync(DEVBLK *dev, U32 qmask)
 {
+    UNREFERENCED(dev);          /* unreferenced for non-DEBUG builds */
+    UNREFERENCED(qmask);        /* unreferenced for non-DEBUG builds */
+
     TRACE(_("SIGA-s dev(%4.4x) qmask(%8.8x)\n"),dev->devnum,qmask);
 
     return 0;
@@ -2011,6 +2012,5 @@ END_DEVICE_SECTION
 #endif // defined(OPTION_DYNAMIC_LOAD)
 
 #if defined( _MSVC_ ) && defined( NO_QETH_OPTIMIZE )
-  #pragma warning( pop )                // restore previous settings
   #pragma optimize( "", on )            // restore previous settings
 #endif
