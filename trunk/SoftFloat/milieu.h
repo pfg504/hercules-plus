@@ -1,6 +1,9 @@
 /* milieu.h    (C) John R. Hauser, 1998-2002                         */
 /*             This module is part of the SoftFloat package.         */
 /*                                                                   */
+/*             Released under "The Q Public License Version 1"       */
+/*             (http://www.hercules-390.org/herclic.html)            */
+/*             as modifications to Hercules.                         */
 
 // $Id$
 
@@ -39,6 +42,11 @@ the work is derivative, and (2) the source code includes prominent notice with
 these four paragraphs for those parts of this code that are retained.
 
 =============================================================================*/
+
+/*----------------------------------------------------------------------------
+| Suppress some compiler warnings
+*----------------------------------------------------------------------------*/
+#include "ccnowarn.h"
 
 /*----------------------------------------------------------------------------
 | Include common integer types and flags.

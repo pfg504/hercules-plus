@@ -18,7 +18,6 @@
 
 #include "hercules.h"
 
-
 /*-------------------------------------------------------------------*/
 /*      Define INLINE attributes by compiler                         */
 /*-------------------------------------------------------------------*/
@@ -281,22 +280,6 @@
 #else
   #define   HOPEN(_p,_o,...)    hopen     ((_p),(_o), ## __VA_ARGS__)
 #endif
-
-/*-------------------------------------------------------------------*/
-/* Macro definitions for version number                              */
-/*-------------------------------------------------------------------*/
-
-#define STRINGMAC(x)    #x
-#define MSTRING(x)      STRINGMAC(x)
-
-/*-------------------------------------------------------------------*/
-/* Use these to suppress unreferenced variable warnings...           */
-/*-------------------------------------------------------------------*/
-
-#define  UNREFERENCED(x)      while(0 && x)
-#define  UNREFERENCED_370(x)  while(0 && x)
-#define  UNREFERENCED_390(x)  while(0 && x)
-#define  UNREFERENCED_900(x)  while(0 && x)
 
 /*-------------------------------------------------------------------*/
 /* Macro for command parsing with variable length                    */

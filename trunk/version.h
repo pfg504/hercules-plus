@@ -31,10 +31,8 @@
 
 #if !defined(VERSION)
 #if defined(V1) && defined(V2) && defined(V3) && defined(V4)
-#define Q_(x) #x
-#define Q(x) Q_(x)
 #define VER V1##.##V2##.##V3##.##V4
-#define VERSION Q(VER)
+#define VERSION QSTR(VER)
 #endif
 #endif
 
@@ -53,7 +51,7 @@
   #ifndef _MSVC_
     #warning No version specified
   #else
-    #pragma message( MSVC_MESSAGE_LINENUM "warning: No version specified" )
+    WARNING("No version specified")
   #endif
   #define VERSION              "(unknown!)"
   #define CUSTOM_BUILD_STRING  "('VERSION' was not defined!)"

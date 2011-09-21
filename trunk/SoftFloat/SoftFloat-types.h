@@ -2,7 +2,6 @@
 /*             (C) Copyright "Fish" (David B. Trout), 2011           */
 /*             This module is part of the SoftFloat package.         */
 /*                                                                   */
-/*  "Fish"es Changes only:                                           */
 /*             Released under "The Q Public License Version 1"       */
 /*             (http://www.hercules-390.org/herclic.html)            */
 /*             as modifications to Hercules.                         */
@@ -18,11 +17,6 @@
 /* to the documents "SoftFloat.txt", "SoftFloat-source.txt", and     */
 /* "SoftFloat-history.txt" for detailed SoftFloat information.       */
 /* Fish note: 'FLOATX80' support was removed as we don't need it.    */
-
-/*----------------------------------------------------------------------------
-| Fish: Suppress some apparently benign compiler warning messages.
-*----------------------------------------------------------------------------*/
-#include "SoftFloat-fixme.h"
 
 /*----------------------------------------------------------------------------
 | One of the macros `BIGENDIAN' or `LITTLEENDIAN' must be defined.

@@ -1,6 +1,9 @@
 /* SoftFloat-macros.h (C) John R. Hauser, 1998-2002                  */
 /*             This module is part of the SoftFloat package.         */
 /*                                                                   */
+/*             Released under "The Q Public License Version 1"       */
+/*             (http://www.hercules-390.org/herclic.html)            */
+/*             as modifications to Hercules.                         */
 
 // $Id$
 
@@ -386,8 +389,9 @@ INLINE void
     carry0 = ( z1 < a1 );
     z0 = a0 + b0;
     z1 += carry1;
-//  FIXME(GCC,G4018_MSG) /* "warning: comparison between signed and unsigned" */
+DISABLE_GCC_WARNING( sign-compare, "comparison between signed and unsigned" )
     z0 += ( z1 < carry1 );
+ENABLE_GCC_WARNING( sign-compare )
     z0 += carry0;
     *z2Ptr = z2;
     *z1Ptr = z1;
@@ -442,8 +446,9 @@ INLINE void
     z1 = a1 - b1;
     borrow0 = ( a1 < b1 );
     z0 = a0 - b0;
-//  FIXME(GCC,G4018_MSG) /* "warning: comparison between signed and unsigned" */
+DISABLE_GCC_WARNING( sign-compare, "comparison between signed and unsigned" )
     z0 -= ( z1 < borrow1 );
+ENABLE_GCC_WARNING( sign-compare )
     z1 -= borrow1;
     z0 -= borrow0;
     *z2Ptr = z2;
@@ -463,10 +468,8 @@ INLINE void mul64To128( bits64 a, bits64 b, bits64 *z0Ptr, bits64 *z1Ptr )
     bits32 aHigh, aLow, bHigh, bLow;
     bits64 z0, zMiddleA, zMiddleB, z1;
 
-    FIXME(MSVC,C4244_MSG) /* "warning C4244_MSG: FIXME! conversion from 'bits64' to 'bits32', possible loss of data" */
     aLow = a;
     aHigh = a>>32;
-    FIXME(MSVC,C4244_MSG) /* "warning C4244_MSG: FIXME! conversion from 'bits64' to 'bits32', possible loss of data" */
     bLow = b;
     bHigh = b>>32;
     z1 = ( (bits64) aLow ) * bLow;
@@ -675,7 +678,6 @@ static int8 countLeadingZeros64( bits64 a )
     else {
         a >>= 32;
     }
-    FIXME(MSVC,C4244_MSG) /* "warning C4244_MSG: FIXME! conversion from 'bits64' to 'bits32', possible loss of data" */
     shiftCount += countLeadingZeros32( a );
     return shiftCount;
 
