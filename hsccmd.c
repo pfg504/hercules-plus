@@ -4583,6 +4583,8 @@ BYTE    c;
         if ( strlen(argv[1]) >= 1 && strlen(argv[1]) <= 2
           && sscanf(argv[1], "%hx%c", &id, &c) == 1)
         {
+#if 1
+// FIXME? This needs to be verified, again...
             if ( strlen(argv[1]) == 2 && id > 0x3f )
             {
                 char buf[8];
@@ -4590,6 +4592,7 @@ BYTE    c;
                 WRMSG(HHC02205,"E", buf, ": must be within 00 to 3F (hex)");
                 return -1;
             }
+#endif
             sysblk.lparnum = id;
             if ( MLVL(VERBOSE) )
             {
@@ -5038,10 +5041,8 @@ int devlist_cmd(int argc, char *argv[], char *cmdline)
                 }
                 WRMSG(HHC02279, "I", buf);
 
-                if (clientip)
-                    free(clientip);
-                if (clientname)
-                    free(clientname);
+                HFREE(clientip);
+                HFREE(clientname);
             }
         }
     }

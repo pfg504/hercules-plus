@@ -667,18 +667,23 @@ DLL_EXPORT void logger_init(void)
 
 DLL_EXPORT char *log_dsphrdcpy(void)
 {
-    static char  buf[MAX_PATH+2];
-    static char *pzbuf = buf;
+    static char *pzbuf = NULL;
+
+    HFREE( pzbuf );
 
     if ( logger_filename != NULL )
     {
         if ( strchr(logger_filename,SPACE) == NULL )
-            pzbuf = logger_filename;
+            pzbuf = strdup(logger_filename);
         else
-            MSGBUF(buf, "'%s'", logger_filename);
+        {
+            pzbuf = malloc( strlen(logger_filename) + 2 + 1);
+            ASSERT( pzbuf != NULL );
+            MSGBUF(pzbuf, "'%s'", logger_filename);
+        }
     }
     else
-        MSGBUF(buf, "(NULL)");
+        pzbuf = strdup( "(NULL)" );
 
     return pzbuf;
 }
@@ -691,11 +696,7 @@ int   new_hrdcpyfd = -1;
 
     if(!filename)
     {
-        if ( logger_filename != NULL )
-        {
-            free(logger_filename);
-            logger_filename = NULL;
-        }
+        HFREE( logger_filename );
 
         if(!logger_hrdcpy)
         {
@@ -721,11 +722,7 @@ int   new_hrdcpyfd = -1;
             }
             fprintf(temp_hrdcpy,MSG(HHC02101, "I"));
             fclose(temp_hrdcpy);
-            if ( logger_filename != NULL )
-            {
-                free(logger_filename);
-                logger_filename = NULL;
-            }
+            HFREE( logger_filename );
             WRMSG(HHC02101, "I");
             return;
         }
@@ -741,11 +738,7 @@ int   new_hrdcpyfd = -1;
 
         hostpath(pathname, filename, FILENAME_MAX);
 
-        if ( logger_filename != NULL )
-        {
-            free( logger_filename );
-            logger_filename = NULL;
-        }
+        HFREE( logger_filename );
 
         logger_filename = strdup(pathname);
         if ( logger_filename == NULL )
@@ -786,13 +779,6 @@ int   new_hrdcpyfd = -1;
 
                 if(temp_hrdcpy)
                 {
-                    char buf[FILENAME_MAX+2];
-                    char *pzbuf = buf;
-
-                    if ( strchr(logger_filename,SPACE) == NULL )
-                        pzbuf = logger_filename;
-                    else
-                        MSGBUF(buf,"'%s'",logger_filename);
 
                     if ( sysblk.emsg & EMSG_TS )
                     {
@@ -805,7 +791,7 @@ int   new_hrdcpyfd = -1;
                         hhmmss[8] = '\0';
                         fprintf(temp_hrdcpy, "%s ", hhmmss);
                     }
-                    fprintf(temp_hrdcpy, MSG(HHC02104, "I", pzbuf));
+                    fprintf(temp_hrdcpy, MSG(HHC02104, "I", log_dsphrdcpy()));
                     fclose(temp_hrdcpy);
                 }
             }
