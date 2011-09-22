@@ -398,8 +398,7 @@ int message_cmd(int argc,char *argv[], char *cmdline,int withhdr)
                      mytm->tm_sec,
                      (strlen(lparname)!=0)? lparname: "HERCULES",
                      msgtxt );
-            if (lparname != NULL)
-                free(lparname);
+            HFREE( lparname );
 #if defined(OPTION_MSGCLR)
             writemsg(__FILE__, __LINE__, __FUNCTION__, 0, MLVL(ANY), "<pnl,color(white,black)>", "%s", msgbuf );
 #else
@@ -3384,7 +3383,7 @@ BYTE c;
     }
 
     /* Configure CPUs */
-    rc = configure_numcpu(g_numcpu = numcpu);
+    rc = configure_numcpu(numcpu);
     switch(rc) {
     case 0:
         if ( MLVL(VERBOSE) )
@@ -3445,28 +3444,7 @@ BYTE c;
         return HERRCPUONL;
     }
 
-    /* If CPU ID format change from 0 to 1, all stop required */
-    if (maxcpu > 16 && sysblk.cpuidfmt == 0)
-    {
-        if (!ALL_STOPPED)
-        {
-            WRMSG(HHC02253, "E");
-            return -1;
-        }
-
-        sysblk.cpuidfmt = 1;
-
-        if (MLVL(VERBOSE))
-        {
-            char msgbuf[32];
-
-            MSGBUF(msgbuf, "%d", sysblk.cpuidfmt);
-            WRMSG(HHC02204, "I", "cpuidfmt", msgbuf);
-        }
-    }
-
-
-    sysblk.maxcpu = g_maxcpu = maxcpu;
+    sysblk.maxcpu = maxcpu;
 
     if (MLVL(VERBOSE))
     {
@@ -4613,7 +4591,6 @@ BYTE    c;
                 return -1;
             }
             sysblk.lparnum = id;
-            sysblk.lparnuml = (U16)strlen(argv[1]);
             if ( MLVL(VERBOSE) )
             {
                 char buf[20];
@@ -4814,17 +4791,11 @@ u_int     id;
                 WRMSG(HHC02205, "E", argv[1], ": must be either 0 or 1");
                 return -1;
             }
-            if (sysblk.maxcpu > 16 && id == 0)
-            {
-                WRMSG(HHC02205, "E", argv[1], ": must be 1 when MAXCPU > 16");
-                return -1;
-            }
-            if (!ALL_STOPPED)
-            {
-                WRMSG(HHC02253, "E");
-                return -1;
-            }
-            sysblk.cpuidfmt = (U16)id;
+
+            if(id)
+                sysblk.cpuid &= ~0x8000ULL;
+            else
+                sysblk.cpuid |= 0x8000ULL;
         }
         else
         {
@@ -4834,14 +4805,14 @@ u_int     id;
         if ( MLVL(VERBOSE) )
         {
             char buf[40];
-            MSGBUF( buf, "%d", sysblk.cpuidfmt);
+            MSGBUF( buf, "%d", (sysblk.cpuid & 0x8000ULL) ? 1 : 0);
             WRMSG(HHC02204, "I", argv[0], buf);
         }
     }
     else
     {
         char buf[40];
-        MSGBUF( buf, "%d", sysblk.cpuidfmt);
+        MSGBUF( buf, "%d", (sysblk.cpuid & 0x8000ULL) ? 1 : 0);
         WRMSG(HHC02203, "I", argv[0], buf);
     }
     return 0;
@@ -7412,7 +7383,9 @@ int msglevel_cmd(int argc, char *argv[], char *cmdline)
 
     if ( argc > 1 )
     {
+#if defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)
         int emsg    = sysblk.emsg;
+#endif
         int msglvl  = sysblk.msglvl;
         int i;
 
@@ -7420,6 +7393,7 @@ int msglevel_cmd(int argc, char *argv[], char *cmdline)
         {
             char check[16];
             strnupper(check, argv[i], sizeof(check));
+#if defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)
             if ( strabbrev("ON", check, 2) )
             {
                 emsg |= EMSG_ON;
@@ -7442,7 +7416,9 @@ int msglevel_cmd(int argc, char *argv[], char *cmdline)
                 emsg |= EMSG_TS + EMSG_ON;
                 emsg &= ~EMSG_TEXT;
             }
-            else if ( strabbrev("TERSE", check, 3) || strabbrev("+TERSE", check, 4) || strabbrev("-VERBOSE", check, 2) )
+            else
+#endif
+            if ( strabbrev("TERSE", check, 3) || strabbrev("+TERSE", check, 4) || strabbrev("-VERBOSE", check, 2) )
             {
                 msglvl &= ~MLVL_VERBOSE;
             }
@@ -7535,13 +7511,16 @@ int msglevel_cmd(int argc, char *argv[], char *cmdline)
                 WRMSG( HHC02205, "E", argv[i], "" );
                 return -1;
             }
+#if defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)
         sysblk.emsg = emsg;
+#endif
         sysblk.msglvl = msglvl;
         }
     }
 
     msgbuf[0] = 0x00;
 
+#if defined(OPTION_MSGCLR) || defined(OPTION_MSGHLD)
     if ( sysblk.emsg & EMSG_TS )
         strlcat(msgbuf, "timestamp ",sizeof(msgbuf));
 
@@ -7549,6 +7528,7 @@ int msglevel_cmd(int argc, char *argv[], char *cmdline)
         strlcat(msgbuf, "text ",sizeof(msgbuf));
     else if ( sysblk.emsg & EMSG_ON )
         strlcat(msgbuf, "on ",sizeof(msgbuf));
+#endif
 
     if (MLVL( VERBOSE )) strlcat( msgbuf, "verbose ", sizeof( msgbuf ));
     else                 strlcat( msgbuf, "terse ",   sizeof( msgbuf ));
