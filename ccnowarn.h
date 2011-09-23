@@ -77,8 +77,10 @@
       /* Globally disable some rather annoying GCC compiler warnings which */
       /* frequently occurs due to our build multiple architectures design. */
 
-      #pragma GCC diagnostic ignored "-Wunused-but-set-variable"  // "variable 'xxx' set but not used"
-      #pragma GCC diagnostic ignored "-Wunused-function"          // "'xxxxxxxx' defined but not used"
+      #if __GNUC__ > 3 && __GNUC_MINOR__ > 5
+        #pragma GCC diagnostic ignored "-Wunused-but-set-variable"  // "variable 'xxx' set but not used"
+        #pragma GCC diagnostic ignored "-Wunused-function"          // "'xxxxxxxx' defined but not used"
+      #endif
 
     #endif
   #endif
