@@ -1,9 +1,5 @@
 /* FEAT900.H    (c) Copyright Jan Jaeger, 2000-2011                  */
 /*              ESAME feature definitions                            */
-/*                                                                   */
-/*   Released under "The Q Public License Version 1"                 */
-/*   (http://www.hercules-390.org/herclic.html) as modifications to  */
-/*   Hercules.                                                       */
 
 // $Id$
 
@@ -94,7 +90,6 @@
 #define FEATURE_LOAD_STORE_ON_CONDITION_FACILITY                /*810*/
 #define FEATURE_LOCK_PAGE
 #define FEATURE_LONG_DISPLACEMENT
-//#define FEATURE_LPAR
 #define FEATURE_MESSAGE_SECURITY_ASSIST
 #define FEATURE_MESSAGE_SECURITY_ASSIST_EXTENSION_1             /*@Z9*/
 #define FEATURE_MESSAGE_SECURITY_ASSIST_EXTENSION_2
