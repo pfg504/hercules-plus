@@ -31,6 +31,11 @@ static const BYTE default_manufact[16]  = { 0xC8,0xD9,0xC3,0x40,0x40,0x40,0x40,0
                                             0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40 };
                                           /*  Z    Z           */
 static const BYTE default_plant[4]      = { 0xE9,0xE9,0x40,0x40 };
+                                         /*   H    E    R    C    U    L    E    S  */
+static const BYTE dflt_cpid[16]         = { 0xC8,0xC5,0xD9,0xC3,0xE4,0xD3,0xC5,0xE2,
+                                            0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40 };
+                                          /*  H    E    R    C    U    L    E    S  */
+static const BYTE dflt_vmid[8]          = { 0xC8,0xC5,0xD9,0xC3,0xE4,0xD3,0xC5,0xE2 };      
 
 static int gsysinfo_init_flg = FALSE;
 
@@ -52,6 +57,9 @@ static GSYSINFO gsysinfo;
                                           { 0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40 }, // systype
                                           { 0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40 }, // sysname
                                           { 0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40 }, // sysplex
+                                          { 0xC8,0xC5,0xD9,0xC3,0xE4,0xD3,0xC5,0xE2,   // cpid
+                                            0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40 },
+                                          { 0xC8,0xC5,0xD9,0xC3,0xE4,0xD3,0xC5,0xE2 }  // vmid
                                         };
 */
 
@@ -138,12 +146,14 @@ static void get_gsysinfo(GSYSINFO *dest)
         memcpy(gsysinfo.plant,     default_plant,       sizeof(gsysinfo.plant));
         memcpy(gsysinfo.model,     dflt_model,          sizeof(gsysinfo.model));
         memcpy(gsysinfo.modelcapa, dflt_model,          sizeof(gsysinfo.modelcapa));
+        memcpy(gsysinfo.cpid,      dflt_cpid,           sizeof(gsysinfo.cpid));
+        memcpy(gsysinfo.vmid,      dflt_vmid,           sizeof(gsysinfo.vmid));
 
-        memset(gsysinfo.modelperm, 0, sizeof(gsysinfo.modelperm));
-        memset(gsysinfo.modeltemp, 0, sizeof(gsysinfo.modeltemp));
+        memset(gsysinfo.modelperm, 0,                   sizeof(gsysinfo.modelperm));
+        memset(gsysinfo.modeltemp, 0,                   sizeof(gsysinfo.modeltemp));
     }
     else
-        memcpy( dest, &gsysinfo, sizeof(GSYSINFO) );
+        memcpy(dest,               &gsysinfo,           sizeof(GSYSINFO) );
     return;
 }
 
@@ -601,6 +611,70 @@ char *str_sysplex()
         get_gsysinfo(NULL);
 
     ebcdic_to_stringz_return(gsysinfo.sysplex);
+}
+
+
+/*-------------------------------------------------------------------*/
+/* VIRTUAL MACHINE ID                                                */
+/* Set by: VMD configuration statement                               */
+/* Retrieved by: STSI instruction                                    */
+/*-------------------------------------------------------------------*/
+
+void set_vmid(BYTE *src)
+{
+    if (gsysinfo_init_flg == FALSE )
+        get_gsysinfo(NULL);
+
+    memcpy(gsysinfo.vmid, src, sizeof(gsysinfo.vmid));
+}
+
+void get_vmid(BYTE *dst)
+{
+    if (gsysinfo_init_flg == FALSE )
+        get_gsysinfo(NULL);
+
+    memcpy(dst, gsysinfo.vmid, sizeof(gsysinfo.vmid));
+}
+
+LOADPARM_DLL_IMPORT
+char *str_vmid()
+{
+    if (gsysinfo_init_flg == FALSE )
+        get_gsysinfo(NULL);
+
+    ebcdic_to_stringz_return(gsysinfo.vmid);
+}
+
+
+/*-------------------------------------------------------------------*/
+/* CONTROL PROGRAM  ID                                               */
+/* Set by: VMD configuration statement                               */
+/* Retrieved by: STSI instruction                                    */
+/*-------------------------------------------------------------------*/
+
+void set_cpid(BYTE *src)
+{
+    if (gsysinfo_init_flg == FALSE )
+        get_gsysinfo(NULL);
+
+    memcpy(gsysinfo.cpid, src, sizeof(gsysinfo.cpid));
+}
+
+void get_cpid(BYTE *dst)
+{
+    if (gsysinfo_init_flg == FALSE )
+        get_gsysinfo(NULL);
+
+    memcpy(dst, gsysinfo.cpid, sizeof(gsysinfo.cpid));
+}
+
+LOADPARM_DLL_IMPORT
+char *str_cpid()
+{
+    if (gsysinfo_init_flg == FALSE )
+        get_gsysinfo(NULL);
+
+    ebcdic_to_stringz_return(gsysinfo.cpid);
 }
 
 
