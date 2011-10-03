@@ -1215,8 +1215,7 @@ int     carry;                          /* Carry indicator           */
         for (i=MAX_DECIMAL_DIGITS-1, j=MAX_DECIMAL_DIGITS-1-effective_addr2;
                 i >= 0; i--, j--)
         {
-            d = (j >= 0) ? dec[j] : 0;
-            d += carry;
+            d = (j >= 0) ? carry + dec[j] : carry;
             carry = d / 10;
             d %= 10;
             dec[i] = d;
