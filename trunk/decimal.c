@@ -942,9 +942,9 @@ BYTE    rbyte;                          /* Result byte               */
         /* Initialize variables */
         addr1 = effective_addr1;
         addr2 = effective_addr2;
-        cc = 0;
-        sig = 0;
-        sbyte = 0;
+        cc =
+        sig =
+        sbyte =
         fbyte = 0;
 
         /* Process first operand from left to right */
