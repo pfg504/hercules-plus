@@ -6553,15 +6553,15 @@ VADR    effective_addr2;                /* Effective address         */
 BYTE   *m;                              /* Mainstor address          */
 int     i;
 U16     offset;                         /* Offset into control block */
+U32     curlvl;                         /* Current config level      */
 SYSIB111  *sysib111;                    /* Basic machine conf        */
 SYSIB121  *sysib121;                    /* Basic machine CPU         */
 SYSIB122  *sysib122;                    /* Basic machine CPUs        */
 SYSIB221  *sysib221;                    /* LPAR CPU                  */
 SYSIB222  *sysib222;                    /* LPAR CPUs                 */
-#if 0
 SYSIB322  *sysib322;                    /* VM CPUs                   */
-SYSIBVMDB *sysib322;                    /* VM description block      */
-#endif
+SYSIBVMDB *sysibvmdb;                   /* VM description block      */
+
 #if defined(FEATURE_CONFIGURATION_TOPOLOGY_FACILITY)
 SYSIB1512 *sysib1512;                   /* Configuration Topology    */
 TLECPU    *tlecpu;                      /* CPU TLE Type              */
@@ -6593,8 +6593,21 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
             effective_addr2);
 #endif /*DEBUG_STSI*/
 
+     /* Determine current configuration level */
+#if defined(_FEATURE_EMULATE_VM)
+     if(FACILITY_ENABLED(VIRTUAL_MACHINE,regs))
+         curlvl = STSI_GPR0_FC_VM;
+     else
+#endif /*defined(_FEATURE_EMULATE_VM)*/
+#if defined(_FEATURE_HYPERVISOR)
+         if(FACILITY_ENABLED(LOGICAL_PARTITION,regs))
+             curlvl = STSI_GPR0_FC_LPAR;
+         else
+#endif /*defined(_FEATURE_HYPERVISOR)*/
+             curlvl = STSI_GPR0_FC_BASIC;
+
     /* Check function code */
-    if((regs->GR_L(0) & STSI_GPR0_FC_MASK) >  STSI_GPR0_FC_LPAR
+    if((regs->GR_L(0) & STSI_GPR0_FC_MASK) > curlvl
 #if defined(FEATURE_CONFIGURATION_TOPOLOGY_FACILITY)
         && (regs->GR_L(0) & STSI_GPR0_FC_MASK) != STSI_GPR0_FC_CURRINFO
 #endif /*defined(FEATURE_CONFIGURATION_TOPOLOGY_FACILITY)*/
@@ -6616,7 +6629,7 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
     /* Return current level if function code is zero */
     if((regs->GR_L(0) & STSI_GPR0_FC_MASK) == STSI_GPR0_FC_CURRNUM)
     {
-        regs->GR_L(0) |= STSI_GPR0_FC_LPAR;
+        regs->GR_L(0) |= curlvl;
 #ifdef DEBUG_STSI
         logmsg("control.c: STSI cc=0 R0=%8.8X\n", regs->GR_L(0));
 #endif /*DEBUG_STSI*/
@@ -6832,6 +6845,21 @@ static BYTE hexebcdic[16] = { 0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
             PTT(PTT_CL_ERR,"*STSI",regs->GR_L(0),regs->GR_L(1),(U32)(effective_addr2 & 0xffffffff));
             regs->psw.cc = 3;
         } /* selector 1 */
+        break;
+        
+    case STSI_GPR0_FC_VM:
+        sysib322 = (SYSIB322 *)(m);
+        memset(sysib322, 0, sizeof(SYSIB322));
+        sysib322->dbct = 0x01;
+        sysibvmdb = (SYSIBVMDB *)&sysib322->vmdb[0];
+        STORE_HW(sysibvmdb->totcpu,sysblk.maxcpu);
+        STORE_HW(sysibvmdb->confcpu,sysblk.cpus);
+        STORE_HW(sysibvmdb->sbcpu,sysblk.maxcpu - sysblk.cpus);
+        get_vmid(sysibvmdb->vmname);
+        STORE_FW(sysibvmdb->vmcaf,1000);   /* Full capability factor */
+        get_cpid(sysibvmdb->cpid);
+        
+        regs->psw.cc = 0;
         break;
 
 #if defined(FEATURE_CONFIGURATION_TOPOLOGY_FACILITY)
