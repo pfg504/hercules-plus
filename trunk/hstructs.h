@@ -692,6 +692,15 @@ struct SYSBLK {
         int     srvprio;                /* Listeners thread priority */
         TID     httptid;                /* HTTP listener thread id   */
 
+#if defined(FEATURE_S380)
+        int     s380;                   /* Indicate S/380 enhancement*/
+        int     mvs_special;            /* specifla MVS processing   */
+        int     vse_special;            /* specifla VSE processing   */
+    #if VSE_UNPATCHED
+        RADR    vse_real;               /* What VSE is really using  */
+    #endif
+#endif
+
      /* Fields used by SYNCHRONIZE_CPUS */
         int     syncing;                /* 1=Sync in progress        */
         CPU_BITMAP sync_mask;           /* CPU mask for syncing CPUs */

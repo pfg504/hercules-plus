@@ -361,14 +361,30 @@
 /*      compilation units                    */
 
 #if !defined(OPTION_370_MODE) \
+  && !defined(OPTION_380_MODE) \
   && !defined(OPTION_390_MODE) \
   && !defined(OPTION_900_MODE)
  #error No Architecture mode
 #endif
+
+/* OPTION_380_MODE is the same as OPTION_370_MODE with additional features */
+#if defined(OPTION_380_MODE)
+  #define _370
+  #define _380
+  #define _ARCHMODE1 370
+  #define ARCH_370 0
+#endif
+
 #if defined(OPTION_370_MODE)
- #define _370
- #define _ARCHMODE1 370
- #define ARCH_370 0
+  #if !defined(_370)
+    #define _370
+  #endif
+  #if !defined(_ARCHMODE1)
+    #define _ARCHMODE1 370
+  #endif
+  #if !defined(ARCH_370)
+    #define ARCH_370 0
+  #endif
 #endif
 
 #if defined(OPTION_390_MODE)

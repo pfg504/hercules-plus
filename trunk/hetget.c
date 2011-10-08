@@ -32,10 +32,16 @@
 /*
 || Local volatile data
 */
-#define O_NL        0x80
-#define O_ASCII     0x40
-#define O_STRIP     0x20
-#define O_UNBLOCK   0x10
+  #define O_LIST      0x100
+  #define O_NL        0x80
+  #define O_ASCII     0x40
+  #define O_STRIP     0x20
+  #define O_UNBLOCK   0x10
+  #define O_NO_NEW    0x08
+  #define O_RDW       0x04
+  #define O_HRCBIN    0x02
+  #define O_HRCTXT    0x01
+
 struct
 {
     char *ifile;
@@ -46,7 +52,7 @@ struct
     int fileno;
     int lrecl;
     int blksize;
-    unsigned char flags;
+    unsigned int flags;
     unsigned char recfm;
 }
 opts = 
@@ -134,7 +140,7 @@ static off_t prevpos = 0;
 || Merge DCB information from HDR2 label
 */
 void
-merge( SLLABEL *lab )
+merge( SLLABEL *lab, int disp_out )
 {
     SLFMT fmt;
     int i;
@@ -197,14 +203,24 @@ merge( SLLABEL *lab )
         }
     }
 
+// some of these functions are duplicated in hetmap.c
+#if 0
     /*
     || Print DCB attributes
     */
-    logmsg( "DCB Attributes used:\n" );
-    logmsg( "  RECFM=%-4.4s  LRECL=%-5.5d  BLKSIZE=%d\n",
-        valfm[ i ].recfm,
-        opts.lrecl,
-        opts.blksize );
+    if ( disp_opt == 0 )
+    {
+        logmsg( "DCB Attributes used:\n" );
+        logmsg( "  RECFM=%-4.4s  LRECL=%-5.5d  BLKSIZE=%d\n",
+                valfm[ i ].recfm,
+                opts.lrecl,
+                opts.blksize );
+    }
+    else if ( disp_opt == 1 )
+    {
+        logmsg( " %-4.4s %5d %5d\n", valfm[ i ].recfm, opts.lrecl, opts.blksize );
+    }
+#endif
 
     return;
 }
@@ -281,9 +297,22 @@ getblock( )
     }
 
     /*
-    || Save the block length (should we use BDW for RECFM=V files???)
+    || Save the block length, and use BDW for RECFM=V to protect
+       against minimum block sizes (which avoid tape noise).
     */
     blklen = rc;
+    if( (blklen > 4) && (opts.recfm & O_VARIABLE) )
+    {
+        int bdw;
+
+        bdw = bdw_length( blkptr );
+        if ( (bdw > 4) && (bdw < blklen) )
+        {
+            blklen = bdw;
+        }
+    }
+
+    rc = blklen;
 
     return( rc );
 }
@@ -405,6 +434,396 @@ get_sl( SLLABEL *lab )
 }
 
 /*
+|| List files in the tape "archive" (ie think "unzip -v")
+   Only works on SL tapes.
+*/
+int
+listfiles( )
+{
+    SLFMT fmt;
+    SLLABEL lab;
+    int rc;
+
+    /*
+    || First block should be a VOL1 record
+    */
+    rc = get_sl( &lab );
+    if( rc < 0 || !sl_isvol( &lab, 1 ) )
+    {
+        logmsg( "Expected VOL1 label\n" );
+        return( -1 );
+    }
+        
+    /* process all files on tape */
+    while (rc >= 0)
+    {
+        /*
+        || Get the HDR1 label.
+        */
+        rc = get_sl( &lab );
+        if( rc < 0 || !sl_ishdr( &lab, 1 ) )
+        {
+            /* quietly return when no more files */
+            return( 0 );
+        }
+
+        /*
+        || Make the label more managable
+        */
+        sl_fmtlab( &fmt, &lab );
+        logmsg("%-17.17s", fmt.slds1.dsid ); 
+
+        /*
+        || Get the HDR2 label.
+        */
+        rc = get_sl( &lab );
+        if( rc < 0 || !sl_ishdr( &lab, 2 ) )
+        {
+            logmsg( "Expected HDR2 label\n" );
+            return( -1 );
+        }
+
+        /*
+        || Merge the DCB information
+        */
+        merge( &lab, 1 );
+
+        /*
+        || Hop over the tapemark
+        */
+        if ( opts.faketape )
+            rc = fet_fsf( opts.fetb );
+        else
+            rc = het_fsf( opts.hetb );
+        if( rc < 0 )
+        {
+            logmsg( "%s while spacing to start of data\n",
+                het_error( rc ) );
+            return( rc );
+        }
+
+        /*
+        || skip data file, if any
+        */
+        if ( opts.faketape )
+            rc = fet_fsf( opts.fetb );
+        else
+            rc = het_fsf( opts.hetb );
+        if( rc < 0 )
+        {
+            return( 0 );
+        }
+        /*
+        || skip EOF file, if any
+        */
+        if ( opts.faketape )
+            rc = fet_fsf( opts.fetb );
+        else
+            rc = het_fsf( opts.hetb );
+        if( rc < 0 )
+        {
+            return( 0 );
+        }
+
+    } /* while */
+    return (0);
+}
+
+/*
+|| Extract files from the tape "archive" (ie think "unzip")
+   Only works on SL tapes.
+*/
+int
+extractfiles( )
+{
+    SLFMT fmt;
+    SLLABEL lab;
+    unsigned char *ptr;
+    int rc;
+    FILE *outf;
+    
+    /*
+    || First block should be a VOL1 record
+    */
+    rc = get_sl( &lab );
+    if( rc < 0 || !sl_isvol( &lab, 1 ) )
+    {
+        logmsg( "Expected VOL1 label\n" );
+        return( -1 );
+    }
+        
+    /* process all files on tape */
+    while (rc >= 0)
+    {
+        /*
+        || Get the HDR1 label.
+        */
+        rc = get_sl( &lab );
+        if( rc < 0 || !sl_ishdr( &lab, 1 ) )
+        {
+            /* quietly return when no more files */
+            return( 0 );
+        }
+
+        /*
+        || Make the label more managable
+        */
+        sl_fmtlab( &fmt, &lab );
+        logmsg("%-17.17s", fmt.slds1.dsid ); 
+    
+        /*
+        || Get the HDR2 label.
+        */
+        rc = get_sl( &lab );
+        if( rc < 0 || !sl_ishdr( &lab, 2 ) )
+        {
+            logmsg( "Expected HDR2 label\n" );
+            return( -1 );
+        }
+    
+        /*
+        || Merge the DCB information
+        */
+        merge( &lab, 1 );
+
+        /*
+        || Hop over the tapemark
+        */
+        if ( opts.faketape )
+            rc = fet_fsf( opts.fetb );
+        else
+            rc = het_fsf( opts.hetb );
+        if( rc < 0 )
+        {
+            logmsg( "%s while spacing to start of data\n",
+                het_error( rc ) );
+            return( rc );
+        }
+
+        /*
+        || process the current file
+        */
+        {
+            /*
+            || Open the output file
+            */
+            char pathname[MAX_PATH];
+            
+            opts.ofile = fmt.slds1.dsid;
+            hostpath(pathname, opts.ofile, sizeof(pathname));
+            outf = fopen( pathname, (opts.flags & O_ASCII) ? "w" : "wb" );
+            if( outf == NULL )
+            {
+                logmsg("unable to open %s\n", opts.ofile);
+                return( -1 );
+            }
+        }
+
+
+
+
+
+
+
+
+    /* this should be in a common block, or at least indented */
+
+    /*
+    || Different processing when converting to ASCII
+    */
+    if( opts.flags & ( O_ASCII | O_UNBLOCK | O_RDW ) )
+    {
+        /*
+        || Get a record
+        */
+        while( ( rc = getrecord( ) ) >= 0 )
+        {
+#ifdef EXTERNALGUI
+            if( extgui )
+            {
+                off_t curpos;
+                /* Report progress every nnnK */
+                if ( opts.faketape )
+                     curpos = ftell( opts.fetb->fd );
+                else
+                     curpos = ftell( opts.hetb->fd );
+                if( ( curpos & PROGRESS_MASK ) != ( prevpos & PROGRESS_MASK ) )
+                {
+                    prevpos = curpos;
+                    fprintf( stderr, "IPOS=%" I64_FMT "d\n", (U64)curpos );
+                }
+            }
+#endif /*EXTERNALGUI*/
+            /*
+            || Get working copy of record ptr
+            */
+            ptr = recptr;
+
+            /*
+            || Only want data portion for RECFM=V records
+            */
+            if( opts.recfm & O_VARIABLE )
+            {
+                ptr += 4;
+                rc -= 4;
+            }
+
+            /*
+            || Convert record to ASCII
+            */
+            if( opts.flags & O_ASCII )
+            {
+                sl_etoa( NULL, ptr, rc );
+            }
+
+            /*
+            || Strip trailing blanks
+            */
+            if( opts.flags & O_STRIP 
+                || ((opts.flags & O_HRCTXT)
+                    && (opts.recfm & O_FIXED)
+                   )
+              )
+            {
+                while( rc > 0 && ptr[ rc - 1 ] == ' ' )
+                {
+                    rc--;
+                }
+                
+                /* if a text file has been copied, in binary mode,
+                   into a fixed dataset, it will have NUL-padding.
+                   Since we don't want NULs in a text file, we
+                   clean them up too */
+                if (opts.recfm & O_FIXED)
+                {
+                    while( rc > 0 && ptr[ rc - 1 ] == '\0' )
+                    {
+                        rc--;
+                    }
+                }
+            }
+            
+            /*
+            || Write the record out
+            */
+            if ( (opts.flags & O_ASCII)
+                 && rc == 1
+                 && ptr[0] == ' '
+                 && !(opts.flags & O_RDW)
+                 && ( ((opts.recfm & O_UNDEFINED)
+                       && !(opts.flags & O_NO_NEW)
+                      )
+                      || (opts.recfm & O_VARIABLE)
+                    )
+               )
+            {
+                /* if the dataset is undefined or variable and has a 
+                   single space, then don't write out that space,
+                   because the space most likely exists because it
+                   was artificially inserted to prevent empty
+                   records or blocks rather than because the user
+                   really wants a space. Also, if they are taking
+                   care of newlines themselves for RECFM=U, then
+                   any single space in the last block would be
+                   genuine albeit extremely unlikely. */
+                rc = 0;
+            }
+            
+            /* write out an artificial RDW */
+            if ((opts.flags & O_RDW)
+                || ((opts.flags & O_HRCBIN)
+                    && (opts.recfm & O_VARIABLE)
+                   )
+               )
+            {
+                int havenl = 0;
+
+                /* take into account newline */
+                if( opts.flags & O_ASCII 
+                    && (!(opts.flags & O_NO_NEW) 
+                        || !(opts.recfm & O_UNDEFINED)
+                       )
+                  )
+                {
+                    havenl = 1;
+                    rc++;
+                }
+                rc += 4;
+                fputc( (((unsigned int)rc >> 8) & 0xff), outf );
+                fputc( ((unsigned int)rc & 0xff), outf );
+                fputc( 0x00, outf );
+                fputc( 0x00, outf );
+                rc -= 4;
+                if (havenl)
+                {
+                    rc--;
+                }
+            }
+            fwrite( ptr, rc, 1, outf );
+
+            /*
+            || Put out a linefeed when converting
+            */
+            if( opts.flags & O_ASCII 
+                && (!(opts.flags & O_NO_NEW) 
+                    || !(opts.recfm & O_UNDEFINED)
+                   )
+              )
+            {
+                fwrite( "\n", 1, 1, outf );
+            }
+        }
+    }
+    else
+    {
+        /*
+        || Get a record
+        */
+        while( ( rc = getblock( ) ) >= 0 )
+        {
+#ifdef EXTERNALGUI
+            if( extgui )
+            {
+                off_t curpos;
+                /* Report progress every nnnK */
+                if ( opts.faketape )
+                     curpos = ftell( opts.fetb->fd );
+                else
+                     curpos = ftell( opts.hetb->fd );
+                if( ( curpos & PROGRESS_MASK ) != ( prevpos & PROGRESS_MASK ) )
+                {
+                    prevpos = curpos;
+                    fprintf( stderr, "IPOS=%" I64_FMT "d\n", (U64)curpos );
+                }
+            }
+#endif /*EXTERNALGUI*/
+            /*
+            || Write the record out
+            */
+            fwrite( blkptr, blklen, 1, outf );
+        }
+    }
+
+        fclose(outf); /* finished writing a single file */
+
+        /*
+        || skip EOF file, if any
+        */
+        if ( opts.faketape )
+            rc = fet_fsf( opts.fetb );
+        else
+            rc = het_fsf( opts.hetb );
+        if( rc < 0 )
+        {
+            return( 0 );
+        }
+
+    } /* while */
+    return (0);
+}
+
+
+/*
 || Extract the file from the tape
 */
 int
@@ -518,7 +937,7 @@ getfile( FILE *outf )
         /*
         || Merge the DCB information
         */
-        merge( &lab );
+        merge( &lab, 0 );
 
         /*
         || Hop over the tapemark
@@ -540,7 +959,7 @@ getfile( FILE *outf )
     /*
     || Different processing when converting to ASCII
     */
-    if( opts.flags & ( O_ASCII | O_UNBLOCK ) )
+    if( opts.flags & ( O_ASCII | O_UNBLOCK | O_RDW ) )
     {
         /*
         || Get a record
@@ -588,23 +1007,94 @@ getfile( FILE *outf )
             /*
             || Strip trailing blanks
             */
-            if( opts.flags & O_STRIP )
-            {
+             if( opts.flags & O_STRIP || ( (opts.flags & O_HRCTXT) &&
+                                           (opts.recfm & O_FIXED) )
+               )
+             {
                 while( rc > 0 && ptr[ rc - 1 ] == ' ' )
                 {
                     rc--;
                 }
-            }
-            
+
+                /* if a text file has been copied, in binary mode,
+                   into a fixed dataset, it will have NUL-padding.
+                   Since we don't want NULs in a text file, we
+                   clean them up too */
+                if (opts.recfm & O_FIXED)
+                {
+                    while( rc > 0 && ptr[ rc - 1 ] == '\0' )
+                    {
+                        rc--;
+                    }
+                }
+             }
+
             /*
             || Write the record out
             */
-            fwrite( ptr, rc, 1, outf );
+            if ( (opts.flags & O_ASCII)
+                 && rc == 1
+                 && ptr[0] == ' '
+                 && !(opts.flags & O_RDW)
+                 && ( ((opts.recfm & O_UNDEFINED)
+                       && !(opts.flags & O_NO_NEW)
+                      )
+                      || (opts.recfm & O_VARIABLE)
+                    )
+               )
+            {
+                /* if the dataset is undefined or variable and has a 
+                   single space, then don't write out that space,
+                   because the space most likely exists because it
+                   was artificially inserted to prevent empty
+                   records or blocks rather than because the user
+                   really wants a space. Also, if they are taking
+                   care of newlines themselves for RECFM=U, then
+                   any single space in the last block would be
+                   genuine albeit extremely unlikely. */
+                rc = 0;
+            }
+            
+            /* write out an artificial RDW */
+            if ((opts.flags & O_RDW)
+                || ((opts.flags & O_HRCBIN)
+                    && (opts.recfm & O_VARIABLE)
+                   )
+               )
+            {
+                int havenl = 0;
+
+                /* take into account newline */
+                if( opts.flags & O_ASCII 
+                    && (!(opts.flags & O_NO_NEW) 
+                        || !(opts.recfm & O_UNDEFINED)
+                       )
+                  )
+                {
+                    havenl = 1;
+                    rc++;
+                }
+                rc += 4;
+                fputc( (((unsigned int)rc >> 8) & 0xff), outf );
+                fputc( ((unsigned int)rc & 0xff), outf );
+                fputc( 0x00, outf );
+                fputc( 0x00, outf );
+                rc -= 4;
+                if (havenl)
+                {
+                    rc--;
+                }
+            }
+             fwrite( ptr, rc, 1, outf );
 
             /*
             || Put out a linefeed when converting
             */
-            if( opts.flags & O_ASCII )
+            if( opts.flags & O_ASCII 
+                && (!(opts.flags & O_NO_NEW) 
+                    || !(opts.recfm & O_UNDEFINED)
+                   )
+              )
             {
                 fwrite( "\n", 1, 1, outf );
             }
@@ -705,7 +1195,7 @@ main( int argc, char *argv[] )
     */
     while( TRUE )
     {
-        rc = getopt( argc, argv, "abhnsu" );
+        rc = getopt( argc, argv, "abhlnsturz" );
         if( rc == -1 )
         {
             break;
@@ -718,9 +1208,18 @@ main( int argc, char *argv[] )
                 set_codepage(NULL);
             break;
 
+            case 'b':
+                opts.flags |= O_HRCBIN;
+                opts.flags |= O_UNBLOCK;
+            break;
+
             case 'h':
                 usage( pgm );
                 exit( 1 );
+            break;
+
+            case 'l':
+                opts.flags |= O_LIST;
             break;
 
             case 'n':
@@ -731,8 +1230,23 @@ main( int argc, char *argv[] )
                 opts.flags |= O_STRIP;
             break;
 
+            case 't':                
+                opts.flags |= O_HRCTXT;
+                opts.flags |= O_ASCII;
+                opts.flags |= O_UNBLOCK;
+                opts.flags |= O_NO_NEW;
+            break;
+
             case 'u':
                 opts.flags |= O_UNBLOCK;
+            break;
+
+            case 'r':
+                opts.flags |= O_RDW;
+            break;
+
+            case 'z':
+                opts.flags |= O_NO_NEW;
             break;
 
             default:
@@ -747,6 +1261,85 @@ main( int argc, char *argv[] )
     */
     argc -= optind;
 
+    if ( opts.flags & O_LIST )
+    {
+        hostpath( pathname, argv[ optind ], sizeof(pathname) );
+        opts.ifile = strdup( pathname );
+        if ( ( rc = (int)strlen( opts.ifile ) ) > 4 
+            && ( rc = strcasecmp( &opts.ifile[rc-4], ".fkt" ) ) == 0 )
+        {
+            opts.faketape = TRUE;
+        }
+        blkptr = (BYTE*)malloc( HETMAX_BLOCKSIZE );
+        if ( blkptr != NULL )
+        {
+            if ( opts.faketape )
+            {
+                rc = fet_open( &opts.fetb, opts.ifile, FETOPEN_READONLY );
+                if ( rc >= 0 )
+                {
+                    listfiles( );
+                    fet_close( &opts.fetb );
+                }
+            }
+            else
+            {
+                rc = het_open( &opts.hetb, opts.ifile, HETOPEN_READONLY );
+                if ( rc >= 0 )
+                {
+                    listfiles( );
+                    het_close( &opts.hetb );
+                }
+            }
+            return 0;
+        }
+        else
+            return -1;
+    }
+
+    if ( argc == 1 )
+    {
+        /* unless otherwise specified (via a deliberate
+           setting of the text options), assume they want
+           binary with sensible defaults */
+        if (!(opts.flags & O_ASCII))
+        {
+            opts.flags |= O_HRCBIN;
+            opts.flags |= O_UNBLOCK;
+        }
+        hostpath( pathname, argv[ optind ], sizeof(pathname) );
+        opts.ifile = strdup( pathname );
+        if ( ( rc = (int)strlen( opts.ifile ) ) > 4 
+            && ( rc = strcasecmp( &opts.ifile[rc-4], ".fkt" ) ) == 0 )
+        {
+            opts.faketape = TRUE;
+        }
+        blkptr = (BYTE*)malloc( HETMAX_BLOCKSIZE );
+        if ( blkptr != NULL )
+        {
+            if ( opts.faketape )
+            {
+                rc = fet_open( &opts.fetb, opts.ifile, FETOPEN_READONLY );
+                if ( rc >= 0 )
+                {
+                    extractfiles( );
+                    fet_close( &opts.fetb );
+                }
+            }
+            else
+            {
+                rc = het_open( &opts.hetb, opts.ifile, HETOPEN_READONLY );
+                if ( rc >= 0 )
+                {
+                    extractfiles( );
+                    het_close( &opts.hetb );
+                }
+            }
+            return 0;
+        }
+        else
+            return -1;
+    }
     /*
     || We must have at least the first 3 parms
     */
@@ -765,7 +1358,6 @@ main( int argc, char *argv[] )
     {
         opts.faketape = TRUE;
     }
-
 
     hostpath( pathname, argv[ optind + 1 ], sizeof(pathname) );
     opts.ofile = strdup( pathname );
@@ -887,7 +1479,7 @@ main( int argc, char *argv[] )
             /*
             || Open the output file
             */
-            outf = fopen( opts.ofile, "wb" );
+            outf = fopen( opts.ofile, (opts.flags & O_ASCII) ? "w" : "wb" );
             if( outf != NULL )
             {
                 /*

@@ -172,6 +172,20 @@ int ARCH_DEP(load_psw) (REGS *regs, BYTE *addr)
 
         SET_IC_ECMODE_MASK(regs);
 
+#if defined(FEATURE_S380)
+        /* In case we are running CMS under CP, this LPSW may
+           be wiping out the 31-bit flag. So record the address
+           ready to be restored. */
+        if ( sysblk.s380 
+             && regs->psw.amode 
+             && (regs->psw.s380_bc == 0
+                 || regs->cr[1].F.L.F == 0) )
+        {
+            regs->psw.s380_bc = regs->psw.IA_L;
+            regs->psw.s380_cr1 = regs->cr[1].F.L.F;
+        }
+#endif
+
         /* Processing for EC mode PSW */
         regs->psw.intcode  = 0;
         regs->psw.asc      = (addr[2] & 0xC0);
@@ -190,6 +204,20 @@ int ARCH_DEP(load_psw) (REGS *regs, BYTE *addr)
         regs->psw.zerobyte = addr[3];
         regs->psw.amode64  = 0;
         regs->psw.IA       = fetch_fw(addr + 4) & 0x7FFFFFFF;
+#if defined(FEATURE_S380)
+        /* Because when running CMS under CP there are LPSWs
+           being done in virtual BCMODE that don't know about
+           AMODE 31, we need to restore the app's AMODE
+           status by looking at the address */
+        if (sysblk.s380 
+            && (regs->psw.s380_bc != 0) 
+            && (regs->psw.IA_L == regs->psw.s380_bc)
+            && (regs->cr[1].F.L.F == regs->psw.s380_cr1)) {
+            regs->psw.s380_bc = 0;
+            regs->psw.s380_cr1 = 0;
+            regs->psw.amode = 1;
+        }
+#endif
         regs->psw.AMASK    = regs->psw.amode ? AMASK31 : AMASK24;
 #endif /*!defined(FEATURE_ESAME)*/
 
@@ -1915,6 +1943,9 @@ const char* arch_name[GEN_MAXARCH] =
 
 const char* get_arch_mode_string(REGS* regs)
 {
+#if defined(FEATURE_S380)
+    if ( sysblk.s380 ) return ( "S/380" );
+#endif
     if (!regs) return arch_name[sysblk.arch_mode];
     else return arch_name[regs->arch_mode];
 }

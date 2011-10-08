@@ -103,8 +103,12 @@ static char *herclogo[]={
 "@ALIGN LEFT",
 "",
 "",
+#if defined(FEATURE_S380)
+"           HHH          HHH   The S/370, S/380, ESA/390 and z/Architecture",
+#else
 "           HHH          HHH   The S/370, ESA/390 and z/Architecture",
-"           HHH          HHH                 Emulator",
+#endif
+"           HHH          HHH                 Emulation",
 "           HHH          HHH",
 "           HHH          HHH  EEEE RRR   CCC U  U L    EEEE  SSS   +",
 "           HHHHHHHHHHHHHHHH  E    R  R C    U  U L    E    S      +",

@@ -47,6 +47,7 @@
 #include "opcode.h"
 #include "inline.h"
 #include "clock.h"
+#include "sllib.h"
 
 /*-------------------------------------------------------------------*/
 /* 16   OR    - Or Register                                     [RR] */
@@ -1317,6 +1318,101 @@ U32     n;                              /* 32-bit operand values     */
                     n);
 }
 
+#if defined(OPTION_EZSOCKET)
+#if !defined(EZAHANDLER_DEFINED)
+#define EZAHANDLER_DEFINED
+/* If we have received an EZASOKET dummy SVC, then R1 will
+   point to the EZASOKET parameters, and R4 will have an
+   address of a 1000-byte area of addressable memory. This
+   is typically used to store a hostent structure. It is
+   beyond Hercules's scope to know where this memory came
+   from. However, it will be checked to make sure it is
+   writable. Not sure what happens if the buffer crosses
+   a page boundary with one page swapped out, but it probably 
+   won't be pretty. */
+
+static void ezahandler(REGS *regs)
+{
+    char keywd[50];
+    UINT32 *parms;
+    BYTE   *p;
+    UINT32  new;
+    BYTE   *gstor; /* global storage */
+
+    /* we have some "global" storage available in R4 */
+    /* I haven't figured out what that "0" means either */
+    gstor = (BYTE *)MADDR (regs->GR_L(4), 0, regs, ACCTYPE_READ, regs->psw.pkey);
+
+    /* get parameters from R1 */
+    parms = (UINT32 *)MADDR (regs->GR_L(1), 0, regs, ACCTYPE_READ, regs->psw.pkey);
+
+    /* now get parameter 1 to EZASOKET, which is the function required */
+    p = (BYTE *)&parms[0];
+    /* There's bound to be a macro that would do this, but I
+       didn't notice it in hmacros */
+    new = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+    p = MADDR(new, 0, regs, ACCTYPE_READ, regs->psw.pkey);
+
+    /* finally we're pointing to the EBCDIC string */
+    /* time to convert to ASCII. Although we could do the */
+    /* comparison in EBCDIC */
+
+    strncpy(keywd, p, sizeof(keywd) );
+    keywd[sizeof(keywd) - 1] = '\0';
+    sl_etoa(NULL, keywd, strlen(keywd));
+
+    /* so far we only support this one function */
+    if (strcmp(keywd, "GETHOSTBYNAME") == 0)
+    {
+        char www[1000];
+        struct hostent *h;
+
+        /* now we need parameter 3, which is a URL to look up */
+        p = (BYTE *)&parms[2];
+        new = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+        p = MADDR(new, 0, regs, ACCTYPE_READ, regs->psw.pkey);
+
+        /* finally we are pointing to the address */
+        /* convert to ASCII then do the proper call */
+
+        strncpy(www, p, sizeof www);
+        keywd[sizeof www - 1] = '\0';
+        sl_etoa(NULL, www, strlen(www));
+        h = gethostbyname(www);
+
+        /* we use the global storage to store an MVS-style
+           hostent */
+
+        /* we are expecting an address to be filled in. If
+           you look at socket.h in tcpip380 (ie *not* in
+           Hercules), you will be able to match up offsets.
+           Copy the data straight in */            
+        memcpy(gstor + 200 + 200 + 2 + 2, h->h_addr, 4);
+
+        /* now their 4th parameter is an address pointer. They
+           need this filled in to point to that structure which
+           we have just created. So, it's simply to a pointer
+           to the global storage "the system" provided in R4. */
+
+        p = (BYTE *)&parms[3];
+        new = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+        p = MADDR(new, 0, regs, ACCTYPE_WRITE, regs->psw.pkey);
+
+        /* Need to ensure that the address is given in
+           big-endian form. There's probably a macro for this
+           somewhere too. */
+        new = regs->GR_L(4);
+        p[0] = new >> 24;
+        p[1] = (new >> 16) & 0xff;
+        p[2] = (new >> 8) & 0xff;
+        p[3] = new & 0xff;
+
+        /* and that's a wrap */
+    }
+    return;
+}
+#endif
+#endif
 
 /*-------------------------------------------------------------------*/
 /* 0A   SVC   - Supervisor Call                                 [RR] */
@@ -1329,6 +1425,82 @@ RADR    px;                             /* prefix                    */
 int     rc;                             /* Return code               */
 
     RR_SVC(inst, regs, i);
+
+#if defined(OPTION_EZSOCKET)
+    /* if we have an SVC and R2 is set to a magic number, then
+       this is actually a request from EZASOKET. */
+    if ((i == 233) && (regs->GR_L(2) == 0xcccccccc))
+    {
+        ezahandler(regs);
+        return;
+    }
+#endif
+
+#if defined(FEATURE_S380)
+    /* If this is DOS/VS (ie VSE/380) then if we are in 31-bit
+       mode, we should handle the ATL memory request and free.
+       Due to the current technical limitation (only one request
+       can be made), we should only do the intercept if at least
+       16 MB was requested - after all, it was going to fail 
+       anyway otherwise. */
+    if (sysblk.vse_special && regs->psw.amode)
+    {
+        /* GETVIS */
+        if (i == 61)
+        {
+            /* if request is at least 16 MB */
+            if (regs->GR_L(0) >= 0x01000000)
+            {
+                regs->GR_L(1) = 0x04100000;
+                regs->GR_L(15) = 0;
+                regs->psw.cc = 0;
+                return;
+            }
+        }
+        /* FREEVIS */
+        else if (i == 62)
+        {
+            /* see if it is an ATL address */
+            if ((regs->GR_L(1) & 0x7f000000) != 0)
+            {
+                regs->GR_L(15) = 0;
+                regs->psw.cc = 0;
+                return;
+            }
+        }
+    }
+
+    /* If user has requested special MVS intercepts, then we need
+       to obtain ATL storage when they do GETMAIN, and free it
+       with FREEMAIN. For now we have a simple one-request-at-a-time
+       method for handling that. We simply return a pointer to the
+       65 MB location on the assumption that they have allocated
+       sufficient memory prior. */
+    if (sysblk.mvs_special && (i == 120) && regs->psw.amode)
+    {
+        if (regs->GR_L(1) == 0) /* getmain */
+        {
+            if (regs->GR_L(0) >= 0x01000000)
+            {
+                regs->GR_L(1) = 0x04100000;
+                regs->GR_L(15) = 0;
+                regs->psw.cc = 0;
+                return;
+            }
+        }
+        else /* freemain */
+        {
+            /* see if it is an ATL address */
+            if ((regs->GR_L(1) & 0x7f000000) != 0)
+            {
+                regs->GR_L(15) = 0;
+                regs->psw.cc = 0;
+                return;
+            }
+        }
+    }
+#endif
+
 #if defined(FEATURE_ECPSVM)
     if(ecpsvm_dosvc(regs,i)==0)
     {

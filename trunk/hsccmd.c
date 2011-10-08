@@ -5469,6 +5469,18 @@ int ostailor_cmd(int argc, char *argv[], char *cmdline)
         mask = OS_LINUX;
     else if ( CMD( postailor, OpenSolaris, 4 ) )
         mask = OS_OPENSOLARIS;
+#if defined(FEATURE_S380)
+    else if ( CMD( postailor, +VSE, 4 ) )
+    {
+        sysblk.vse_special = TRUE;
+        mask = OS_VSE;
+    }
+    else if ( CMD( postailor, +MVS, 4 ) )
+    {
+        sysblk.mvs_special = TRUE;
+        mask = OS_OS390;
+    }
+#endif
     else if ( CMD( postailor, DEFAULT,7 ) || CMD( postailor, NONE, 4 ) )
     {
         mask = OS_NONE;

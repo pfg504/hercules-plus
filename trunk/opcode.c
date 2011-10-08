@@ -2095,8 +2095,13 @@ static zz_func opcode_table[0x100][GEN_MAXARCH] = {
  /*08*/   GENx370x___x___ (set_storage_key,RR,"SSK"),
  /*09*/   GENx370x___x___ (insert_storage_key,RR,"ISK"),
  /*0A*/   GENx370x390x900 (supervisor_call,RR_SVC,"SVC"),
+#if defined( FEATURE_S380)
+ /*0B*/   GENx370x390x900 (branch_and_set_mode,RR,"BSM"),
+ /*0C*/   GENx370x390x900 (branch_and_save_and_set_mode,RR,"BASSM"),
+#else
  /*0B*/   GENx___x390x900 (branch_and_set_mode,RR,"BSM"),
  /*0C*/   GENx___x390x900 (branch_and_save_and_set_mode,RR,"BASSM"),
+#endif
  /*0D*/   GENx370x390x900 (branch_and_save_register,RR,"BASR"),
  /*0E*/   GENx370x390x900 (move_long,RR,"MVCL"),
  /*0F*/   GENx370x390x900 (compare_logical_character_long,RR,"CLCL"),

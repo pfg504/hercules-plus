@@ -1737,7 +1737,7 @@ char                    *logoout;
         }
 
         /* Close the connection and terminate the thread */
-        SLEEP (5);
+        SLEEP (8);
         close_socket (csock);
         if (clientip) free(clientip);
         return NULL;
