@@ -896,6 +896,9 @@ int ecpsvm_do_disp2(REGS *regs,VADR dl,VADR el)
 
         /* Build REAL PSW */
         INITPSEUDOREGS(rregs);
+#if defined(FEATURE_S380)
+        rregs.psw.AMASK = AMASK24;
+#endif
         /* Copy IAR */
         UPD_PSW_IA(&rregs, wregs.psw.IA);
         /* Copy CC, PSW KEYs and PGM Mask */

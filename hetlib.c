@@ -767,7 +767,7 @@ het_read( HETB *hetb, void *sbuf )
     unsigned long slen;
     int flags1, flags2;
     unsigned long tlen;
-    char tbuf[ HETMAX_BLOCKSIZE ];
+    char tbuf[( ( ( ( HETMAX_BLOCKSIZE * 1001 ) + 999 ) / 1000 ) + 12 )];
 
     /*
     || Initialize
@@ -861,7 +861,7 @@ het_read( HETB *hetb, void *sbuf )
         /*
         || Can't be bigger than HETMAX_BLOCKSIZE
         */
-        if( tlen > HETMAX_BLOCKSIZE )
+        if( tlen > sizeof(tbuf) )
         {
             return( HETE_OVERFLOW );
         }

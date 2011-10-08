@@ -1,4 +1,5 @@
 /* ARCHLVL.C    (c) Copyright Jan Jaeger,   2010-2011                */
+/*              (c) Copyright Silence Dogood, 2011                   */
 /*                                                                   */
 /*   Released under "The Q Public License Version 1"                 */
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
@@ -53,6 +54,8 @@ typedef struct _FACTAB
 #define Z390      (ZARCH|ESA390)   /* Exists in ESAME only
                                       but is also indicated
                                       in ESA390           */
+#define S380      (0x80|S370)      /* Hybrid S/370 mode 
+                                      31-bit with S/370 IO*/
     const BYTE   fixed;            /* Mandatory for       */
 #define NONE       0x00
     const BYTE   supported;        /* Supported in        */
@@ -82,6 +85,10 @@ static ARCHTAB archtab[] =
 ARCHLVL(_ARCH_370_NAME,  ARCH_370, ALS0)
 ARCHLVL("S370",          ARCH_370, ALS0)
 ARCHLVL("ALS0",          ARCH_370, ALS0)
+#endif
+
+#if defined(_380)
+ARCHLVL("S380",          ARCH_370, ALS0)
 #endif
 
 #if defined(_390)
@@ -741,7 +748,16 @@ int archlvl_cmd(int argc, char *argv[], char *cmdline)
             WRMSG( HHC02299, "E", argv[0] );
             return -1;
         }
-
+#if defined(FEATURE_S380)
+        if( argc < 3 && CMD(argv[2],S/380,4) )
+        {
+            sysblk.s380 = TRUE;
+        }
+        else
+        {
+            sysblk.s380 = FALSE;
+        }
+#endif
         for(tb = factab; tb->name; tb++)
         {
             int fbyte, fbit;

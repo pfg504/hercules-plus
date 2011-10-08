@@ -474,7 +474,7 @@ int     acc_mode = 0;                   /* access mode to use        */
 } /* end function release_cms_lock */
 
 
-#if !defined(FEATURE_TRACING)
+#if !defined(FEATURE_TRACING) || defined(FEATURE_S380)
 /*-------------------------------------------------------------------*/
 /* E508       - Trace SVC Interruption                         [SSE] */
 /*-------------------------------------------------------------------*/

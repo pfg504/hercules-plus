@@ -541,10 +541,6 @@ DEF_INST(branch_and_save_and_set_mode)
 {
 int     r1, r2;                         /* Values of R fields        */
 VADR    newia;                          /* New instruction address   */
-int     xmode;                          /* 64 or 31 mode of target   */
-#if defined(FEATURE_ESAME)
-BYTE    *ipsav;                         /* save for ip               */
-#endif /*defined(FEATURE_ESAME)*/
 
     RR_B(inst, regs, r1, r2);
 
@@ -556,6 +552,7 @@ BYTE    *ipsav;                         /* save for ip               */
     /* Add a mode trace entry when switching in/out of 64 bit mode */
     if((regs->CR(12) & CR12_MTRACE) && (r2 != 0) && (regs->psw.amode64 != (newia & 1)))
     {
+        BYTE    *ipsav;                 /* save of ip */
         /* save ip and update it for mode switch trace */
         ipsav = regs->ip;
         INST_UPDATE_PSW(regs, 2, 0);
@@ -569,6 +566,8 @@ BYTE    *ipsav;                         /* save for ip               */
     /* Add a branch trace entry to the trace table */
     if ((regs->CR(12) & CR12_BRTRACE) && (r2 != 0))
     {
+        int     xmode;          /* 64 or 31 bit mode of target */
+
         regs->psw.ilc = 0; // indicates regs->ip not updated
      #if defined(FEATURE_ESAME)
         if (newia & 0x01)
@@ -593,7 +592,14 @@ BYTE    *ipsav;                         /* save for ip               */
         regs->GR_L(r1) = PSW_IA24(regs, 2);
 
     /* Set mode and branch to address specified by R2 operand */
-    if ( r2 != 0 )
+    if ( r2 != 0 
+#if defined(FEATURE_S380)
+    /* if a S/370 machine, don't allow them to change addressing
+       modes, because that has implications for the memory access
+       routines */
+         && (sysblk.s380 || (regs->arch_mode != ARCH_370))
+#endif
+       )
     {
         SET_ADDRESSING_MODE(regs, newia);
         SUCCESSFUL_BRANCH(regs, newia, 2);
@@ -650,7 +656,14 @@ VADR    newia;                          /* New instruction address   */
     }
 
     /* Set mode and branch to address specified by R2 operand */
-    if ( r2 != 0 )
+    if ( r2 != 0 
+#if defined(FEATURE_S380)
+    /* if a S/370 machine, don't allow them to change addressing
+       modes, because that has implications for the memory access
+       routines */
+         && (sysblk.s380 || (regs->arch_mode != ARCH_370))
+#endif
+       )
     {
         SET_ADDRESSING_MODE(regs, newia);
         SUCCESSFUL_BRANCH(regs, newia, 2);

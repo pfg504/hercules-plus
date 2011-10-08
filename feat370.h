@@ -35,6 +35,11 @@
 #define FEATURE_ECPSVM
 #define FEATURE_VM_BLOCKIO
 
+#if defined(FEATURE_S380)
+#define FEATURE_BIMODAL_ADDRESSING
+#define FEATURE_FLOATING_POINT_EXTENSION_FACILITY
+#endif
+
 /* The following section defines the ESA/390 and
    z/Architecture defined features (and their related
    instructions) that are compatible and backported to
@@ -42,7 +47,7 @@
    relevant instructions are enabled by the s37x loadable
    module */
 
-#if defined(OPTION_370_EXTENSION)
+#if defined(OPTION_370_EXTENSION) || defined(FEATURE_S380)
 
 /* ESA/390 backported features */
 #define FEATURE_BASIC_FP_EXTENSIONS

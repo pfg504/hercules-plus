@@ -131,8 +131,11 @@ s370_ ## _name
 
 #define AMASK   AMASK_L
 
-#define ADDRESS_MAXWRAP(_register_context) \
-    (AMASK24)
+#if defined(FEATURE_S380)
+  #define ADDRESS_MAXWRAP(_register_context)  ((_register_context)->psw.AMASK)
+#else
+  #define ADDRESS_MAXWRAP(_register_context)  (AMASK24)
+#endif
 
 #define ADDRESS_MAXWRAP_E(_register_context) \
     (AMASK31)
@@ -213,6 +216,12 @@ s370_ ## _name
 #define TLBID_BYTEMASK  0x001FFFFF
 #define ASD_PRIVATE   SEGTAB_370_CMN
 #define CHANNEL_MASKS(_regs) ((_regs)->CR(2))
+
+  #if defined(FEATURE_S380)
+    #define CR12_BRTRACE    S_CR12_BRTRACE
+    #define CR12_TRACEEA    S_CR12_TRACEEA
+    #define CHM_GPR2_RESV   S_CHM_GPR2_RESV
+  #endif
 
 #elif __GEN_ARCH == 390
 
@@ -782,7 +791,7 @@ do { \
  /*
   * Accelerated lookup
   */
-#define MADDRL(_addr, _len, _arn, _regs, _acctype, _akey) \
+#define MADDRL_STD(_addr, _len, _arn, _regs, _acctype, _akey) \
  ( \
        likely((_regs)->AEA_AR((_arn))) \
    &&  likely( \
@@ -803,9 +812,57 @@ do { \
      ) \
  )
 
+
+#if defined(FEATURE_S380)
+  #if VSE_UNPATCHED
+    #define VSE_SPECIAL(_addr) \
+      (sysblk.vse_special && (((_addr) & 0x7fffffff) < sysblk.vse_real))
+  #else
+    #define VSE_SPECIAL(_addr) 0
+  #endif
+
+// S380
+#define MADDRL_S380(_addr, _len, _arn, _regs, _acctype, _akey) \
+(   ((_regs)->psw.amode && sysblk.s380 \
+      && (((_addr) & 0x7f000000) != 0)) \
+    ? \
+ ( ((_regs)->CR(13) == 0) ? \
+ ( \
+    ( \
+      (((_addr) & 0x7fffffff) < sysblk.mainsize || VSE_SPECIAL(_addr)) ? \
+           ((_regs)->dat.storkey = &STORAGE_KEY((_addr) & 0x7fffffff, \
+                                                (_regs)), \
+            (_regs)->mainstor + ((_addr) & 0x7fffffff)) : \
+           ( \
+            (_regs)->program_interrupt ((_regs), \
+                                        PGM_PROTECTION_EXCEPTION), \
+            (BYTE *)0) \
+    ) \
+ ) : /* if CR13 is set, split DAT is being used, so don't use the TLB */ \
+     ARCH_DEP(logical_to_main_l) ((_addr), (_arn), (_regs), \
+               ((_acctype) | ACC_NOTLB), (_akey), (_len) ) \
+ ) \
+    : \
+    MADDRL_STD(_addr, _len, _arn, _regs, _acctype, _akey) \
+) 
+
 /* Old style accelerated lookup (without length) */
-#define MADDR(_addr, _arn, _regs, _acctype, _akey) \
-    MADDRL( (_addr), 1, (_arn), (_regs), (_acctype), (_akey))
+#define MADDR_S380(_addr, _arn, _regs, _acctype, _akey) \
+    MADDRL_S380( (_addr), 1, (_arn), (_regs), (_acctype), (_akey))
+#endif
+
+/* Old style accelerated lookup (without length) */
+#define MADDR_STD(_addr, _arn, _regs, _acctype, _akey) \
+    MADDRL_STD( (_addr), 1, (_arn), (_regs), (_acctype), (_akey))
+
+#if defined(FEATURE_S380) && !defined(FEATURE_S390_DAT) && !defined(FEATURE_ESAME)
+    #define MADDR  MADDR_S380
+    #define MADDRL MADDRL_S380
+#else
+    #define MADDR  MADDR_STD
+    #define MADDRL MADDRL_STD
+#endif
+
 
 /*
  * PER Successful Branch

@@ -91,6 +91,12 @@ typedef struct  _PSW {
         DW       ia;                    /* Instruction addrress      */
                                         /*                 (33 - 63) */
                                         /* or (esame)      (64 -127) */
+#if defined(FEATURE_S380)
+        U32      s380_bc;               /* last address that was     */
+                                        /* known to be AMODE 31      */
+        U32      s380_cr1;              /* control register 1 when   */
+                                        /* last in AMODE 31          */
+#endif
         DW       amask;                 /* Address wraparound mask   */
         U16      intcode;               /* Interruption code         */
         BYTE     ilc;                   /* Instruction length count  */
@@ -224,7 +230,12 @@ typedef struct _DAT {
 #define CR0_PAGE_SZ_2K  0x00400000      /* ...2K pages               */
 #define CR0_PAGE_SZ_4K  0x00800000      /* ...4K pages               */
 #define CR0_ED          0x00800000      /* Enhanced DAT enable   EDAT*/
+#if defined(FEATURE_S380)
+#define CR0_SEG_SIZE    0x00180000      /* Segment size for S/370... */
+#define CR0_XA          0x00200000      /* XA DATA Indicator         */
+#else
 #define CR0_SEG_SIZE    0x00380000      /* Segment size for S/370... */
+#endif
 #define CR0_SEG_SZ_64K  0x00000000      /* ...64K segments           */
 #define CR0_SEG_SZ_1M   0x00100000      /* ...1M segments            */
 #define CR0_ASN_LX_REUS 0x00080000      /* ASN-and-LX-reuse control  */

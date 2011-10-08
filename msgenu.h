@@ -1625,7 +1625,7 @@ do { \
        "            -a     output disk will include alternate cylinders\n" \
        "%s%s%s" \
        "\n" \
-       "          ctlfile  name of input control file\n" \
+       "          ctlfile  name of input control file or '-' from stdin \n" \
        "          outfile  name of DASD image file to be created\n" \
        "\n" \
        "          n        msglevel 'n' is a digit 0 - 5 re: output verbosity"
@@ -1709,7 +1709,7 @@ do { \
 #define HHC02571 "Internal error: TTR count exceeds MAXTTR of %d"
 #define HHC02572 "File '%s': XMIT utility file is not in IEBCOPY format; file is not loaded"
 #define HHC02573 "File '%s': invalid dsorg[0x%02X] for SEQ processing; dsorg must be PS or DA"
-#define HHC02574 "File '%s': invalid recfm[0x%02X] for SEQ processing; recfm must be F or FB"
+#define HHC02574 "File '%s': invalid recfm[0x%02X] for SEQ processing; recfm must be F, FB or U"
 #define HHC02575 "File '%s': invalid lrecl[%d] or blksize[%d] for SEQ processing"
 #define HHC02576 "File '%s': invalid keyln[%d] for SEQ processing; keyln must be 0 for blocked"
 #define HHC02577 "File '%s': line[%04d] error: line length is invalid"
@@ -1793,10 +1793,16 @@ do { \
        "\n" \
        "            Options:\n" \
        "                -a  convert to ASCII (implies -u)\n" \
+       "                -b  sensible defaults for binary files\n" \
        "                -h  display usage summary\n" \
+       "                -l  list datasets on SL tape (only needs hetfile)\n" \
        "                -n  file is an NL (or BLP like) tape\n" \
        "                -u  unblock (removes BDWs and RDWs if RECFM=V)\n" \
-       "                -s  strip trailing blanks (requires -a)"
+       "                -r  add an artificial RDW to anything\n" \
+       "                -s  strip trailing blanks (requires -a)\n" \
+       "                -t  sensible defaults for text files\n" \
+       "                -z  don't add newlines when converting RECFM=U to ASCII\n" \
+       " Note: If just hetfile given, extraction will be done\n"
 #define HHC02729 "Usage: %s [options] filename [volser] [owner]\n" \
        "\n" \
        "            Options:\n" \

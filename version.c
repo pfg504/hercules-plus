@@ -48,6 +48,9 @@ static const char *build_info[] = {
 #if defined(_370)
     " " _ARCH_370_NAME
 #endif
+#if defined(FEATURE_S380)
+    " S/380"
+#endif
 #if defined(_390)
     " " _ARCH_390_NAME
 #endif

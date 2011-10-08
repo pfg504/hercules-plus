@@ -16,6 +16,10 @@
 #define OPTION_370_MODE                 /* Generate S/370 support    */
 #endif
 
+#if !defined(OPTION_380_MODE) && !defined(NO_380_MODE)
+#define NO_380_MODE                     /* Do not gen S/380 support  */
+#endif
+
 #if !defined(OPTION_370_EXTENSION) && !defined(NO_370_EXTENSION)
 #define OPTION_370_EXTENSION            /* S/370 backport of S/390 & z/arch */
 #endif
@@ -200,11 +204,18 @@
 #if defined(OPTION_370_MODE) && defined(NO_370_MODE)
   #undef    OPTION_370_MODE
 #endif
+#if defined(OPTION_380_MODE) && defined(NO_380_MODE)
+  #undef    OPTION_380_MODE
+#endif
 #if defined(OPTION_390_MODE) && defined(NO_390_MODE)
   #undef    OPTION_390_MODE
 #endif
 #if defined(OPTION_900_MODE) && defined(NO_900_MODE)
   #undef    OPTION_900_MODE
+#endif
+
+#if defined(OPTION_380_MODE)
+  #define FEATURE_S380
 #endif
 
 #if defined(OPTION_FEATURE_HYPERVISOR) && !defined(NO_FEATURE_HYPERVISOR)

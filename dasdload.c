@@ -120,7 +120,7 @@ BYTE iplccw2[8] =   {0x08, 0x00, 0x3A, 0x98, 0x00, 0x00, 0x00, 0x00};
 BYTE ipl2data[] =   {0x07, 0x00, 0x3A, 0xB8, 0x40, 0x00, 0x00, 0x06,
                      0x31, 0x00, 0x3A, 0xBE, 0x40, 0x00, 0x00, 0x05,
                      0x08, 0x00, 0x3A, 0xA0, 0x00, 0x00, 0x00, 0x00,
-                     0x06, 0x00, 0x00, 0x00, 0x20, 0x00, 0x19, 0x60,
+                     0x06, 0x00, 0x00, 0x00, 0x20, 0x00, 0x7f, 0xff,
                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, /*BBCCHH*/
                      0x00, 0x00, 0x00, 0x00, 0x04}; /*CCHHR*/
 BYTE noiplpsw[8] =  {0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F};
@@ -696,15 +696,35 @@ int             keylen;                 /* Key length                */
 int             datalen;                /* Data length               */
 int             maxtrks = 1;            /* Maximum track count       */
 DATABLK        *datablk;                /* -> data block             */
-BYTE            buf[32768];             /* Buffer for data block     */
+static BYTE     buf[32768];             /* Buffer for data block     */
+int             iSepLdFn;               /* Is load deck in sep file? */
+
+    if ( str_caseless_eq( iplfnm, "separate") )
+    {
+        iSepLdFn = TRUE;
+    }
+    else
+    {
+        iSepLdFn = FALSE;
+    }
 
     /* For 2311 the IPL text will not fit on track 0 record 4,
        so adjust the IPL2 so that it loads from track 1 record 1 */
-    if (devtype == 0x2311)
+    /* Same is true for "separate" loaders */
+    if (devtype == 0x2311 || iSepLdFn )
     {
         memcpy (ipl2data + 32, "\x00\x00\x00\x00\x00\x01", 6);
         memcpy (ipl2data + 38, "\x00\x00\x00\x01\x01", 5);
         maxtrks = 2;
+    }
+
+    if (iSepLdFn)
+    {
+        /* Large binary files need more room. This will put the
+           CCWs above the 1 MB mark, which is hopefully
+           enough for now. */
+        iplccw1[1] = iplccw2[1] = ipl2data[1] = ipl2data[9] 
+             = ipl2data[17] = 0x10;
     }
 
     /* Read track 0 */
@@ -780,7 +800,7 @@ BYTE            buf[32768];             /* Buffer for data block     */
     if (rc < 0) return -1;
 
     /* Build the IPL text from the object file */
-    if (iplfnm != NULL)
+    if ( iplfnm != NULL && !iSepLdFn )
     {
         memset (buf, 0, sizeof(buf));
         datalen = read_ipl_text (iplfnm, buf+12, sizeof(buf)-12);
@@ -993,7 +1013,7 @@ time_t          timeval;                /* Current time value        */
     f1dscb->ds1volsq[0] = 0;
     f1dscb->ds1volsq[1] = 1;
     f1dscb->ds1credt[0] = tmptr->tm_year;
-    f1dscb->ds1credt[1] = (tmptr->tm_yday >> 8) & 0xFF;
+    f1dscb->ds1credt[1] = (++tmptr->tm_yday >> 8) & 0xFF;
     f1dscb->ds1credt[2] = tmptr->tm_yday & 0xFF;
     f1dscb->ds1expdt[0] = 0;
     f1dscb->ds1expdt[1] = 0;
@@ -3385,11 +3405,14 @@ char            pathname[MAX_PATH];     /* sfname in host path format*/
         XMERRF ( MSG( HHC02573, "E", sfname, dsorg ) );
         return -1;
     }
-    if (recfm != RECFM_FORMAT_F && recfm != (RECFM_FORMAT_F|RECFM_BLOCKED))
+    if ( recfm != RECFM_FORMAT_F && 
+         recfm != (RECFM_FORMAT_F|RECFM_BLOCKED) &&
+         recfm != RECFM_FORMAT_U )
     {
         XMERRF ( MSG( HHC02574, "E", sfname, recfm ) );
         return -1;
     }
+    if ((lrecl == 0) && (recfm == RECFM_FORMAT_U)) lrecl = 1;
     if (blksz == 0) blksz = lrecl;
     if (lrecl == 0) lrecl = blksz;
     if (lrecl == 0 || blksz % lrecl != 0
@@ -4319,6 +4342,10 @@ char           *strtok_str = NULL;      /* last token position       */
     /* Process optional arguments */
     for ( ; argc > 1 && argv[1][0] == '-'; argv++, argc--)
     {
+        /* a single '-' can be used for the control file */
+        if ( argv[1][1] == '\0' ) 
+            break;
+
         if (strcmp("0", &argv[1][1]) == 0)
             comp = CCKD_COMPRESS_NONE;
 #ifdef CCKD_COMPRESS_ZLIB
@@ -4359,8 +4386,15 @@ char           *strtok_str = NULL;      /* last token position       */
     }
 
     /* Open the control file */
-    hostpath(pathname, cfname, sizeof(pathname));
-    cfp = fopen (pathname, "r");
+    if (strcmp(cfname, "-") == 0)
+    {
+        cfp = stdin;
+    }
+    else
+    {
+        hostpath(pathname, cfname, sizeof(pathname));
+        cfp = fopen (pathname, "r");
+    }
     if (cfp == NULL)
     {
         XMERRF ( MSG( HHC02468, "E", cfname, "fopen()", strerror( errno ) ) );
@@ -4469,8 +4503,11 @@ char           *strtok_str = NULL;      /* last token position       */
                         outcyl, outhead);
 
     /* Close files and release buffers */
-    fclose (cfp);
-    close_ckd_image (cif);
+    if ( str_ne(cfname, "-") )
+    {
+        fclose( cfp );
+    }
+    close_ckd_image( cif );
 
     return rc;
 
