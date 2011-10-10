@@ -88,7 +88,8 @@ ARCHLVL("ALS0",          ARCH_370, ALS0)
 #endif
 
 #if defined(_380)
-ARCHLVL("S380",          ARCH_370, ALS0)
+ARCHLVL("S380",          ARCH_380, ALS0)
+ARCHLVL("S/380",         ARCH_380, ALS0)
 #endif
 
 #if defined(_390)
@@ -374,6 +375,14 @@ ARCHTAB *tb;
 
     if((tb = get_archtab(name)))
     {
+#if defined(FEATURE_S380)
+        if ( tb->archmode == ARCH_380 )
+        {
+            sysblk.s380 = TRUE;
+            sysblk.arch_mode = ARCH_370;
+        }
+        else
+#endif
         sysblk.arch_mode = tb->archmode;
         set_alslevel(tb->alslevel);
         if (sysblk.cpus != 0)
