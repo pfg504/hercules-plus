@@ -855,7 +855,7 @@ do { \
 #define MADDR_STD(_addr, _arn, _regs, _acctype, _akey) \
     MADDRL_STD( (_addr), 1, (_arn), (_regs), (_acctype), (_akey))
 
-#if defined(FEATURE_S380) && !defined(FEATURE_S390_DAT) && !defined(FEATURE_ESAME)
+#if defined(FEATURE_S380) && ( !defined(FEATURE_S390_DAT) || !defined(FEATURE_ESAME) )
     #define MADDR  MADDR_S380
     #define MADDRL MADDRL_S380
 #else

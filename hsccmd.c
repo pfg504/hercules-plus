@@ -2886,6 +2886,11 @@ u_int   locktype = 0;
             break;
 #if SIZEOF_SIZE_T >= 8
         case 'T':
+            if ( sizeof(xpndsize) < 8 )
+            {
+                WRMSG( HHC01451, "E", argv[1], argv[0]);
+                return -1;
+            }
             xpndsize <<= SHIFT_TERABYTE;
             break;
 #endif
@@ -2908,7 +2913,8 @@ u_int   locktype = 0;
 #if SIZEOF_SIZE_T >= 8
     else
     {
-        if (xpndsize > (RADR)((RADR)16 << SHIFT_TERABYTE) || sysblk.arch_mode == ARCH_370 )
+        U64     iuMaxXpnd = 16ULL << SHIFT_TERABYTE;
+        if (xpndsize > (RADR)((RADR)iuMaxXpnd) || sysblk.arch_mode == ARCH_370 )
         {
             WRMSG( HHC01451, "E", argv[1], argv[0]);
             return -1;

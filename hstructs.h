@@ -99,7 +99,7 @@ struct REGS {                           /* Processor registers       */
 #define CR_ASD_REAL     -1
 #define CR_ALB_OFFSET   16
 
-#ifndef NOCHECK_AEA_ARRAY_BOUNDS
+#if !defined(NOCHECK_AEA_ARRAY_BOUNDS) && !defined(FEATURE_S380)
         DW      cr_struct[1+16+16];
 #define XR(_crn) cr_struct[1+(_crn)]
 #else

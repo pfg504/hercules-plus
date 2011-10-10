@@ -12,6 +12,8 @@
 /*   All existing features MUST be #undef-ed here.                   */
 /*-------------------------------------------------------------------*/
 
+#define OPTION_380_MODE
+
 #if !defined(OPTION_370_MODE) && !defined(NO_370_MODE)
 #define OPTION_370_MODE                 /* Generate S/370 support    */
 #endif
@@ -164,6 +166,14 @@
 #define OPTION_FEATURE_HYPERVISOR       /* Tell Guest it is Hypervised */
 #endif
 
+#if defined(OPTION_380_MODE)
+WARNING( "MODES S390 and S900 undefined with S380 selected" )
+  #define FEATURE_S380
+  #define NOCHECK_AEA_ARRAY_BOUNDS
+  #undef OPTION_390_MODE
+  #undef OPTION_900_MODE
+#endif
+
 #if defined(OPTION_DYNAMIC_LOAD)
   #define OPTION_DYNAMIC_RESOLVE_REXX   /* Dynamically load REXX     */
 #endif /*defined(OPTION_DYNAMIC_LOAD)*/
@@ -212,10 +222,6 @@
 #endif
 #if defined(OPTION_900_MODE) && defined(NO_900_MODE)
   #undef    OPTION_900_MODE
-#endif
-
-#if defined(OPTION_380_MODE)
-  #define FEATURE_S380
 #endif
 
 #if defined(OPTION_FEATURE_HYPERVISOR) && !defined(NO_FEATURE_HYPERVISOR)

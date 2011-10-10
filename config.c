@@ -255,11 +255,11 @@ int was_locked = sysblk.mainstor_locked;
 static U32 config_allocxsize = 0;       // numbers of pages
 int configure_xstorage(RADR xstor)      // amount of memory
 {
+int rc = 0;
 #ifdef _FEATURE_EXPANDED_STORAGE
 BYTE *xpndstor  = NULL;
 RADR  xpndsize  = xstor;
 int cpu;
-int rc = 0;
 int was_locked = sysblk.xpndstor_locked;
 
     /* Obtain (re)configuration lock */

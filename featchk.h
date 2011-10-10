@@ -369,10 +369,20 @@
 
 /* OPTION_380_MODE is the same as OPTION_370_MODE with additional features */
 #if defined(OPTION_380_MODE)
+  #define OPTION_370_MODE
   #define _370
   #define _380
   #define _ARCHMODE1 370
   #define ARCH_370 0
+
+  #if defined(OPTION_390_MODE)
+    WARNING (_(OPTION_390_MODE disabled))
+    #undef OPTION_390_MODE
+  #endif
+  #if defined(OPTION_900_MODE)
+    WARNING (_(OPTION_900_MODE disabled))
+    #undef OPTION_900_MODE
+  #endif
 #endif
 
 #if defined(OPTION_370_MODE)
@@ -387,7 +397,10 @@
   #endif
 #endif
 
-#if defined(OPTION_390_MODE)
+#if defined(OPTION_390_MODE) || defined(OPTION_900_MODE)
+ #if !defined(OPTION_390_MODE) 
+  #define OPTION_390_MODE
+ #endif
  #define _390
  #if !defined(_ARCHMODE1)
   #define _ARCHMODE1 390
