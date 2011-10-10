@@ -2914,7 +2914,7 @@ u_int   locktype = 0;
     else
     {
         U64     iuMaxXpnd = 16ULL << SHIFT_TERABYTE;
-        if (xpndsize > (RADR)((RADR)iuMaxXpnd) || sysblk.arch_mode == ARCH_370 )
+        if (xpndsize > iuMaxXpnd || sysblk.arch_mode == ARCH_370 )
         {
             WRMSG( HHC01451, "E", argv[1], argv[0]);
             return -1;
@@ -5439,7 +5439,15 @@ int ostailor_cmd(int argc, char *argv[], char *cmdline)
             MSGBUF( msgbuf, "Custom(0x"I64_FMTX")", sysblk.pgminttr );
         else
             MSGBUF( msgbuf, "%s", sostailor );
+#if defined(FEATURE_S380)
+        {
+            char    mbuf[128];
+            MSGBUF( mbuf, "%s%s%s", msgbuf, sysblk.vse_special ? " VSE+" : "", sysblk.mvs_special ? " MVS+" : "" );
+            WRMSG(HHC02203, "I", argv[0], mbuf);
+        }
+#else
         WRMSG(HHC02203, "I", argv[0], msgbuf);
+#endif
         return 0;
     }
 
@@ -5476,14 +5484,20 @@ int ostailor_cmd(int argc, char *argv[], char *cmdline)
     else if ( CMD( postailor, OpenSolaris, 4 ) )
         mask = OS_OPENSOLARIS;
 #if defined(FEATURE_S380)
-    else if ( CMD( postailor, +VSE, 4 ) )
+    else if ( CMD( postailor, VSE+, 4 ) )
     {
-        sysblk.vse_special = TRUE;
+        if ( b_on || ( !b_on && !b_off ) )
+            sysblk.vse_special = TRUE;
+        if ( b_off )
+            sysblk.vse_special = FALSE;
         mask = OS_VSE;
     }
-    else if ( CMD( postailor, +MVS, 4 ) )
+    else if ( CMD( postailor, MVS+, 4 ) )
     {
-        sysblk.mvs_special = TRUE;
+        if ( b_on || ( !b_on && !b_off ) )
+            sysblk.mvs_special = TRUE;
+        if ( b_off )
+            sysblk.mvs_special = FALSE;
         mask = OS_OS390;
     }
 #endif

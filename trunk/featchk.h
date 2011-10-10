@@ -374,6 +374,7 @@
   #define _380
   #define _ARCHMODE1 370
   #define ARCH_370 0
+  #define ARCH_380 0
 
   #if defined(OPTION_390_MODE)
     WARNING (_(OPTION_390_MODE disabled))

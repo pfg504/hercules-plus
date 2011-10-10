@@ -542,6 +542,8 @@ static PANMSG* newest_msg()
 
 static int lines_scrolled()
 {
+    if ( topmsg == NULL || curmsg == NULL ) 
+        return -1;
     /* return # of lines 'up' from current line that we're scrolled. */
     if (topmsg->msgnum <= curmsg->msgnum)
         return curmsg->msgnum - topmsg->msgnum;

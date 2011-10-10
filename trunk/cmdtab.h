@@ -39,6 +39,17 @@
 #define alrf_cmd_desc           "Command deprecated: Use \"archlvl enable|disable|query asn_lx_reuse\" instead"
 #define ar_cmd_desc             "Display access registers"
 #define archlvl_cmd_desc        "Set Architecture Level"
+#if defined(FEATURE_S380)
+#define archlvl_cmd_help        \
+                                \
+  "Format: archlvl s/370|als0 | s/380 | esa/390|als1 | esame|als2 | z/arch|als3\n"\
+  "                enable|disable <facility> [s/370|esa/390|z/arch]\n"          \
+  "                query [<facility> | all]\n"                                  \
+  "command without any argument simply displays the current architecture\n"     \
+  "mode. Entering the command with an argument sets the architecture mode\n"    \
+  "to the specified value.\n"                                                   \
+  "Note: The archlvl values are dependant upon the specific HERCULES build.\n"
+#else
 #define archlvl_cmd_help        \
                                 \
   "Format: archlvl s/370|als0 | esa/390|als1 | esame|als2 | z/arch|als3\n"      \
@@ -46,7 +57,9 @@
   "                query [<facility> | all]\n"                                  \
   "command without any argument simply displays the current architecture\n"     \
   "mode. Entering the command with an argument sets the architecture mode\n"    \
-  "to the specified value.\n"
+  "to the specified value.\n"                                                   \
+  "Note: The archlvl values are dependant upon the specific HERCULES build.\n"
+#endif
 
 #define archmode_cmd_desc       "Alias for archlvl"
 #define asnlx_cmd_desc          "Command deprecated: Use \"archlvl enable|disable|query asn_lx_reuse\" instead"
@@ -803,6 +816,25 @@
 #define numcpu_cmd_desc         "Set numcpu parameter"
 #define numvec_cmd_desc         "Set numvec parameter"
 #define ostailor_cmd_desc       "Tailor trace information for specific OS"
+#if defined(FEATURE_S380)
+#define ostailor_cmd_help       \
+                                \
+  "Format: \"ostailor [quiet|os/390|z/os|vm|vse|linux|opensolaris|null]\".\n"    \
+  "Specifies the intended operating system. The effect is to reduce\n"           \
+  "control panel message traffic by selectively suppressing program\n"           \
+  "check trace messages which are considered normal in the specified\n"          \
+  "environment. The option 'quiet' suppresses all exception messages,\n"         \
+  "whereas 'null' suppresses none of them. The other options suppress\n"         \
+  "some messages and not others depending on the specified o/s. Prefix\n"        \
+  "values with '+' to combine them with existing values or '-' to exclude\n"     \
+  "them. SEE ALSO the 'pgmtrace' command which allows you to further fine\n"     \
+  "tune the tracing of program interrupt exceptions.\n"\
+  "\n"\
+  "S/380 - enable VSE or MVS special features with additional operands of\n"     \
+  "        vse+ | mvs+\n"                                                        \
+  "        ostailor VSE+ - will enable special VSE features. -VSE+ will disable\n"\
+  "                        the VSE special features.\n"
+#else
 #define ostailor_cmd_help       \
                                 \
   "Format: \"ostailor [quiet|os/390|z/os|vm|vse|linux|opensolaris|null]\".\n"    \
@@ -815,6 +847,7 @@
   "values with '+' to combine them with existing values or '-' to exclude\n"     \
   "them. SEE ALSO the 'pgmtrace' command which allows you to further fine\n"     \
   "tune the tracing of program interrupt exceptions.\n"
+#endif
 
 #define panrate_cmd_desc        "Display or set rate at which console refreshes"
 #define panrate_cmd_help        \
