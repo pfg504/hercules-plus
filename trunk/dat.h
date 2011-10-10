@@ -826,7 +826,6 @@ RADR    sto = 0;                        /* Segment table origin      */
 RADR    pto = 0;                        /* Page table origin         */
 int     cc;                             /* Condition code            */
 int     tlbix = TLBIX(vaddr);           /* TLB entry index           */
-
 #if !defined(FEATURE_S390_DAT) && !defined(FEATURE_ESAME)
 /*-----------------------------------*/
 /* S/370 Dynamic Address Translation */
@@ -834,7 +833,7 @@ int     tlbix = TLBIX(vaddr);           /* TLB entry index           */
 U32     stl;                            /* Segment table length      */
 RADR    ste;                            /* Segment table entry       */
 #if defined(FEATURE_S380)
-int     seglm;
+int     seg1m;
 int     use_xa  = 0;
 RADR    pte;
 #else
@@ -910,7 +909,7 @@ U32     ptl;                            /* Page table length         */
 
         /* If the segment table origin register indicates a private
            address space then STE must not indicate a common segment */
-        if (regs->dat.private && (ste & (SEGTAB_COMMON)))
+        if (regs->dat.pvtaddr && (ste & (SEGTAB_COMMON)))
             goto tran_spec_excp;
 
         /* Isolate page table origin and length */
