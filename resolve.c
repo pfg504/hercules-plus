@@ -5,7 +5,7 @@
 /*   (http://www.hercules-390.org/herclic.html) as modifications to  */
 /*   Hercules.                                                       */
 
-// $Id: resolve.c 5125 2009-12-25 12:00:00Z ian $
+// $Id$
 
 
 #include "hstdinc.h"
