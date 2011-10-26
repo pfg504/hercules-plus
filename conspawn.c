@@ -20,6 +20,7 @@
 /*-------------------------------------------------------------------*/
 
 #include "hstdinc.h"
+#include <shellAPI.h>
 
 #define PGMNAME  "conspawn"
 

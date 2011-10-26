@@ -141,6 +141,8 @@
   call :set_targ_arch
   if %rc% NEQ 0 exit /b 1
 
+  call :set_OSLVL
+  if %rc% NEQ 0 exit /b 1
 
   call :set_VERSION
   if %rc% NEQ 0 exit /b 1
@@ -401,9 +403,9 @@
   set rc=0
   set host_arch=
 
-  if /i "%PROCESSOR_ARCHITECTURE%" == "x86"   set host_arch=x86
-  if /i "%PROCESSOR_ARCHITECTURE%" == "AMD64" set host_arch=amd64
-  if /i "%PROCESSOR_ARCHITECTURE%" == "IA64"  set host_arch=ia64
+  if /i "%PROCESSOR_ARCHITECTURE%" == "x86"   (set host_arch=x86)
+  if /i "%PROCESSOR_ARCHITECTURE%" == "AMD64" (set host_arch=amd64)
+  if /i "%PROCESSOR_ARCHITECTURE%" == "IA64"  (set host_arch=ia64)
 
   ::  PROGRAMMING NOTE: there MUST NOT be any spaces before the ')'!!!
 
@@ -427,7 +429,58 @@
   set rc=1
   goto :EOF
 
+::-----------------------------------------------------------------------------
+:set_OSLVL
 
+  set rc=0
+  set oslvl=
+  
+  ver | findstr /il "4.0.95" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WIN98)
+
+  ver | findstr /il "4.0.13" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WINNT4)
+
+  ver | findstr /il "4.1.1998" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WIN98)
+
+  ver | findstr /il "4.1.2222" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WIN982ND)
+
+  ver | findstr /il "4.90" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WINME)
+
+  ver | findstr /il "5.0" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WIN2000)
+
+  ver | findstr /il "5.1" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WINXP)
+
+  ver | findstr /il "5.2" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WINXPPRO)
+
+  ver | findstr /il "6.0" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=VISTA)
+
+  ver | findstr /il "6.1" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WIN7)
+
+  ver | findstr /il "6.2" > nul 
+  IF %ERRORLEVEL% EQU 0 ( set oslvl=WIN8)
+
+  if DEFINED ProgramFiles(x86) goto X64
+  set oslvl=%oslvl%_x86
+  goto X32
+:X64
+  set oslvl=%oslvl%_x64
+:X32
+
+  if %oslvl% == "" ( set oslvl=Unknown)
+
+  echo Building on OS = %oslvl%
+  
+  goto :EOF
+  
 ::-----------------------------------------------------------------------------
 :set_VERSION
 
@@ -474,7 +527,7 @@
   call :fullpath "%svn_exe%"
   if "%fullpath%" == "" goto :skip_svn_info
 
-  for /f "tokens=1-2" %%a in ('"%svn_exe%" info^|find /i "Revision:"') do set "V4=%%b"
+  for /f "tokens=1-2" %%a in ('%svn_exe% info^|find /i "Revision:"') do set "V4=%%b"
 
 :skip_svn_info
 

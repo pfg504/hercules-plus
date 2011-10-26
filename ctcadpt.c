@@ -34,6 +34,7 @@
 #include "hercules.h"
 #include "devtype.h"
 #include "ctcadpt.h"
+#include "tuntap.h"
 
 #include "opcode.h"
 #include "devtype.h"
