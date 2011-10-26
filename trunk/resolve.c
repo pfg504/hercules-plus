@@ -10,7 +10,7 @@
 
 #include "hstdinc.h"
 
-#if !defined(__SOLARIS__)
+#if !defined(__SOLARIS__) && ( _MSVC_ && ( NTDDI_VERSION >= NTDDI_VISTA ) )
 
 #include "hercules.h"
 #include "resolve.h"

@@ -416,10 +416,10 @@ int           TUNTAP_SetNetMask( char*   pszNetDevName,
 }   // End of function  TUNPTAP_SetNetMask()
 #endif // OPTION_TUNTAP_SETNETMASK
 
+#if defined(_MSVC_) && defined(NTDDI_VERSION) && NTDDI_VERSION >= NTDDI_VISTA
 //
 // TUNTAP_SetIPAddr6
 //
-
 int             TUNTAP_SetIPAddr6( char*   pszNetDevName,
                                    char*   pszIPAddr6,
                                    char*   pszPrefixSize6 )
@@ -471,6 +471,7 @@ int             TUNTAP_SetIPAddr6( char*   pszNetDevName,
 
     return TUNTAP_IOCtl( 0, SIOCSIFADDR, (char*)&hifr );
 }   // End of function  TUNTAP_SetIPAddr6()
+#endif   // defined(_MSVC_) && defined(NTDDI_VERSION) && NTDDI_VERSION >= NTDDI_VISTA
 
 //
 // TUNTAP_SetMTU

@@ -296,6 +296,7 @@ do { \
 // reserve 20-39 for file related
 
 // reserve 43-58 for option related
+#define HHC00043 "Option %s conflicts with option %s"
 
 #define HHC00069 "There %s %d CPU%s still active; confirmation required"
 // HHC0007xx, HHC0008xx and HHC0009xx reserved for hao.c. (to recognize own messages)
@@ -353,7 +354,8 @@ do { \
 #define HHC00150 "%s module loaded%s"
 #define HHC00151 "Activated facility: '%s'"
 #define HHC00152 "Out of memory"
-// 00153 - 00159 unused
+#define HHC00153 "Net device '%s': Invalid prefix length '%s'"
+// 00152 - 00159 unused
 #define HHC00160 "SCP %scommand: '%s'"
 #define HHC00161 "Function %s failed: '[%02d] %s'"
 
@@ -757,6 +759,7 @@ do { \
 #define HHC00915 "%1d:%04X CTC: incorrect number of parameters"
 #define HHC00916 "%1d:%04X CTC: option '%s' value '%s' invalid"
 #define HHC00917 "%1d:%04X CTC: default value '%s' is used for option '%s'"
+#define HHC00918 "%1d:%04X CTC: option specified incorrectly or unknown option"
 
 /* ctc_lcs.c */
 #define HHC00920 "%1d:%04X CTC: lcs device %04X not in configuration"
@@ -988,7 +991,21 @@ do { \
 #define HHC01404 "Cannot create the 'Hercules Automatic Operator' thread"
 #define HHC01405 "Script file '%s' not found"
 #define HHC01406 "Startup parm '-l': maximum loadable modules %d exceeded; remainder not loaded"
-#define HHC01407 "Usage: %s [-f config-filename] [-d] [-b logo-filename] [-s sym=val]%s [> logfile]"
+#if defined(OPTION_CONFIG_SYMBOLS) && !defined(OPTION_DYNAMIC_LOAD)
+#define HHC01407 "Usage: %s [[-n]|[-f config-filename]] [-d] [-b logo-filename] [-s sym=val] " \
+                 "[[-v]|[-t]] [> logfile]"
+#endif
+#if defined(OPTION_DYNAMIC_LOAD) && !defined(OPTION_CONFIG_SYMBOLS)
+#define HHC01407 "Usage: %s [[-n]|[-f config-filename]] [-d] [-b logo-filename] " \
+                 "[-p dyn-load-dir] [[-l dynmod-to-load]...] [[-v]|[-t]] [> logfile]"
+#endif
+#if defined(OPTION_DYNAMIC_LOAD) && defined(OPTION_CONFIG_SYMBOLS)
+#define HHC01407 "Usage: %s [[-n]|[-f config-filename]] [-d] [-b logo-filename] [-s sym=val] " \
+                 "[-p dyn-load-dir] [[-l dynmod-to-load]...] [[-v]|[-t]] [> logfile]"
+#endif
+#if !defined(OPTION_DYNAMIC_LOAD) && !defined(OPTION_CONFIG_SYMBOLS)
+#define HHC01407 "Usage: %s [[-n]|[-f config-filename]] [-d] [-b logo-filename] [[-v]|[-t]] [> logfile]"
+#endif
 #define HHC01408 "Hercules terminating, see previous messages for reason"
 #define HHC01409 "Load of 'dyngui.dll' failed, hercules terminated"
 #define HHC01410 "Cannot register '%s' handler: %s"
@@ -1857,6 +1874,42 @@ do { \
 #define HHC02805 "%1d:%04X Volser = %s"
 #define HHC02806 "%1d:%04X Unlabeled tape"
 
+// reserve 039xx for ptp related messages
+#define HHC03901 "%1d:%04X CTC: Guest and driver IP addresses are the same"
+#define HHC03902 "%1d:%04X CTC: Inet6 not supported"
+#define HHC03903 "%1d:%04X CTC: Data of size %d bytes displayed, data of size %d bytes not displayed"
+#define HHC03904 "%1d:%04X CTC: Receive %s packet of size %d bytes from device '%s'"
+#define HHC03905 "%1d:%04X CTC: Present data of size %d bytes to guest"
+#define HHC03906 "%1d:%04X CTC: Accept data of size %d bytes from guest"
+#define HHC03907 "%1d:%04X CTC: Send %s packet of size %d bytes to device '%s'"
+#define HHC03908 "CTC: %s: %s %s %s"
+#define HHC03909 "CTC: data trace: %s %s %s"
+#define HHC03910 "%1d:%04X CTC: Hercules has maximum read length of size %d bytes and actual MTU of size %d bytes"
+#define HHC03911 "%1d:%04X CTC: Guest has maximum read length of size %d bytes and actual MTU of size %d bytes"
+#define HHC03912 "%1d:%04X CTC: Guest has the driver IP address '%s'"
+#define HHC03913 "%1d:%04X CTC: Guest has IP address '%s'"
+#define HHC03915 "%1d:%04X CTC: Connection active to guest IP address '%s'"
+#define HHC03916 "%1d:%04X CTC: Connection cleared to guest IP address '%s'"
+#define HHC03917 "%1d:%04X CTC: Guest read and write paths mis-configured"
+#define HHC03918 "%1d:%04X CTC: MTU changed from size %d bytes to size %d bytes"
+#define HHC03921 "%1d:%04X CTC: Packet of size %d bytes from device '%s' has an unknown IP version, packet dropped"
+#define HHC03922 "%1d:%04X CTC: Packet of size %d bytes from device '%s' is not equal to the packet length of %d bytes, packet dropped"
+#define HHC03923 "%1d:%04X CTC: Packet of size %d bytes from device '%s' is larger than the guests actual MTU of %d bytes, packet dropped"
+#define HHC03924 "%1d:%04X CTC: Packet of size %d bytes from device '%s' is too large for read buffer area of %d bytes, packet dropped"
+#define HHC03931 "%1d:%04X CTC: Accept data of size %d bytes for device '%s' contains unknown data, data dropped"
+#define HHC03932 "%1d:%04X CTC: Accept data for device '%s' contains unknown MSH, data dropped"
+#define HHC03933 "%1d:%04X CTC: Accept data for device '%s' contains IP packet with unknown IP version, data dropped"
+#define HHC03934 "%1d:%04X CTC: Accept data for device '%s' contains incomplete IP packet, data dropped"
+#define HHC03935 "%1d:%04X CTC: Accept data for device '%s' contains IP packet larger than MTU, data dropped"
+#define HHC03936 "%1d:%04X CTC: Accept data for device '%s' contains unknown %s"
+#define HHC03937 "%1d:%04X CTC: Accept data for device '%s' contains %s that does not contain expected %s"
+#define HHC03951 "%1d:%04X CTC: %s"
+#define HHC03952 "%1d:%04X CTC: MAC: %s"
+#define HHC03953 "%1d:%04X CTC: IPv4: Drive %s: Guest %s/%s (%s)"
+#define HHC03954 "%1d:%04X CTC: IPv6: Drive %s/%s %s/%s: Guest %s"
+#define HHC03991 "%1d:%04X CTC: %s"
+#define HHC03992 "%1d:%04X CTC: Code %02X: Flags %02X: Count %04X: Chained %02X: PrevCode %02X: CCWseq %d"
+
 
 // reserve 04xxx for host os specific component messages
 // reserve 041xx for windows specific component messages (w32xxxx.c)
@@ -2020,3 +2073,7 @@ do { \
 /* ctc/lcs/ndis */
 #define HHC90900 "DBG: CTC: %s device port %2.2X: %s"
 #define HHC90901 "DBG: CTC: %s: %s"
+
+// HHC90999 see dbgtrace.h    (fish too lazy to do it correctly)
+// HHC91999 see dbgtrace.h    (fish too lazy to do it correctly)
+

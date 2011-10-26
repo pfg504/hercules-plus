@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Hercules"
+	Name="HerculesPlus"
 	ProjectGUID="{A0F495FF-9C35-4DFB-A51A-0427D8420779}"
 	RootNamespace="Hercules"
 	Keyword="MakeFileProj"
@@ -54,7 +54,7 @@
 				ReBuildCommandLine="makefile.bat DEBUG-X64 makefile.msvc 32 -a"
 				CleanCommandLine="makefile.bat DEBUG-X64 makefile.msvc 32 clean"
 				Output="$(OutDir)"
-				PreprocessorDefinitions="FEATURE_BINARY_FLOATING_POINT;WIN32;_WIN64;_DEBUG;_MSVC_;CPU=AMD64;HOST_ARCH=AMD64;OPTION_DYNAMIC_LOAD;HDL_BUILD_SHARED;OPTION_FTHREADS;EXTERNALGUI;FEATURE_CHANNEL_SUBSYSTEM;FEATURE_CANCEL_IO_FACILITY;FEATURE_ESAME;FEATURE_CONFIGURATION_TOPOLOGY_FACILITY;OPTION_HAO;HAVE_REGINA_REXXSAA_H;OPTION_CMDTGT;_FEATURE_SYSTEM_CONSOLE;FEATURE_CHSC;OPTION_PTTRACE;FEATURE_COMPRESSION"
+				PreprocessorDefinitions="_WIN32_WINNT= 0x0601;WIN32;_WIN64;_DEBUG;_MSVC_;CPU=AMD64;HOST_ARCH=AMD64;OPTION_DYNAMIC_LOAD;HDL_BUILD_SHARED;OPTION_FTHREADS;EXTERNALGUI;FEATURE_BINARY_FLOATING_POINT;FEATURE_CHANNEL_SUBSYSTEM;FEATURE_CANCEL_IO_FACILITY;FEATURE_ESAME;FEATURE_CONFIGURATION_TOPOLOGY_FACILITY;OPTION_HAO;HAVE_REGINA_REXXSAA_H;OPTION_CMDTGT;_FEATURE_SYSTEM_CONSOLE;FEATURE_CHSC;OPTION_PTTRACE;FEATURE_COMPRESSION"
 				IncludeSearchPath="crypto;decNumber;SoftFloat"
 				ForcedIncludes=""
 				AssemblySearchPath=""
@@ -634,6 +634,10 @@
 								>
 							</File>
 							<File
+								RelativePath=".\ctc_ptp.h"
+								>
+							</File>
+							<File
 								RelativePath=".\ctcadpt.h"
 								>
 							</File>
@@ -643,6 +647,10 @@
 							</File>
 							<File
 								RelativePath=".\qeth.h"
+								>
+							</File>
+							<File
+								RelativePath=".\resolve.h"
 								>
 							</File>
 							<File
@@ -678,6 +686,10 @@
 								>
 							</File>
 							<File
+								RelativePath=".\ctc_ptp.c"
+								>
+							</File>
+							<File
 								RelativePath=".\ctcadpt.c"
 								>
 							</File>
@@ -687,6 +699,10 @@
 							</File>
 							<File
 								RelativePath=".\qeth.c"
+								>
+							</File>
+							<File
+								RelativePath=".\resolve.c"
 								>
 							</File>
 							<File

@@ -4,37 +4,8 @@
 
 # $Id: makefile.w32 7771 2011-09-20 13:03:16Z fish $
 
-VERSION  = \"3.05w32\"
+VERSION  = \"3.08w32\"
 
-# $Log$
-# Revision 1.59  2008/12/01 20:28:21  rbowler
-# Add new module losc.c in build process
-#
-# Revision 1.58  2008/05/22 19:25:58  fish
-# Flex FakeTape support
-#
-# Revision 1.57  2008/03/25 11:41:31  fish
-# SCSI TAPE MODS part 1: groundwork: non-functional changes:
-# rename some functions, comments, general restructuring, etc.
-# New source modules awstape.c, omatape.c, hettape.c and
-# tapeccws.c added, but not yet used (all will be used in a future
-# commit though when tapedev.c code is eventually split)
-#
-# Revision 1.56  2008/03/02 22:50:35  rbowler
-# Restore tabs corrupted by previous modification
-#
-# Revision 1.55  2008/03/01 14:19:29  rbowler
-# Add new module general3.c for general-instructions-extension facility
-#
-# Revision 1.54  2007/06/20 23:40:58  jmaynard
-# 3.05 version bump.
-#
-# Revision 1.53  2007/06/02 13:46:41  rbowler
-# PFPO framework
-#
-# Revision 1.52  2006/12/08 09:43:29  jj
-# Add CVS message log
-#
 
 # Change this if you want to install the Hercules executables somewhere
 #   besides /usr/bin. The $PREFIX (which defaults to nothing) can be
@@ -86,7 +57,7 @@ EXEFILES = hercules \
            cckd2ckd ckd2cckd fba2cfba cfba2fba dasdcopy \
            hetget hetinit hetmap hetupd \
            dmap2hrc
-DYNFILES = dyninst dyngui hdteq \
+DYNFILES = dyninst dyngui hdteq hdtptp \
            hdt1403 hdt2703 hdt3088 hdt3270 hdt3420 hdt3505 hdt3525 \
            hdt1052c
 
@@ -120,6 +91,7 @@ hdt3420_OBJ  = tapedev.o tapeccws.o faketape.o awstape.o hettape.o omatape.o scs
 hdt3505_OBJ  = cardrdr.o sockdev.o
 hdt3525_OBJ  = cardpch.o
 hdteq_OBJ    = hdteq.o
+hdtptp_OBJ   = ctc_ptp.o resolve.o w32ctca.o tuntap.o
 
 #hercifc_OBJ  = hercifc.o hostinfo.o version.o 
 
@@ -222,6 +194,8 @@ HEADERS  = codepage.h commadpt.h cnsllogo.h cpuint.h ctcadpt.h dasdblks.h \
            milieu.h                \
            ccfixme.h               \
            ccnowarn.h              \
+           resolve.h               \
+           ctc_ptp.h               \
            softfloat-macros.h      \
            softfloat-specialize.h  \
            softfloat-types.h       \
@@ -354,6 +328,9 @@ hdt3525:  $(hdt3525_OBJ) hercules.a
 
 hdteq:    $(hdteq_OBJ) hercules.a
 	  $(CC) -o hdteq.dll $(hdteq_OBJ) $(DFLAGS)
+
+hdtptp:   $(hdtptp_OBJ) hercules.a
+	  $(CC) -o hdtptp.dll $(hdtptp_OBJ) $(DFLAGS)
 
 clean:
 	rm -rf $(EXEFILES) $(DYNFILES) *.o
