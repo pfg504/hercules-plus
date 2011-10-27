@@ -296,6 +296,7 @@ do { \
 // reserve 20-39 for file related
 
 // reserve 43-58 for option related
+#define HHC00043 "Option %s conflicts with option %s"
 
 #define HHC00069 "There %s %d CPU%s still active; confirmation required"
 // HHC0007xx, HHC0008xx and HHC0009xx reserved for hao.c. (to recognize own messages)
@@ -988,7 +989,21 @@ do { \
 #define HHC01404 "Cannot create the 'Hercules Automatic Operator' thread"
 #define HHC01405 "Script file '%s' not found"
 #define HHC01406 "Startup parm '-l': maximum loadable modules %d exceeded; remainder not loaded"
-#define HHC01407 "Usage: %s [-f config-filename] [-d] [-b logo-filename] [-s sym=val]%s [> logfile]"
+#if defined(OPTION_CONFIG_SYMBOLS) && !defined(OPTION_DYNAMIC_LOAD)
+#define HHC01407 "Usage: %s [[-n]|[-f config-filename]] [-d] [-b logo-filename] [-s sym=val] " \
+                 "[[-v]|[-t]] [> logfile]"
+#endif
+#if defined(OPTION_DYNAMIC_LOAD) && !defined(OPTION_CONFIG_SYMBOLS)
+#define HHC01407 "Usage: %s [[-n]|[-f config-filename]] [-d] [-b logo-filename] " \
+                 "[-p dyn-load-dir] [[-l dynmod-to-load]...] [[-v]|[-t]] [> logfile]"
+#endif
+#if defined(OPTION_DYNAMIC_LOAD) && defined(OPTION_CONFIG_SYMBOLS)
+#define HHC01407 "Usage: %s [[-n]|[-f config-filename]] [-d] [-b logo-filename] [-s sym=val] " \
+                 "[-p dyn-load-dir] [[-l dynmod-to-load]...] [[-v]|[-t]] [> logfile]"
+#endif
+#if !defined(OPTION_DYNAMIC_LOAD) && !defined(OPTION_CONFIG_SYMBOLS)
+#define HHC01407 "Usage: %s [[-n]|[-f config-filename]] [-d] [-b logo-filename] [[-v]|[-t]] [> logfile]"
+#endif
 #define HHC01408 "Hercules terminating, see previous messages for reason"
 #define HHC01409 "Load of 'dyngui.dll' failed, hercules terminated"
 #define HHC01410 "Cannot register '%s' handler: %s"
@@ -2020,3 +2035,7 @@ do { \
 /* ctc/lcs/ndis */
 #define HHC90900 "DBG: CTC: %s device port %2.2X: %s"
 #define HHC90901 "DBG: CTC: %s: %s"
+
+// HHC90999 see dbgtrace.h    (fish too lazy to do it correctly)
+// HHC91999 see dbgtrace.h    (fish too lazy to do it correctly)
+
