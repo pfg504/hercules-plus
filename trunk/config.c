@@ -118,17 +118,13 @@ int was_locked = sysblk.mainstor_locked;
 
     OBTAIN_INTLOCK(NULL);
     if(sysblk.cpus)
-    {
         for(cpu = 0; cpu < sysblk.maxcpu; cpu++)
-        {
             if(IS_CPU_ONLINE(cpu) && sysblk.regs[cpu]->cpustate == CPUSTATE_STARTED)
             {
                 RELEASE_INTLOCK(NULL);
                 release_lock(&sysblk.config);
                 return HERRCPUONL;
             }
-        }
-    }
     RELEASE_INTLOCK(NULL);
 
     /* Adjust for alignment */

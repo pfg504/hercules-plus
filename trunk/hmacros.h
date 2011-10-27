@@ -484,7 +484,8 @@ typedef U64  (*z900_trace_br_func) (int amode,  U64 ia, REGS *regs);
 
 /* Instruction count for a CPU */
 #define INSTCOUNT(_regs) \
-    ( (_regs) ? ( (_regs->hostregs) ? ( (_regs)->hostregs->prevcount + (_regs)->hostregs->instcount ) : 0 ) : 0 )
+ ((_regs)->hostregs->prevcount + (_regs)->hostregs->instcount)
+
 /*-------------------------------------------------------------------*/
 /* Obtain/Release mainlock.                                          */
 /* mainlock is only obtained by a CPU thread                         */

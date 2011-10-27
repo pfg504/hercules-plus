@@ -33,10 +33,6 @@ rcflags = $(rcflags) -D PRERELEASE=1
 rcflags = $(rcflags) -D _WIN64
 !ENDIF
 
-#!IFDEF $(_WIN32_WINNT) >= $(_WIN32_WINNT_WIN6)
-LIBS = $(LIBS) Ws2_32.lib
-#!ENDIF
-
 !IFNDEF MAX_CPU_ENGINES
 MAX_CPU_ENGINES = 8
 !ENDIF

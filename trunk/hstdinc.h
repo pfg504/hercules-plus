@@ -33,26 +33,18 @@
 
 #include "ccnowarn.h"           /* suppress compiler warning support */
 
-
 #ifdef _MSVC_
   // The following ensures certain functions get defined...
   // (such as TryEnterCriticalSection and InitializeCriticalSectionAndSpinCount)
-  // This needs to be adjusted for the machine your are running on
-  #define WIN32_LEAN_AND_MEAN
-  #ifdef WIN32
-    #include <windows.h>
-  #endif
   #ifndef _WIN32_WINNT
-    #include <winsdkver.h>
-    #define _WIN32_WINNT _WIN32_WINNT_MAXVER
+    #define _WIN32_WINNT 0x0403 // Windows 98 or WinNT SP4 or greater
   #endif
-  #include <SDKDDKVer.h>
-  #include <winsock2.h>
+  #include <winsock2.h>         // Windows Sockets 2
   #include <mstcpip.h>          // (need struct tcp_keepalive)
-  #include <ws2tcpip.h>         // Windows Sockets 2
 #endif
-
-
+#ifdef WIN32
+  #include <windows.h>
+#endif
 #ifdef _MSVC_
   #include <xmmintrin.h>
   #include <tchar.h>

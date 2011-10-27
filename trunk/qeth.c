@@ -45,7 +45,6 @@
 #include "chsc.h"
 #include "qeth.h"
 #include "tuntap.h"
-#include "ctcadpt.h"
 
 // #define QETH_DEBUG
 
