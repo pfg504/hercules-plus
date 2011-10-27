@@ -213,7 +213,7 @@ int stchan_id (REGS *regs, U16 chan)
 U32     chanid;                         /* Channel identifier word   */
 int     devcount = 0;                   /* #of devices on channel    */
 DEVBLK *dev;                            /* -> Device control block   */
-PSA_3XX *psa = NULL;                    /* -> Prefixed storage area  */
+PSA_3XX *psa;                           /* -> Prefixed storage area  */
 
     /* Find a device on specified channel */
     for (dev = sysblk.firstdev; dev != NULL; dev = dev->nextdev)
@@ -239,12 +239,8 @@ PSA_3XX *psa = NULL;                    /* -> Prefixed storage area  */
     /* Construct the channel id word */
     /* According to GA22-7000-4, Page 192, 2nd paragraph,
      * channel 0 is a Byte Multiplexor.. Return STIDC data
-     * accordingly. 
+     * accordingly
      * ISW 20080313
-     * This is incomplete... channel 0 of each channel group is 
-     * a Byte Multiplexor. For Example, chan 0 and chan 6 on a
-     * 4381 with 12 channels.
-     * PFG 20111026
      */
     if(!chan)
     {
@@ -257,9 +253,7 @@ PSA_3XX *psa = NULL;                    /* -> Prefixed storage area  */
 
     /* Store the channel id word at PSA+X'A8' */
     psa = (PSA_3XX*)(regs->mainstor + regs->PX);
-
-    if ( psa )
-        STORE_FW(psa->chanid, chanid);
+    STORE_FW(psa->chanid, chanid);
 
     /* Exit with condition code 0 indicating channel id stored */
     return 0;
@@ -312,8 +306,7 @@ int     cc = 0;                         /* Returned condition code   */
 int testio (REGS *regs, DEVBLK *dev, BYTE ibyte)
 {
 int     cc;                             /* Condition code            */
-PSA_3XX *psa = NULL;                    /* -> Prefixed storage area  */
-DBLWRD  csw;                            /* csw work area             */
+PSA_3XX *psa;                           /* -> Prefixed storage area  */
 IOINT *ioint=NULL;
 
     UNREFERENCED(ibyte);
@@ -338,29 +331,25 @@ IOINT *ioint=NULL;
             cc = 1;
 
             /* Store the channel status word at PSA+X'40' */
+            psa = (PSA_3XX*)(regs->mainstor + regs->PX);
             if (dev->pcipending)
             {
-                memcpy (csw, dev->pcicsw, 8);
+                memcpy (psa->csw, dev->pcicsw, 8);
                 ioint=&dev->pciioint;
             }
             else
             {
                 if(dev->pending)
                 {
-                    memcpy (csw, dev->csw, 8);
+                    memcpy (psa->csw, dev->csw, 8);
                     ioint=&dev->ioint;
                 }
                 else
                 {
-                    memcpy (csw, dev->attncsw, 8);
+                    memcpy (psa->csw, dev->attncsw, 8);
                     ioint=&dev->attnioint;
                 }
             }
-
-            psa = (PSA_3XX*)(regs->mainstor + regs->PX);
-
-            if ( psa )
-                memcpy(psa->csw, csw, 8);
 
             /* Signal console thread to redrive select */
             if (dev->console)
@@ -369,7 +358,7 @@ IOINT *ioint=NULL;
             }
 
             if (dev->ccwtrace || dev->ccwstep)
-                display_csw (dev, csw);
+                display_csw (dev, psa->csw);
         }
         else
         {
@@ -380,10 +369,7 @@ IOINT *ioint=NULL;
                 dev->csw[4] = 0;
                 dev->csw[5] = 0;
                 psa = (PSA_3XX*)(regs->mainstor + regs->PX);
-                if ( psa )
-                {
-                    memcpy (psa->csw, dev->csw, 8);
-                }
+                memcpy (psa->csw, dev->csw, 8);
                 if (dev->ccwtrace)
                 {
                     WRMSG (HHC01319, "I", SSID_TO_LCSS(dev->ssid), dev->devnum);
@@ -421,7 +407,7 @@ IOINT *ioint=NULL;
 int haltio (REGS *regs, DEVBLK *dev, BYTE ibyte)
 {
 int      cc;                            /* Condition code            */
-PSA_3XX *psa = NULL;                    /* -> Prefixed storage area  */
+PSA_3XX *psa;                           /* -> Prefixed storage area  */
 int      pending = 0;                   /* New interrupt pending     */
 
     UNREFERENCED(ibyte);
@@ -461,9 +447,7 @@ int      pending = 0;                   /* New interrupt pending     */
 
         /* Store the channel status word at PSA+X'40' */
         psa = (PSA_3XX*)(regs->mainstor + regs->PX);
-
-        if ( psa )
-            memcpy (psa->csw, dev->csw, 8);
+        memcpy (psa->csw, dev->csw, 8);
 
         /* Set pending interrupt */
         dev->pending = pending = 1;
@@ -480,8 +464,7 @@ int      pending = 0;                   /* New interrupt pending     */
             dev->csw[4] = 0;
             dev->csw[5] = 0;
             psa = (PSA_3XX*)(regs->mainstor + regs->PX);
-            if ( psa )
-                memcpy (psa->csw, dev->csw, 8);
+            memcpy (psa->csw, dev->csw, 8);
             if (dev->ccwtrace)
             {
                 WRMSG (HHC01330, "I", SSID_TO_LCSS(dev->ssid), dev->devnum);

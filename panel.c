@@ -1065,14 +1065,9 @@ static void NP_screen_redraw (REGS *regs)
     /* Line 1 - title line */
     set_color (COLOR_WHITE, COLOR_BLUE );
     set_pos   (1, 1);
-    draw_text ("  Hercules");
-    if ( sysblk.cpus > 0 )
-    {
-        fill_text (' ', 16);
-        draw_text ("CPU:    %");
-        fill_text (' ', 30);
-        draw_text ((char *)get_arch_mode_string(NULL));
-    }
+    draw_text ("  Hercules      CPU:    %");
+    fill_text (' ', 30);
+    draw_text ((char *)get_arch_mode_string(NULL));
     fill_text (' ', 38);
     set_color (COLOR_LIGHT_GREY, COLOR_BLUE );
     draw_text ("| ");
@@ -1095,85 +1090,77 @@ static void NP_screen_redraw (REGS *regs)
     set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
     draw_text("ment");
 
-    if ( sysblk.cpus > 0 )
+    /* PSW_LINE = PSW */
+    NPpswmode = (regs->arch_mode == ARCH_900);
+    NPpswzhost =
+#if defined(_FEATURE_SIE)
+                 !NPpswmode && SIE_MODE(regs) && regs->hostregs->arch_mode == ARCH_900;
+#else
+                 0;
+#endif /*defined(_FEATURE_SIE)*/
+    set_pos (PSW_LINE+1, NPpswmode || NPpswzhost ? 19 : 10);
+    draw_text ("PSW");
+
+    /* Register area */
+    set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+    NPregmode = (regs->arch_mode == ARCH_900 && (NPregdisp == 0 || NPregdisp == 1));
+    NPregzhost =
+#if defined(_FEATURE_SIE)
+                 (regs->arch_mode != ARCH_900
+               && SIE_MODE(regs) && regs->hostregs->arch_mode == ARCH_900
+               && (NPregdisp == 0 || NPregdisp == 1));
+#else
+                 0;
+#endif /*defined(_FEATURE_SIE)*/
+    if (NPregmode == 1 || NPregzhost)
     {
-        /* PSW_LINE = PSW */
-        NPpswmode = (regs->arch_mode == ARCH_900);
-        NPpswzhost =
-#if defined(_FEATURE_SIE)
-            !NPpswmode && SIE_MODE(regs) && regs->hostregs->arch_mode == ARCH_900;
-#else
-            0;
-#endif /*defined(_FEATURE_SIE)*/
-        set_pos (PSW_LINE+1, NPpswmode || NPpswzhost ? 19 : 10);
-        draw_text ("PSW");
-
-        /* Register area */
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
-        NPregmode = (regs->arch_mode == ARCH_900 && (NPregdisp == 0 || NPregdisp == 1));
-        NPregzhost =
-#if defined(_FEATURE_SIE)
-            (regs->arch_mode != ARCH_900
-            && SIE_MODE(regs) && regs->hostregs->arch_mode == ARCH_900
-            && (NPregdisp == 0 || NPregdisp == 1));
-#else
-            0;
-#endif /*defined(_FEATURE_SIE)*/
-        if (NPregmode == 1 || NPregzhost)
+        for (i = 0; i < 8; i++)
         {
-            for (i = 0; i < 8; i++)
-            {
-                set_pos (REGS_LINE+i, 1);
-                draw_text (NPregnum64[i*2]);
-                set_pos (REGS_LINE+i, 20);
-                draw_text (NPregnum64[i*2+1]);
-            }
+            set_pos (REGS_LINE+i, 1);
+            draw_text (NPregnum64[i*2]);
+            set_pos (REGS_LINE+i, 20);
+            draw_text (NPregnum64[i*2+1]);
         }
-        else
-        {
-            for (i = 0; i < 4; i++)
-            {
-                set_pos (i*2+(REGS_LINE+1),9);
-                draw_text (NPregnum[i*4]);
-                set_pos (i*2+(REGS_LINE+1),18);
-                draw_text (NPregnum[i*4+1]);
-                set_pos (i*2+(REGS_LINE+1),27);
-                draw_text (NPregnum[i*4+2]);
-                set_pos (i*2+(REGS_LINE+1),36);
-                draw_text (NPregnum[i*4+3]);
-            }
-        }
-
-        /* Register selection */
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
-        set_pos ((REGS_LINE+8), 6);
-        draw_text ("GPR");
-        set_pos ((REGS_LINE+8), 14);
-        draw_text ("CR");
-        set_pos ((REGS_LINE+8), 22);
-        draw_text ("AR");
-        set_pos ((REGS_LINE+8), 30);
-        draw_text ("FPR");
-
-        /* Address and data */
-        set_pos (ADDR_LINE, 2);
-        draw_text ("ADD");
-        set_color (COLOR_WHITE, COLOR_BLACK);
-        draw_char ('R');
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
-        draw_text ("ESS:");
-        set_pos (ADDR_LINE, 22);
-        set_color (COLOR_WHITE, COLOR_BLACK);
-        draw_char ('D');
-        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
-        draw_text ("ATA:");
     }
     else
     {
-        set_color( COLOR_YELLOW, COLOR_BLACK );
-        set_pos(REGS_LINE, 8);
-        draw_text( "CPU(s) offline" );
+        for (i = 0; i < 4; i++)
+        {
+            set_pos (i*2+(REGS_LINE+1),9);
+            draw_text (NPregnum[i*4]);
+            set_pos (i*2+(REGS_LINE+1),18);
+            draw_text (NPregnum[i*4+1]);
+            set_pos (i*2+(REGS_LINE+1),27);
+            draw_text (NPregnum[i*4+2]);
+            set_pos (i*2+(REGS_LINE+1),36);
+            draw_text (NPregnum[i*4+3]);
+        }
     }
+
+    /* Register selection */
+    set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+    set_pos ((REGS_LINE+8), 6);
+    draw_text ("GPR");
+    set_pos ((REGS_LINE+8), 14);
+    draw_text ("CR");
+    set_pos ((REGS_LINE+8), 22);
+    draw_text ("AR");
+    set_pos ((REGS_LINE+8), 30);
+    draw_text ("FPR");
+
+    /* Address and data */
+    set_pos (ADDR_LINE, 2);
+    draw_text ("ADD");
+    set_color (COLOR_WHITE, COLOR_BLACK);
+    draw_char ('R');
+    set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+    draw_text ("ESS:");
+    set_pos (ADDR_LINE, 22);
+    set_color (COLOR_WHITE, COLOR_BLACK);
+    draw_char ('D');
+    set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+    draw_text ("ATA:");
+
     /* separator */
     set_pos (ADDR_LINE+1, 1);
     fill_text ('-', 38);
@@ -1335,27 +1322,20 @@ static void NP_update(REGS *regs)
 #endif /*defined(_FEATURE_SIE)*/
 
 #if defined(OPTION_MIPS_COUNTING)
-    if ( sysblk.cpus > 0 )
-    {
-        /* percent CPU busy */
-        cpupct_total = 0;
-        n = 0;
-        for ( i = 0; i < sysblk.maxcpu; i++ )
-        {
-            if ( IS_CPU_ONLINE(i) )
+    /* percent CPU busy */
+    cpupct_total = 0;
+    n = 0;
+    for ( i = 0; i < sysblk.maxcpu; i++ )
+        if ( IS_CPU_ONLINE(i) )
+            if ( sysblk.regs[i]->cpustate == CPUSTATE_STARTED )
             {
-                if ( sysblk.regs[i]->cpustate == CPUSTATE_STARTED )
-                {
-                    n++;
-                    cpupct_total += sysblk.regs[i]->cpupct;
-                }
-                set_color (COLOR_WHITE, COLOR_BLUE);
-                set_pos (1, 22);
-                sprintf(buf, "%3d", (n > 0 ? cpupct_total/n : 0));
-                draw_text (buf);
+                n++;
+                cpupct_total += sysblk.regs[i]->cpupct;
             }
-        }
-    }
+    set_color (COLOR_WHITE, COLOR_BLUE);
+    set_pos (1, 22);
+    sprintf(buf, "%3d", (n > 0 ? cpupct_total/n : 0));
+    draw_text (buf);
 #else // !defined(OPTION_MIPS_COUNTING)
     if (!NPcpupct_valid)
     {
@@ -1379,135 +1359,133 @@ static void NP_update(REGS *regs)
             0;
 #endif // defined(_FEATURE_SIE)
 
-    if ( sysblk.cpus > 0 )
+    /* Redraw the psw template if the mode changed */
+    if (NPpswmode != mode || NPpswzhost != zhost)
     {
-        /* Redraw the psw template if the mode changed */
-        if (NPpswmode != mode || NPpswzhost != zhost)
-        {
-            NPpswmode = mode;
-            NPpswzhost = zhost;
-            NPpsw_valid = NPpswstate_valid = 0;
-            set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
-            set_pos (PSW_LINE, 1);
-            fill_text (' ',38);
-            set_pos (PSW_LINE+1, 1);
-            fill_text (' ', 38);
-            set_pos (PSW_LINE+1, NPpswmode || NPpswzhost ? 19 : 10);
-            draw_text ("PSW");
-        }
+        NPpswmode = mode;
+        NPpswzhost = zhost;
+        NPpsw_valid = NPpswstate_valid = 0;
+        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+        set_pos (PSW_LINE, 1);
+        fill_text (' ',38);
+        set_pos (PSW_LINE+1, 1);
+        fill_text (' ', 38);
+        set_pos (PSW_LINE+1, NPpswmode || NPpswzhost ? 19 : 10);
+        draw_text ("PSW");
+    }
 
-        /* Display the psw */
-        memset(curpsw, 0, sizeof(QWORD));
-        copy_psw (regs, curpsw);
-        if (!NPpsw_valid || memcmp(NPpsw, curpsw, sizeof(QWORD)))
+    /* Display the psw */
+    memset(curpsw, 0, sizeof(QWORD));
+    copy_psw (regs, curpsw);
+    if (!NPpsw_valid || memcmp(NPpsw, curpsw, sizeof(QWORD)))
+    {
+        set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+        set_pos (PSW_LINE, 3);
+        if (mode)
         {
-            set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
-            set_pos (PSW_LINE, 3);
-            if (mode)
-            {
-                draw_dw (fetch_dw(curpsw));
-                set_pos (PSW_LINE, 22);
-                draw_dw (fetch_dw(curpsw+8));
-            }
-            else if (zhost)
-            {
-                draw_fw (fetch_fw(curpsw));
-                //          draw_fw (0);
-                draw_fw (fetch_fw(curpsw+4)); /* *JJ */
-                set_pos (PSW_LINE, 22);
-                //          draw_fw (fetch_fw(curpsw+4) & 0x80000000 ? 0x80000000 : 0);
-                //          draw_fw (fetch_fw(curpsw+4) & 0x7fffffff);
-                draw_text("----------------"); /* *JJ */
-            }
-            else
-            {
-                draw_fw (fetch_fw(curpsw));
-                set_pos (PSW_LINE, 12);
-                draw_fw (fetch_fw(curpsw+4));
-            }
-            NPpsw_valid = 1;
-            memcpy (NPpsw, curpsw, sizeof(QWORD));
+            draw_dw (fetch_dw(curpsw));
+            set_pos (PSW_LINE, 22);
+            draw_dw (fetch_dw(curpsw+8));
         }
-
-        /* Display psw state */
-        sprintf (buf, "%2d%c%c%c%c%c%c%c%c",
-            regs->psw.amode64                  ? 64  :
-            regs->psw.amode                    ? 31  : 24,
-            regs->cpustate == CPUSTATE_STOPPED ? 'M' : '.',
-            sysblk.inststep                    ? 'T' : '.',
-            WAITSTATE (&regs->psw)             ? 'W' : '.',
-            regs->loadstate                    ? 'L' : '.',
-            regs->checkstop                    ? 'C' : '.',
-            PROBSTATE(&regs->psw)              ? 'P' : '.',
-            SIE_MODE(regs)                     ? 'S' : '.',
-            mode                               ? 'Z' : '.');
-        if (!NPpswstate_valid || strcmp(NPpswstate, buf))
+        else if (zhost)
         {
-            set_color( COLOR_LIGHT_YELLOW, COLOR_BLACK );
-            set_pos( mode || zhost ? (PSW_LINE+1) : PSW_LINE, 28 );
-            draw_text( buf );
-            NPpswstate_valid = 1;
-            strlcpy( NPpswstate, buf, sizeof(NPpswstate) );
+            draw_fw (fetch_fw(curpsw));
+//          draw_fw (0);
+            draw_fw (fetch_fw(curpsw+4)); /* *JJ */
+            set_pos (PSW_LINE, 22);
+//          draw_fw (fetch_fw(curpsw+4) & 0x80000000 ? 0x80000000 : 0);
+//          draw_fw (fetch_fw(curpsw+4) & 0x7fffffff);
+            draw_text("----------------"); /* *JJ */
         }
+        else
+        {
+            draw_fw (fetch_fw(curpsw));
+            set_pos (PSW_LINE, 12);
+            draw_fw (fetch_fw(curpsw+4));
+        }
+        NPpsw_valid = 1;
+        memcpy (NPpsw, curpsw, sizeof(QWORD));
+    }
 
-        /* Redraw the register template if the regmode switched */
-        mode = (regs->arch_mode == ARCH_900 && (NPregdisp == 0 || NPregdisp == 1));
-        zhost =
+    /* Display psw state */
+    sprintf (buf, "%2d%c%c%c%c%c%c%c%c",
+                  regs->psw.amode64                  ? 64  :
+                  regs->psw.amode                    ? 31  : 24,
+                  regs->cpustate == CPUSTATE_STOPPED ? 'M' : '.',
+                  sysblk.inststep                    ? 'T' : '.',
+                  WAITSTATE (&regs->psw)             ? 'W' : '.',
+                  regs->loadstate                    ? 'L' : '.',
+                  regs->checkstop                    ? 'C' : '.',
+                  PROBSTATE(&regs->psw)              ? 'P' : '.',
+                  SIE_MODE(regs)                     ? 'S' : '.',
+                  mode                               ? 'Z' : '.');
+    if (!NPpswstate_valid || strcmp(NPpswstate, buf))
+    {
+        set_color( COLOR_LIGHT_YELLOW, COLOR_BLACK );
+        set_pos( mode || zhost ? (PSW_LINE+1) : PSW_LINE, 28 );
+        draw_text( buf );
+        NPpswstate_valid = 1;
+        strlcpy( NPpswstate, buf, sizeof(NPpswstate) );
+    }
+
+    /* Redraw the register template if the regmode switched */
+    mode = (regs->arch_mode == ARCH_900 && (NPregdisp == 0 || NPregdisp == 1));
+    zhost =
 #if defined(_FEATURE_SIE)
             (regs->arch_mode != ARCH_900
-            && SIE_MODE(regs) && regs->hostregs->arch_mode == ARCH_900
-            && (NPregdisp == 0 || NPregdisp == 1));
+          && SIE_MODE(regs) && regs->hostregs->arch_mode == ARCH_900
+          && (NPregdisp == 0 || NPregdisp == 1));
 #else // !defined(_FEATURE_SIE)
-            0;
+                 0;
 #endif /*defined(_FEATURE_SIE)*/
-        if (NPregmode != mode || NPregzhost != zhost)
-        {
-            NPregmode = mode;
-            NPregzhost = zhost;
-            NPregs_valid = 0;
-            set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
-            if (NPregmode || NPregzhost)
-            {
-                /* 64 bit registers */
-                for (i = 0; i < 8; i++)
-                {
-                    set_pos (REGS_LINE+i, 1);
-                    fill_text (' ', 38);
-                    set_pos (REGS_LINE+i, 1);
-                    draw_text (NPregnum64[i*2]);
-                    set_pos (REGS_LINE+i, 20);
-                    draw_text (NPregnum64[i*2+1]);
-                }
-            }
-            else
-            {
-                /* 32 bit registers */
-                for (i = 0; i < 4; i++)
-                {
-                    set_pos (i*2+REGS_LINE,1);
-                    fill_text (' ', 38);
-                    set_pos (i*2+(REGS_LINE+1),1);
-                    fill_text (' ', 38);
-                    set_pos (i*2+(REGS_LINE+1),9);
-                    draw_text (NPregnum[i*4]);
-                    set_pos (i*2+(REGS_LINE+1),18);
-                    draw_text (NPregnum[i*4+1]);
-                    set_pos (i*2+(REGS_LINE+1),27);
-                    draw_text (NPregnum[i*4+2]);
-                    set_pos (i*2+(REGS_LINE+1),36);
-                    draw_text (NPregnum[i*4+3]);
-                }
-            }
-        }
-
-        /* Display register values */
-        set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK );
-        if (NPregmode)
+    if (NPregmode != mode || NPregzhost != zhost)
+    {
+        NPregmode = mode;
+        NPregzhost = zhost;
+        NPregs_valid = 0;
+        set_color (COLOR_LIGHT_GREY, COLOR_BLACK);
+        if (NPregmode || NPregzhost)
         {
             /* 64 bit registers */
-            for (i = 0; i < 16; i++)
+            for (i = 0; i < 8; i++)
             {
-                switch (NPregdisp) {
+                set_pos (REGS_LINE+i, 1);
+                fill_text (' ', 38);
+                set_pos (REGS_LINE+i, 1);
+                draw_text (NPregnum64[i*2]);
+                set_pos (REGS_LINE+i, 20);
+                draw_text (NPregnum64[i*2+1]);
+            }
+        }
+        else
+        {
+            /* 32 bit registers */
+            for (i = 0; i < 4; i++)
+            {
+                set_pos (i*2+REGS_LINE,1);
+                fill_text (' ', 38);
+                set_pos (i*2+(REGS_LINE+1),1);
+                fill_text (' ', 38);
+                set_pos (i*2+(REGS_LINE+1),9);
+                draw_text (NPregnum[i*4]);
+                set_pos (i*2+(REGS_LINE+1),18);
+                draw_text (NPregnum[i*4+1]);
+                set_pos (i*2+(REGS_LINE+1),27);
+                draw_text (NPregnum[i*4+2]);
+                set_pos (i*2+(REGS_LINE+1),36);
+                draw_text (NPregnum[i*4+3]);
+            }
+        }
+    }
+
+    /* Display register values */
+    set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK );
+    if (NPregmode)
+    {
+        /* 64 bit registers */
+        for (i = 0; i < 16; i++)
+        {
+            switch (NPregdisp) {
             case 0:
                 if (!NPregs_valid || NPregs64[i] != regs->GR_G(i))
                 {
@@ -1524,20 +1502,20 @@ static void NP_update(REGS *regs)
                     NPregs64[i] = regs->CR_G(i);
                 }
                 break;
-                }
             }
         }
-        else if (NPregzhost)
+    }
+    else if (NPregzhost)
+    {
+        /* 32 bit registers on 64 bit template */
+        for (i = 0; i < 16; i++)
         {
-            /* 32 bit registers on 64 bit template */
-            for (i = 0; i < 16; i++)
-            {
-                switch (NPregdisp) {
+            switch (NPregdisp) {
             case 0:
                 if (!NPregs_valid || NPregs[i] != regs->GR_L(i))
                 {
                     set_pos (REGS_LINE + i/2, 3 + (i%2)*19);
-                    //                  draw_fw (0);
+//                  draw_fw (0);
                     draw_text("--------");
                     draw_fw (regs->GR_L(i));
                     NPregs[i] = regs->GR_L(i);
@@ -1547,22 +1525,22 @@ static void NP_update(REGS *regs)
                 if (!NPregs_valid || NPregs[i] != regs->CR_L(i))
                 {
                     set_pos (REGS_LINE + i/2, 3 + (i%2)*19);
-                    //                  draw_fw (0);
+//                  draw_fw (0);
                     draw_text("--------");
                     draw_fw (regs->CR_L(i));
                     NPregs[i] = regs->CR_L(i);
                 }
                 break;
-                }
             }
         }
-        else
+    }
+    else
+    {
+        /* 32 bit registers */
+        addr = NPaddress;
+        for (i = 0; i < 16; i++)
         {
-            /* 32 bit registers */
-            addr = NPaddress;
-            for (i = 0; i < 16; i++)
-            {
-                switch (NPregdisp) {
+            switch (NPregdisp) {
             default:
             case 0:
                 if (!NPregs_valid || NPregs[i] != regs->GR_L(i))
@@ -1608,77 +1586,77 @@ static void NP_update(REGS *regs)
                     NPregs[i] = fetch_fw(regs->mainstor + aaddr);
                 }
                 break;
-                }
             }
         }
+    }
 
-        /* Update register selection indicator */
-        if (!NPregs_valid)
-        {
-            set_pos ((REGS_LINE+8), 6);
-            set_color (NPregdisp == 0 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
-            draw_char ('G');
+    /* Update register selection indicator */
+    if (!NPregs_valid)
+    {
+        set_pos ((REGS_LINE+8), 6);
+        set_color (NPregdisp == 0 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
+        draw_char ('G');
 
-            set_pos ((REGS_LINE+8), 14);
-            set_color (NPregdisp == 1 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
-            draw_char ('C');
+        set_pos ((REGS_LINE+8), 14);
+        set_color (NPregdisp == 1 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
+        draw_char ('C');
 
-            set_pos ((REGS_LINE+8), 22);
-            set_color (NPregdisp == 2 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
-            draw_char ('A');
+        set_pos ((REGS_LINE+8), 22);
+        set_color (NPregdisp == 2 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
+        draw_char ('A');
 
-            set_pos ((REGS_LINE+8), 30);
-            set_color (NPregdisp == 3 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
-            draw_char ('F');
-        }
+        set_pos ((REGS_LINE+8), 30);
+        set_color (NPregdisp == 3 ? COLOR_LIGHT_YELLOW : COLOR_WHITE, COLOR_BLACK);
+        draw_char ('F');
+    }
 
-        NPregs_valid = 1;
+    NPregs_valid = 1;
 
-        /* Address & Data */
-        if (!NPaddr_valid)
-        {
-            set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
-            set_pos (ADDR_LINE, 12);
-            draw_fw (NPaddress);
-            NPaddr_valid = 1;
-        }
-        if (!NPdata_valid)
-        {
-            set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
-            set_pos (ADDR_LINE, 30);
-            draw_fw (NPdata);
-            NPdata_valid = 1;
-        }
+    /* Address & Data */
+    if (!NPaddr_valid)
+    {
+        set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+        set_pos (ADDR_LINE, 12);
+        draw_fw (NPaddress);
+        NPaddr_valid = 1;
+    }
+    if (!NPdata_valid)
+    {
+        set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+        set_pos (ADDR_LINE, 30);
+        draw_fw (NPdata);
+        NPdata_valid = 1;
+    }
 
-        /* Rates */
+    /* Rates */
 #ifdef OPTION_MIPS_COUNTING
-        if (!NPmips_valid || sysblk.mipsrate != NPmips)
-        {
-            set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
-            set_pos (BUTTONS_LINE, 1);
-            if((sysblk.mipsrate / 1000000) > 999)
-                sprintf(buf, "%2d,%03d", sysblk.mipsrate / 1000000000, sysblk.mipsrate % 1000000000 / 1000000);
-            else if((sysblk.mipsrate / 1000000) > 99)
-                sprintf(buf, "%4d.%01d", sysblk.mipsrate / 1000000, sysblk.mipsrate % 1000000 / 100000);
-            else if((sysblk.mipsrate / 1000000) > 9)
-                sprintf(buf, "%3d.%02d", sysblk.mipsrate / 1000000, sysblk.mipsrate % 1000000 / 10000);
-            else
-                sprintf(buf, "%2d.%03d", sysblk.mipsrate / 1000000, sysblk.mipsrate % 1000000 / 1000);
-            draw_text (buf);
-            NPmips = sysblk.mipsrate;
-            NPmips_valid = 1;
-        }
-        if (!NPsios_valid || NPsios != sysblk.siosrate)
-        {
-            set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
-            set_pos (BUTTONS_LINE, 8);
-            sprintf(buf, "%6.6s", format_int(sysblk.siosrate));
-            draw_text (buf);
-            NPsios = sysblk.siosrate;
-            NPsios_valid = 1;
-        }
+    if (!NPmips_valid || sysblk.mipsrate != NPmips)
+    {
+        set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+        set_pos (BUTTONS_LINE, 1);
+        if((sysblk.mipsrate / 1000000) > 999)
+          sprintf(buf, "%2d,%03d", sysblk.mipsrate / 1000000000, sysblk.mipsrate % 1000000000 / 1000000);
+        else if((sysblk.mipsrate / 1000000) > 99)
+          sprintf(buf, "%4d.%01d", sysblk.mipsrate / 1000000, sysblk.mipsrate % 1000000 / 100000);
+        else if((sysblk.mipsrate / 1000000) > 9)
+          sprintf(buf, "%3d.%02d", sysblk.mipsrate / 1000000, sysblk.mipsrate % 1000000 / 10000);
+        else
+          sprintf(buf, "%2d.%03d", sysblk.mipsrate / 1000000, sysblk.mipsrate % 1000000 / 1000);
+        draw_text (buf);
+        NPmips = sysblk.mipsrate;
+        NPmips_valid = 1;
+    }
+    if (!NPsios_valid || NPsios != sysblk.siosrate)
+    {
+        set_color (COLOR_LIGHT_YELLOW, COLOR_BLACK);
+        set_pos (BUTTONS_LINE, 8);
+        sprintf(buf, "%6.6s", format_int(sysblk.siosrate));
+        draw_text (buf);
+        NPsios = sysblk.siosrate;
+        NPsios_valid = 1;
+    }
 #endif /* OPTION_MIPS_COUNTING */
-}
+
     /* Optional cpu graph */
     if (NPcpugraph)
     {

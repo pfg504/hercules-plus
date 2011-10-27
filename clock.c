@@ -624,9 +624,6 @@ static void ARCH_DEP(_store_int_timer_2) (REGS *regs,int getlock)
 S32 itimer;
 S32 vtimer=0;
 
-    if ( !regs->psa )       // no storage defined
-        return;
-
     FETCH_FW(itimer, regs->psa->inttimer);
     if(getlock)
     {
@@ -696,10 +693,6 @@ void ARCH_DEP(store_int_timer_nolock) (REGS *regs)
 DLL_EXPORT void ARCH_DEP(fetch_int_timer) (REGS *regs)
 {
 S32 itimer;
-
-    if ( !regs->psa )       // no storage defined
-        return;
-
     FETCH_FW(itimer, regs->psa->inttimer);
     OBTAIN_INTLOCK(regs->hostregs?regs:NULL);
     set_int_timer(regs, itimer);

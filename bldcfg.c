@@ -89,18 +89,13 @@ int     devtmax;                        /* Max number device threads */
     sysblk.numvec = 0;
 #endif // _FEATURE_VECTOR_FACILITY
 
-    if (hercules_cnf)
-    {
 #if defined(_900)
-        set_archlvl(_ARCH_900_NAME);
+    set_archlvl(_ARCH_900_NAME);
 #elif defined(_390)
-        set_archlvl(_ARCH_390_NAME);
-#elif defined(_370)
-        set_archlvl(_ARCH_370_NAME);
+    set_archlvl(_ARCH_390_NAME);
 #else
-        set_archlvl(NULL);
+    set_archlvl(_ARCH_370_NAME);
 #endif
-    }
     devtmax  = MAX_DEVICE_THREADS;
 
 
@@ -138,13 +133,11 @@ int     devtmax;                        /* Max number device threads */
         sysblk.ptyp[i] = SCCB_PTYP_CP;
 
     /* Default Storage & NUMCPU */
-    if ( hercules_cnf )
-    {
-        configure_storage(4096);        // bytes
-        configure_numcpu(1);            // number of cpus to bring online
-        if ( process_config(hercules_cnf) )
-            return -1;
-    }
+    configure_storage(2);
+    configure_numcpu(1);
+
+    if (hercules_cnf && (process_config(hercules_cnf)))
+        return -1;
 
     return 0;
 } /* end function build_config */

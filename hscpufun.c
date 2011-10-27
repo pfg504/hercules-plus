@@ -356,13 +356,6 @@ int  rest_loadparm = FALSE;
     save_loadparm[0] = '\0';
 #endif
 
-    /* Check for CPUs online */
-    if ( sysblk.mainstor == NULL || sysblk.cpus == 0 )
-    {
-        WRMSG(HHC00837, "E");
-        return -1;
-    }
-
     /* Check that target processor type allows IPL */
     if (sysblk.ptyp[sysblk.pcpu] == SCCB_PTYP_IFA
      || sysblk.ptyp[sysblk.pcpu] == SCCB_PTYP_SUP)

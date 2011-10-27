@@ -330,7 +330,7 @@ DLL_EXPORT void logmsg(char *msg,...)
     {
         char *dest = NULL;
 
-        if ( split_logs( &dest, bfr, "" ) > 0 )
+        if ( split_logs( &dest, bfr, NULL ) > 0 )
         {
             HFREE(bfr);
             bfr = dest;

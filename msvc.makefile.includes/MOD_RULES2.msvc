@@ -91,9 +91,6 @@ $(X)hdt1052c.dll: $(O)con1052c.obj $(O)hengine.lib $(O)hutil.lib $(O)hsys.lib $(
 $(X)hdtqeth.dll: $(O)qeth.obj $(O)w32ctca.obj $(O)tuntap.obj $(O)hengine.lib $(O)hutil.lib $(O)hsys.lib $(O)hercver.res
     $(linkdll)
 
-$(X)hdtptp.dll: $(O)ctc_ptp.obj $(O)resolve.obj $(O)w32ctca.obj $(O)tuntap.obj $(O)hengine.lib $(O)hutil.lib $(O)hsys.lib $(O)hercver.res
-    $(linkdll)
-
 $(X)hdteq.dll: $(O)hdteq.obj $(O)hengine.lib $(O)hutil.lib $(O)hercver.res
     $(linkdll)
 

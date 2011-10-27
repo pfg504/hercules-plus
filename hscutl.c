@@ -1215,7 +1215,7 @@ DLL_EXPORT size_t split_logs(char **dest, const char *src, const char *prefix)
             if ( lines[line_cnt] != NULL )
                 strcnt += strlen(lines[line_cnt]);
         }
-        strcnt += line_cnt * ( ( msgid != NULL ? strlen(msgid) : 0 ) + ( prefix != NULL ? strlen(prefix) : 0 ) );
+        strcnt += line_cnt * ( strlen(msgid) + strlen(prefix) );
         strcnt = ( strcnt * 120) / 100; // 20% extra
         {
             char *ptr = malloc( strcnt );

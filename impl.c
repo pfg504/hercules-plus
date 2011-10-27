@@ -328,17 +328,17 @@ char    pathname[MAX_PATH];             /* (work)                    */
 /*-------------------------------------------------------------------*/
 DLL_EXPORT int impl(int argc, char *argv[])
 {
-char   *cfgfile = NULL;                 /* -> Configuration filename */
+char   *cfgfile;                        /* -> Configuration filename */
 char    pathname[MAX_PATH];             /* work area for filenames   */
 #if defined ( OPTION_LOCK_CONFIG_FILE )
-  int     fd_cfg = -1;                  /* fd for config file        */
-  #if !defined ( _MSVC_ )
-    struct  flock  fl_cfg;              /* file lock for conf file   */
-  #endif
+int     fd_cfg = -1;                    /* fd for config file        */
+#if !defined ( _MSVC_ )
+struct  flock  fl_cfg;                  /* file lock for conf file   */
+#endif
 #endif
 int     c;                              /* Work area for getopt      */
 int     arg_error = 0;                  /* 1=Invalid arguments       */
-char   *msgbuf = NULL;                  /*                           */
+char   *msgbuf;                         /*                           */
 int     msgnum;                         /*                           */
 int     msgcnt;                         /*                           */
 TID     rctid;                          /* RC file thread identifier */
@@ -743,40 +743,16 @@ int     dll_count;                      /* index into array          */
     /* Get name of configuration file or default to hercules.cnf */
     if(!(cfgfile = getenv("HERCULES_CNF")))
         cfgfile = "hercules.cnf";
-    else
-        if ( strlen(cfgfile) == 0 )
-            cfgfile = NULL;
-
-    /*  At this point cfgfile is either hercules.cnf or to the 
-     *  "HERCULES_CNF" environment variable. A NULL pointer 
-     *  indicates no configuration file is needed
-     */
 
     /* Process the command line options */
-    while ((c = getopt(argc, argv, "nf:p:l:db:s:tvh")) != EOF)
+    while ((c = getopt(argc, argv, "hf:p:l:db:s:tv")) != EOF)
     {
-        static int cfg_flag = FALSE;
-        static int msg_flag = FALSE;
 
         switch (c) {
-        case 'n':
-            if ( cfg_flag )
-            {
-                WRMSG(HHC00043, "E", "-n", "-f" );
-                arg_error = TRUE;
-                break;
-            }
-            cfg_flag = TRUE;
-            cfgfile = NULL;
+        case 'h':
+            arg_error = 1;
             break;
         case 'f':
-            if ( cfg_flag )
-            {
-                WRMSG(HHC00043, "E", "-f", "-n" );
-                arg_error = TRUE;
-                break;
-            }
-            cfg_flag = TRUE;
             cfgfile = optarg;
             break;
 #if defined(OPTION_CONFIG_SYMBOLS)
@@ -834,35 +810,20 @@ int     dll_count;                      /* index into array          */
             sysblk.logofile=optarg;
             break;
         case 'v':
-            if ( msg_flag )
-            {
-                WRMSG(HHC00043, "E", "-t", "-v" );
-                arg_error = TRUE;
-                break;
-            }
-            msg_flag = TRUE;
             sysblk.msglvl |= MLVL_VERBOSE;
-            break;
-        case 't':           /* Terse message level is the default */
-            if ( msg_flag )
-            {
-                WRMSG(HHC00043, "E", "-v", "-t" );
-                arg_error = TRUE;
-                break;
-            }
-            msg_flag = TRUE;
             break;
         case 'd':
             sysblk.daemon_mode = 1;
-            break;
-        case 'h':
-            arg_error = 1;          /* Indicate help is needed */
             break;
         default:
             arg_error = 1;
 
         } /* end switch(c) */
     } /* end while */
+
+    /* Treat filename None as special */
+    if(!strcasecmp(cfgfile,"None"))
+        cfgfile = NULL;
 
     if (optind < argc)
         arg_error = 1;
@@ -874,8 +835,12 @@ int     dll_count;                      /* index into array          */
         char* strtok_str = NULL;
         strncpy(pgm, sysblk.hercules_pgmname, sizeof(pgm));
 
-        WRMSG (HHC01407, "S", strtok_r(pgm,".", &strtok_str));
-
+#if defined(OPTION_DYNAMIC_LOAD)
+        WRMSG (HHC01407, "S", strtok_r(pgm,".",&strtok_str),
+                             " [-p dyn-load-dir] [[-l dynmod-to-load]...]");
+#else
+        WRMSG (HHC01407, "S", strtok_r(pgm,".", &strtok_str), "");
+#endif /* defined(OPTION_DYNAMIC_LOAD) */
         fflush(stderr);
         fflush(stdout);
         usleep(100000);
