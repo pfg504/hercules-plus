@@ -1012,9 +1012,9 @@
 #define r_cmd_desc              "Display or alter real storage"
 #define r_cmd_help              \
                                 \
-  "Format: \"r addr[.len]\" or \"r addr[-addr2]\" to display real\n"             \
-  "storage, or \"r addr=value\" to alter real storage, where 'value'\n"          \
-  "is a hex string of up to 32 pairs of digits.\n"
+  "Format: \"r addr[.len]\" or \"r addr[-addr2]\" to display real storage\n"     \
+  "        \"r addr=value\" to alter real storage, where 'value' is a hex\n"     \
+  "                       string of up to 32 pairs of digits.\n"
 
 #define restart_cmd_desc        "Generate restart interrupt"
 #define resume_cmd_desc         "Resume hercules"

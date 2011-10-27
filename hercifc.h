@@ -45,61 +45,6 @@
 
 #endif
 
-//FIXME: Temporary, should be part of the make system.
-  /* The in6_ifreq structure can be found in include/linux/ipv6.h */
-  struct in6_ifreq {
-    struct in6_addr ifr6_addr;
-    __u32   ifr6_prefixlen;
-    int   ifr6_ifindex;
-  };
-
-// The Hercules ifr (hifr) structure. Why? Because an ifreq stucture is
-// not large enough to hold inet6 addresses, an in6_ifreq structure is
-// needed for them. The hifr structure contains both an ifreq stucture
-// and an in6_ifreq structure.
-//
-// The ifreq structure is the parameter to most of the ioctl requests
-// issued by hercifc, with ifrn_name specifying the device to which the
-// ioctl request applies, and the ifr_ifru union containing the
-// appropriate value for the ioctl.
-//
-// When an ioctl request is made to set an inet6 address, an ifreq
-// structure is not used; instead an in6_ifreq structure is the
-// parameter. The field ifr6_ifindex specifies the device to which the
-// ioctl request applies, and the ifr6_addr and ifr6_prefixlen fields
-// contain the appropriate values for the ioctl. The ifr6_ifindex value
-// is obtained using the ifrn_name value.
-//
-// Although the ifrn_name is not used when an in6_ifreq structure is the
-// parameter to the ioctl request, it is needed for hercifc to use in
-// error messages, etc.
-//
-// To distinguish when the in6_ifreq structure is the parameter to the
-// ioctl request the field hifr_afamily must contain the value AF_INET6,
-// otherwise it should contain the value AF_INET or zero.
-//
-// ioctl requests with an ifreq structure as the parameter are made
-// using an inet socket, whereas ioctl requests with an in6_ifreq
-// structure as the parameter are made using an inet6 socket.
-//
-  struct hifr
-  {
-    struct ifreq ifreq;
-    struct in6_ifreq in6_ifreq;
-    int    hifr_afamily;
-  };
-
-  #define  hifr_name       ifreq.ifr_ifrn.ifrn_name
-  #define  hifr_addr       ifreq.ifr_ifru.ifru_addr
-  #define  hifr_netmask    ifreq.ifr_ifru.ifru_netmask
-  #define  hifr_hwaddr     ifreq.ifr_ifru.ifru_hwaddr
-  #define  hifr_flags      ifreq.ifr_ifru.ifru_flags
-  #define  hifr_mtu        ifreq.ifr_ifru.ifru_mtu
-  #define  hifr6_addr      in6_ifreq.ifr6_addr
-  #define  hifr6_prefixlen in6_ifreq.ifr6_prefixlen
-  #define  hifr6_ifindex   in6_ifreq.ifr6_ifindex
-
-
 #if ( !defined(WIN32) && !defined(HAVE_LINUX_IF_TUN_H) ) || \
     (  defined(OPTION_W32_CTCI)                        )
 
@@ -118,17 +63,19 @@
 
 #endif
 
-#if !defined(HAVE_NET_IF_H)
+#if !defined(IFF_UP) && !defined(HAVE_NET_IF_H) 
   /* Standard interface flags. */
-  #define IFF_UP          0x1             /* interface is up              */
-  #define IFF_BROADCAST   0x2             /* broadcast address valid      */
-  #define IFF_DEBUG       0x4             /* Turn on debugging.           */
-  #define IFF_LOOPBACK    0x8             /* is a loopback net            */
-  #define IFF_NOTRAILERS  0x20            /* avoid use of trailers        */
-  #define IFF_RUNNING     0x40            /* resources allocated          */
-  #define IFF_PROMISC     0x100           /* receive all packets          */
-  #define IFF_MULTICAST   0x1000          /* Supports multicast           */
+  #define IFF_UP              0x00000001 // Interface is up.
+  #define IFF_BROADCAST       0x00000002 // Broadcast is  supported.
+  #define IFF_LOOPBACK        0x00000004 // This is loopback interface.
+  #define IFF_POINTTOPOINT    0x00000008 // This is point-to-point interface.
+  #define IFF_MULTICAST       0x00000010 // Multicast is supported.
 #endif
+  /* Hercules Defined interface flags */
+  #define IFF_NOTRAILERS      0x00010000 /* avoid use of trailers        */
+  #define IFF_RUNNING         0x00020000 /* resources allocated          */
+  #define IFF_PROMISC         0x00040000 /* receive all packets          */
+  #define IFF_DEBUG           0x00080000 /* Turn on debugging.           */
 
 // --------------------------------------------------------------------
 // Definition of the control request structure

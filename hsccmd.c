@@ -3389,6 +3389,12 @@ BYTE c;
     }
 
     /* Configure CPUs */
+    if ( sysblk.mainstor == NULL )      // bring minimum amount of storage online
+    {
+        configure_storage(0);           // this will default to the minmum amount for the 
+                                        // archlvl of the machine
+    }
+
     rc = configure_numcpu(numcpu);
     switch(rc) {
     case 0:

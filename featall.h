@@ -12,7 +12,7 @@
 /*   All existing features MUST be #undef-ed here.                   */
 /*-------------------------------------------------------------------*/
 
-#define OPTION_380_MODE
+//#define OPTION_380_MODE
 
 #if !defined(OPTION_370_MODE) && !defined(NO_370_MODE)
 #define OPTION_370_MODE                 /* Generate S/370 support    */
