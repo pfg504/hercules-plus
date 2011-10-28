@@ -868,7 +868,7 @@ int     dll_count;                      /* index into array          */
         arg_error = 1;
 
     /* Terminate if invalid arguments were detected */
-    if (arg_error)
+    if (arg_error || !cfg_flag ) // either -n or -f needed
     {
         char pgm[MAX_PATH];
         char* strtok_str = NULL;
@@ -1170,7 +1170,7 @@ int     dll_count;                      /* index into array          */
 #if defined(FISH_HANG)
     FishHangAtExit();
 #endif
-#ifdef _MSVC_
+#if defined( _MSVC_ )
     SetConsoleCtrlHandler(console_ctrl_handler, FALSE);
     socket_deinit();
 #endif
