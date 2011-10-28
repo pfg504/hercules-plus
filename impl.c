@@ -329,6 +329,7 @@ char    pathname[MAX_PATH];             /* (work)                    */
 DLL_EXPORT int impl(int argc, char *argv[])
 {
 char   *cfgfile = NULL;                 /* -> Configuration filename */
+static int cfg_flag = FALSE;
 char    pathname[MAX_PATH];             /* work area for filenames   */
 #if defined ( OPTION_LOCK_CONFIG_FILE )
   int     fd_cfg = -1;                  /* fd for config file        */
@@ -755,7 +756,6 @@ int     dll_count;                      /* index into array          */
     /* Process the command line options */
     while ((c = getopt(argc, argv, "nf:p:l:db:s:tvh")) != EOF)
     {
-        static int cfg_flag = FALSE;
         static int msg_flag = FALSE;
 
         switch (c) {
