@@ -63,19 +63,60 @@
 
 #endif
 
-#if !defined(IFF_UP) && !defined(HAVE_NET_IF_H) 
-  /* Standard interface flags. */
-  #define IFF_UP              0x00000001 // Interface is up.
-  #define IFF_BROADCAST       0x00000002 // Broadcast is  supported.
-  #define IFF_LOOPBACK        0x00000004 // This is loopback interface.
-  #define IFF_POINTTOPOINT    0x00000008 // This is point-to-point interface.
-  #define IFF_MULTICAST       0x00000010 // Multicast is supported.
+#if !defined(_MSVC_) && !(defined(HAVE_LINUX_IF_TUN_H) || defined(HAVE_NET_IF_H))
+  #if !defined(__gnu_linux__)
+  /* Standard interface flags. UNIX including MAC OS X (APPLE) */
+    #define IFF_UP          0x1             /* interface is up              */
+    #define IFF_BROADCAST   0x2             /* broadcast address valid      */
+    #define IFF_DEBUG       0x4             /* Turn on debugging.           */
+    #define IFF_LOOPBACK    0x8             /* is a loopback net            */
+    #define IFF_POINTOPOINT 0x10            /* interface has p-t-p link     */
+    #define IFF_NOTRAILERS  0x20            /* avoid use of trailers        */
+    #define IFF_RUNNING     0x40            /* resources allocated          */
+    #define IFF_NOARP       0x80            /* no ARP Protocol              */
+    #define IFF_PROMISC     0x100           /* receive all packets          */
+    #define IFF_ALLMULTI    0x200           /* receive all multicast packets*/
+    #define IFF_OACTIVE     0x400           /* transmission in progress     */
+    #define IFF_SIMPLEX     0x800           /* can't hear own transmission  */
+    #define IFF_LINK0       0x1000          /* per link layer definition    */
+    #define IFF_LINK1       0x2000          /* per link layer definition    */
+    #define IFF_LINK2       0x4000          /* per link layer definition    */
+    #define IFF_ALTPHYS     IFF_LINK2       /* user alternate physical      */
+    #define IFF_MULTICAST   0x8000          /* Supports multicast           */
+  #else
+    /* Standard interface flags. LINUX */
+    #define IFF_UP          0x1             /* interface is up              */
+    #define IFF_BROADCAST   0x2             /* broadcast address valid      */
+    #define IFF_DEBUG       0x4             /* Turn on debugging.           */
+    #define IFF_LOOPBACK    0x8             /* is a loopback net            */
+    #define IFF_POINTOPOINT 0x10            /* interface has p-t-p link     */
+    #define IFF_NOTRAILERS  0x20            /* avoid use of trailers        */
+    #define IFF_RUNNING     0x40            /* resources allocated          */
+    #define IFF_NOARP       0x80            /* no ARP Protocol              */
+    #define IFF_PROMISC     0x100           /* receive all packets          */
+    #define IFF_ALLMULTI    0x200           /* receive all multicast packets*/
+    #define IFF_MASTER      0x400           /* master of a load balancer    */
+    #define IFF_SLAVE       0x800           /* slave of a load balancer     */
+    #define IFF_MULTICAST   0x1000          /* Supports multicast           */
+  #endif
+#elif defined(_MSVC_) && !defined(_WS2IPDEF_)
+    #define IFF_UP          0x1             /* interface is up              */
+    #define IFF_BROADCAST   0x2             /* broadcast address valid      */
+    #define IFF_DEBUG       0x4             /* Turn on debugging.           */
+    #define IFF_LOOPBACK    0x8             /* is a loopback net            */
+    #define IFF_POINTOPOINT 0x10            /* interface has p-t-p link     */
+    #define IFF_NOTRAILERS  0x20            /* avoid use of trailers        */
+    #define IFF_RUNNING     0x40            /* resources allocated          */
+    #define IFF_NOARP       0x80            /* no ARP Protocol              */
+    #define IFF_PROMISC     0x100           /* receive all packets          */
+  /* not supported by TunTap32 on windows */
+    #define IFF_ALLMULTI    0x200           /* receive all multicast packets*/
+    #define IFF_MASTER      0x400           /* master of a load balancer    */
+    #define IFF_SLAVE       0x800           /* slave of a load balancer     */
+    #define IFF_MULTICAST   0x1000          /* Supports multicast           */
+    #define IFF_PORTSEL     0x2000          /* Can set media type           */
+    #define IFF_AUTOMEDIA   0x4000          /* auto media select active     */
 #endif
-  /* Hercules Defined interface flags */
-  #define IFF_NOTRAILERS      0x00010000 /* avoid use of trailers        */
-  #define IFF_RUNNING         0x00020000 /* resources allocated          */
-  #define IFF_PROMISC         0x00040000 /* receive all packets          */
-  #define IFF_DEBUG           0x00080000 /* Turn on debugging.           */
 
 // --------------------------------------------------------------------
 // Definition of the control request structure
