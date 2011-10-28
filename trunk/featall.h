@@ -132,7 +132,7 @@
 #endif
 
 #if !defined(OPTION_SCP_MSG_PREFIX) && !defined(NO_SCP_MSG_PREFIX)
-    #define NO_SCP_MSG_PREFIX           /* Prefix scp msg with HHC*  */
+    #define OPTION_SCP_MSG_PREFIX       /* Prefix scp msg with HHC*  */
 #endif
 
 #if !defined(OPTION_WINDOWS_HOST_FILENAMES) && !defined(NO_WINDOWS_HOST_FILENAMES)
@@ -142,11 +142,11 @@
 #endif
 
 #if !defined(OPTION_SHUTDOWN_CONFIRMATION) && !defined(NO_SHUTDOWN_CONFIRMATION)
-#define  NO_SHUTDOWN_CONFIRMATION       /* Confirm quit and ssd cmds */
+#define  OPTION_SHUTDOWN_CONFIRMATION   /* Confirm quit and ssd cmds */
 #endif
 
 #if !defined(OPTION_LOCK_CONFIG_FILE) && !defined(NO_LOCK_CONFIG_FILE)
-#define  NO_LOCK_CONFIG_FILE            /* Keep Configuration file
+#define  OPTION_LOCK_CONFIG_FILE        /* Keep Configuration file
                                            locked during execution   */
 #endif
 
@@ -155,7 +155,7 @@
 #undef  OPTION_SHOWDVOL1                /* showdvol1 support         */
 
 #if !defined(OPTION_BUILTIN_SYMBOLS) && !defined(NO_BUILTIN_SYMBOLS)
-#define  NO_BUILTIN_SYMBOLS             /* Internal Symbols Defined  */
+#define  OPTION_BUILTIN_SYMBOLS         /* Internal Symbols Defined  */
 #endif
 
 #if defined(OPTION_BUILTIN_SYMBOLS) && !defined(OPTION_CONFIG_SYMBOLS)
