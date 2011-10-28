@@ -225,7 +225,8 @@ violate the software vendor's licensing terms.</em>
 <p>
 To start Hercules enter this command at the host's command prompt:
 <blockquote><code><pre>
-    hercules  [ -f <em>filename</em> ]
+    hercules  [ -f <em>filename</em> | -n ]
+              [ -v | -t ]
               [ -d ]
               [ -p <em>dyndir</em> ]  [[-l <em>dynmod</em> ] ... ]
               [ -s symbol=value ]
@@ -236,12 +237,25 @@ To start Hercules enter this command at the host's command prompt:
 where:
 <blockquote>
 <dl>
-        <dt><code><em>filename</em></code><p><dd>
+        <dt><code><em>-f filename</em></code><p><dd>
 
-            is the name of the configuration file.
+            where filename is the name of the configuration file.
             The default, if none is specified, is <b><em>hercules.cnf</em></b>.
             The default may be overridden via the <code>HERCULES_CNF</code>
             environment variable.
+        <p>
+        <dt><code><em>-n</em></code><p><dd>
+
+            specifies that Hercules is to be started without a 
+            configuration file.
+        <p>
+        <dt><code><em>-v</em></code><p><dd>
+
+            specifies verbose messaging is in effect.
+        <p>
+        <dt><code><em>-t</em></code><p><dd>
+
+            specifies terse messaging is in effect.
         <p>
         <dt><code><em>-d</em></code><p><dd>
 
