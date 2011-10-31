@@ -879,6 +879,7 @@ int     dll_count;                      /* index into array          */
         fflush(stderr);
         fflush(stdout);
         usleep(100000);
+        delayed_exit(-1);
         return(1);
     }
 
