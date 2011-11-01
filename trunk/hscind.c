@@ -59,15 +59,11 @@
 #include "dasdtab.h"
 #include "ctcadpt.h"
 
-// (forward references, etc)
-
-#define MAX_DEVLIST_DEVICES  1024
-
-#if defined(FEATURE_ECPSVM)
-extern void ecpsvm_command( int argc, char **argv );
-#endif
-int HercCmdLine ( char *cmdline );
-int exec_cmd(int argc, char *argv[],char *cmdline);
-
+int indicate_vm_cmd(int argc, char *argv[],char *cmdline)
+{
+    UNREFERENCED(argc);
+    UNREFERENCED(argv);
+    UNREFERENCED(cmdline);
+}
 /* HSCIND.C End-of-text */
 
