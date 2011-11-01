@@ -387,6 +387,10 @@ endif
                        cgibin.c     \
                        loadmem.c    \
                        loadparm.c   \
+                       hscset.c     \
+                       hscqry.c     \
+                       hscdef.c     \
+                       hscind.c     \
                        hsccmd.c     \
                        hscemode.c   \
                        hscpufun.c   \
