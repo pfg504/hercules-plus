@@ -1059,7 +1059,15 @@
 							>
 						</File>
 						<File
+							RelativePath=".\hscdef.c"
+							>
+						</File>
+						<File
 							RelativePath=".\hscemode.c"
+							>
+						</File>
+						<File
+							RelativePath=".\hscind.c"
 							>
 						</File>
 						<File
@@ -1072,6 +1080,14 @@
 						</File>
 						<File
 							RelativePath=".\hscpufun.c"
+							>
+						</File>
+						<File
+							RelativePath=".\hscqry.c"
+							>
+						</File>
+						<File
+							RelativePath=".\hscset.c"
 							>
 						</File>
 						<File

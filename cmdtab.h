@@ -34,6 +34,18 @@
   "with a period.\n"
 
 #define quest_cmd_desc          "alias for help"
+
+/* VM Style commands */
+#define set_vm_cmd_desc         "VM style Set command"
+#define set_vm_cmd_help         "VM style Set command"
+#define define_vm_cmd_desc      "VM style Define command"
+#define define_vm_cmd_help      "VM style Define command"
+#define query_vm_cmd_desc       "VM style Query command"
+#define query_vm_cmd_help       "VM style Query command"
+#define indicate_vm_cmd_desc    "VM style Indicate command"
+#define indicate_vm_cmd_help    "VM style Indicate command"
+
+
 #define aea_cmd_desc            "Display AEA tables"
 #define aia_cmd_desc            "Display AIA fields"
 #define alrf_cmd_desc           "Command deprecated: Use \"archlvl enable|disable|query asn_lx_reuse\" instead"
@@ -1339,6 +1351,12 @@ COMMAND( "cckd",                    cckd_cmd,               SYSCONFIG,          
 COMMAND( "devtmax",                 devtmax_cmd,            SYSCONFIG,          devtmax_cmd_desc,       devtmax_cmd_help    )
 CMDABBR( "legacysenseid",  9,       legacysenseid_cmd,      SYSCONFIG,          legacy_cmd_desc,        NULL                )
 COMMAND( "sclproot",                sclproot_cmd,           SYSCONFIG,          sclproot_cmd_desc,      sclproot_cmd_help   )
+
+/* VM Style commands */
+COMMAND( "set",                     set_vm_cmd,             SYSALL,             set_vm_cmd_desc,        set_vm_cmd_help     )
+CMDABBR( "define",   3,             define_vm_cmd,          SYSALL,             define_vm_cmd_desc,     define_vm_cmd_help  )
+CMDABBR( "query",    1,             query_vm_cmd,           SYSALL,             query_vm_cmd_desc,      query_vm_cmd_help   )
+CMDABBR( "indicate", 3,             indicate_vm_cmd,        SYSALL,             indicate_vm_cmd_desc,   indicate_vm_cmd_help)
 
 COMMAND( "#",                       comment_cmd,            SYSALL,             hash_cmd_desc,          NULL                )
 COMMAND( "*",                       comment_cmd,            SYSALL,             star_cmd_desc,          NULL                )
