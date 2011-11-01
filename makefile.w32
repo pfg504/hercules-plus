@@ -105,6 +105,7 @@ hercules_OBJ = hostinfo.o impl.o config.o panel.o \
                timer.o esame.o cckddasd.o cckdutil.o dasdtab.o \
                parser.o ieee.o dfp.o httpserv.o bldcfg.o sr.o \
                cgibin.o codepage.o loadparm.o fillfnam.o \
+               hscset.o hscqry.o hscdef.o hscind.o \
                hsccmd.o hscmisc.o history.o logger.o \
                cache.o ecpsvm.o shared.o logmsg.o hdl.o hdlmain.o \
                hscutl.o hscutl2.o hsys.o bootstrap.o pttrace.o \
