@@ -1543,7 +1543,7 @@ char                    *logoout;
 #endif
 
     /* Negotiate telnet parameters */
-    rc = negotiate (csock, &devclass, &model, &extended, &devnum, group);
+    rc = negotiate (csock, &devclass, &model, &extended, &devnum, (char *)group);
     if (rc != 0)
     {
         close_socket (csock);
@@ -1580,8 +1580,8 @@ char                    *logoout;
            and the device group does not match the requested group */
         if (devnum==0xFFFF && (group[0] || dev->devunique.cons_dev.szgroupip[0]))
         {
-            if (strncasecmp(group,dev->devunique.cons_dev.szgroupip,
-                MAX(strlen(dev->devunique.cons_dev.szgroupip),strlen(group)) )!=0)
+            if (strncasecmp((char *)group,(char *)dev->devunique.cons_dev.szgroupip,
+                MAX(strlen((char*)dev->devunique.cons_dev.szgroupip),strlen((char*)group)) )!=0)
             {
                 continue;
             }

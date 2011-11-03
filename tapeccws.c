@@ -3210,7 +3210,7 @@ BYTE            rustat;                 /* Addl CSW stat on Rewind Unload */
             if ( dev->filename != NULL )
                 str_host_to_guest( (const BYTE*)dev->filename, iobuf, (u_int)num );
             else
-                str_host_to_guest( "", iobuf, (u_int)num );
+                str_host_to_guest( (const BYTE*)"", iobuf, (u_int)num );
 
             /* Return normal status */
             build_senseX (TAPE_BSENSE_STATUSONLY, dev, unitstat, code);
