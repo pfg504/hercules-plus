@@ -48,6 +48,9 @@ typedef  uint64_t   U64;        // unsigned 64-bits
 
 #ifndef  _MSVC_                 // (MSVC typedef's it too)
 typedef  uint8_t    BYTE;       // unsigned byte       (1 byte)
+  #ifndef UCHAR
+    typedef unsigned char UCHAR;// unsigned char       (1 byte)
+  #endif
 #endif
 typedef  uint8_t    HWORD[2];   // unsigned halfword   (2 bytes)
 typedef  uint8_t    FWORD[4];   // unsigned fullword   (4 bytes)

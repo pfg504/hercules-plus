@@ -29,6 +29,8 @@
 #define TAPE_CREATE     1
 #define TAPE_READONLY   2
 
+//typedef unsigned char   UCHAR;
+
 /* The File Status Table (as expected by VMFPLC2) */
 /* The "Basic" version is the FST for VM/370      */
 /* while the EDF extention is for support of VM   */
