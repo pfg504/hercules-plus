@@ -120,7 +120,7 @@ static const NED configuration_data[] = {
       /* .model    = */ {0},
       /* .manufact = */ {0},
       /* .plant    = */ {0},
-      /* .seq.code = */ {0},
+      /* .seq.code = */ {{0}},
       /* .tag      = */ {0,0} }
 };
 
@@ -145,7 +145,7 @@ static const NED node_data[] = {
       /* .model    = */ {0},
       /* .manufact = */ {0},
       /* .plant    = */ {0},
-      /* .seq.code = */ {0},
+      /* .seq.code = */ {{0}},
       /* .tag      = */ {0,0} }
 
 };
