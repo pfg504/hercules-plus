@@ -145,6 +145,7 @@ merge( SLLABEL *lab, int disp_out )
     SLFMT fmt;
     int i;
 
+    UNREFERENCED(disp_out);
     /*
     || Make the label more managable
     */

@@ -1501,7 +1501,7 @@ char                    devmsg[64];     /* Device message            */
 char                    hostmsg[256];   /* Host ID message           */
 char                    num_procs[64];  /* #of processors string     */
 char                    rejmsg[256];    /* Rejection message         */
-char                    group[16];      /* Console group             */
+BYTE                    group[16];      /* Console group             */
 size_t                  logoheight;
 char                    *logobfr;
 char                    *logoout;
@@ -1682,11 +1682,13 @@ char                    *logoout;
                 MSGBUF( rejmsg, MSG(HHC01029, "E",
                                     devclass == 'D' ? "3270" 
                                   : devclass == 'P' ? "3287"
-                                  : "1052/1053/3215" ) );
+                                  : "1052/1053/3215" ),
+                                  group );
                 WRMSG(HHC01029, "E", (
                                     devclass == 'D' ? "3270" 
                                   : devclass == 'P' ? "3287"
-                                  : "1052/1053/3215" ) );
+                                  : "1052/1053/3215" ),
+                                  group );
             }
         }
         else
@@ -2361,7 +2363,7 @@ loc3270_init_handler ( DEVBLK *dev, int argc, char *argv[] )
                      
                 if ( rc == 0 && isalpha( r[0] ))
                 {
-                    strlcpy(dev->devunique.cons_dev.szgroupip,r,sizeof(dev->devunique.cons_dev.szgroupip));
+                    strlcpy((char *)dev->devunique.cons_dev.szgroupip,r,sizeof(dev->devunique.cons_dev.szgroupip));
                 }
                 else
                 {
@@ -2697,7 +2699,7 @@ constty_init_handler ( DEVBLK *dev, int argc, char *argv[] )
             ;   // NOP (not really a group name; an '*' is
                 // simply used as an argument place holder)
         else
-            strlcpy(dev->devunique.cons_dev.szgroupip,argv[ac],sizeof(dev->devunique.cons_dev.szgroupip));
+            strlcpy((char*)dev->devunique.cons_dev.szgroupip,argv[ac],sizeof(dev->devunique.cons_dev.szgroupip));
 
         argc--; ac++;
         if (argc > 0)   // ip address?

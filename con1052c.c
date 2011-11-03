@@ -106,7 +106,7 @@ con1052_init_handler ( DEVBLK *dev, int argc, char *argv[] )
         dev->devunique.cons_dev.prompt1052 = TRUE;
 
         /* Default command character is "/" */
-        strlcpy(dev->devunique.cons_dev.szCmdPrefix,"/",
+        strlcpy((char*)dev->devunique.cons_dev.szCmdPrefix,"/",
                 sizeof(dev->devunique.cons_dev.szCmdPrefix));
 
         /* Is there an argument? */
@@ -122,7 +122,7 @@ con1052_init_handler ( DEVBLK *dev, int argc, char *argv[] )
             {
                 if ( strlen( argv[ac] ) == 1 )
                 {
-                    strlcpy( dev->devunique.cons_dev.szCmdPrefix, 
+                    strlcpy( (char*)dev->devunique.cons_dev.szCmdPrefix, 
                              argv[ac], 
                              sizeof(dev->devunique.cons_dev.szCmdPrefix) );
                 }
@@ -159,7 +159,7 @@ con1052_query_device (DEVBLK *dev, char **devclass,
 char msgbuf[32];
 
     BEGIN_DEVICE_CLASS_QUERY( "CON", dev, devclass, buflen, buffer );
-    if (strlen(dev->devunique.cons_dev.szCmdPrefix) == 1)
+    if (strlen((char*)dev->devunique.cons_dev.szCmdPrefix) == 1)
         MSGBUF( msgbuf, " cmdpref(%s)", dev->devunique.cons_dev.szCmdPrefix );
     else
         msgbuf[0] = '\0';
@@ -428,12 +428,13 @@ int  i;
         if(dev->allocated
           && dev->hnd == &con1052_device_hndinfo
           && dev->devtype != 0x1053
-          && strlen(dev->devunique.cons_dev.szCmdPrefix) != 0
-          && !strncasecmp(cmd,dev->devunique.cons_dev.szCmdPrefix,strlen(dev->devunique.cons_dev.szCmdPrefix)) )
+          && strlen((char*)dev->devunique.cons_dev.szCmdPrefix) != 0
+          && !strncasecmp(cmd,(char*)dev->devunique.cons_dev.szCmdPrefix,
+                          strlen((char*)dev->devunique.cons_dev.szCmdPrefix)) )
         {
-            input = cmd + strlen(dev->devunique.cons_dev.szCmdPrefix);
+            input = cmd + strlen((char*)dev->devunique.cons_dev.szCmdPrefix);
             WRCMSG ("<pnl,color(lightyellow,black)>", HHC00008, "I", 
-                        dev->devunique.cons_dev.szCmdPrefix, cmd+strlen(dev->devunique.cons_dev.szCmdPrefix) );
+                        dev->devunique.cons_dev.szCmdPrefix, cmd+strlen((char*)dev->devunique.cons_dev.szCmdPrefix) );
             for(i = 0; i < dev->bufsize && input[i] != '\0'; i++)
                 dev->buf[i] = isprint(input[i]) ? host_to_guest(input[i]) : SPACE;
             dev->devunique.cons_dev.keybdrem = dev->buflen = i;

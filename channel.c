@@ -157,6 +157,7 @@ BYTE    area[64];                       /* Data display area         */
 
 } /* end function display_ccw */
 
+#if 0               /* Ununsed function */
 /*-------------------------------------------------------------------*/
 /* DISPLAY IDAW AND DATA                                             */
 /*-------------------------------------------------------------------*/
@@ -179,6 +180,7 @@ BYTE    area[64];                       /* Data display area         */
     }
 
 } /* end function display_idaw */
+#endif 
 
 /*-------------------------------------------------------------------*/
 /* DISPLAY CHANNEL STATUS WORD                                       */
