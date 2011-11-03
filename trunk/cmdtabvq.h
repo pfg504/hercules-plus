@@ -32,12 +32,12 @@
   #define _FW_REF_ABR(_s,_a,_f,_t,_d,_l)  static int (_f)( CMDFUNC_ARGS_PROTO );
 #endif
 
-CMDABBR( "help",   4,              qhelp_cmd,              SYSCMD,             help_cmd_desc,         help_cmd_help     )
-CMDABBR( "cpuid",  5,              qcpuid_cmd,             SYSCMD,             cpuid_cmd_desc,        cpuid_cmd_help     )
-CMDABBR( "pid",    3,              qpid_cmd,               SYSCMD,             pid_cmd_desc,          NULL                )
-CMDABBR( "ports",  5,              qports_cmd,             SYSCMD,             ports_cmd_desc,        NULL                )
-CMDABBR( "processor",4,            qproc_cmd,              SYSCMD,             proc_cmd_desc,         NULL                )
-CMDABBR( "storage", 4,             qstor_cmd,              SYSCMD,             stor_cmd_desc,         NULL                )
+CMDABBR( "help",   4,              help_cmd,              SYSCMD,             help_cmd_desc,         help_cmd_help     )
+CMDABBR( "cpuid",  5,              cpuid_cmd,             SYSCMD,             cpuid_cmd_desc,        cpuid_cmd_help     )
+CMDABBR( "pid",    3,              pid_cmd,               SYSCMD,             pid_cmd_desc,          NULL                )
+CMDABBR( "ports",  2,              ports_cmd,             SYSCMD,             ports_cmd_desc,        NULL                )
+CMDABBR( "processor",4,            proc_cmd,              SYSCMD,             proc_cmd_desc,         NULL                )
+CMDABBR( "storage", 3,             stor_cmd,              SYSCMD,             stor_cmd_desc,         NULL                )
 #if defined( OPTION_CONFIG_SYMBOLS )
-CMDABBR( "pfkeys",  2,             qpfkeys_cmd,            SYSCMD,             pfkeys_cmd_desc,       NULL                )
+CMDABBR( "pfkeys",  2,             pfkeys_cmd,            SYSCMD,             pfkeys_cmd_desc,       NULL                )
 #endif
