@@ -21,6 +21,17 @@
 #define proc_cmd_desc          "Display processors type and utilization"
 #define stor_cmd_desc          "Display main and expanded storage values"
 
+#if defined(_FW_REF)
+  #if defined(_FW_REF_CMD)
+    #undef _FW_REF_CMD
+  #endif
+  #if defined(_FW_REF_ABR)
+    #undef _FW_REF_ABR
+  #endif
+  #define _FW_REF_CMD(_s,   _f,_t,_d,_l)  static int (_f)( CMDFUNC_ARGS_PROTO );
+  #define _FW_REF_ABR(_s,_a,_f,_t,_d,_l)  static int (_f)( CMDFUNC_ARGS_PROTO );
+#endif
+
 CMDABBR( "help",   4,              qhelp_cmd,              SYSCMD,             help_cmd_desc,         help_cmd_help     )
 CMDABBR( "cpuid",  5,              qcpuid_cmd,             SYSCMD,             cpuid_cmd_desc,        cpuid_cmd_help     )
 CMDABBR( "pid",    3,              qpid_cmd,               SYSCMD,             pid_cmd_desc,          NULL                )
