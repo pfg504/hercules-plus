@@ -87,7 +87,7 @@ static const NED configuration_data[] = {
       /* .model    = */ _001,
       /* .manufact = */ _HRC,
       /* .plant    = */ _ZZ,
-      /* .seq.code = */ _SERIAL,
+      /* .seq.code = */ {_SERIAL},
       /* .tag      = */ {0,0} },
 
     { /* .code     = */ NODE_NED + NODE_SNIND,
@@ -98,7 +98,7 @@ static const NED configuration_data[] = {
       /* .model    = */ _001,
       /* .manufact = */ _HRC,
       /* .plant    = */ _ZZ,
-      /* .seq.code = */ _SERIAL,
+      /* .seq.code = */ {_SERIAL},
       /* .tag      = */ {0,0} },
 
     { /* .code     = */ NODE_NED + NODE_TOKEN + NODE_SNIND,
@@ -109,7 +109,7 @@ static const NED configuration_data[] = {
       /* .model    = */ _004,
       /* .manufact = */ _HRC,
       /* .plant    = */ _ZZ,
-      /* .seq.code = */ _SERIAL,
+      /* .seq.code = */ {_SERIAL},
       /* .tag      = */ {0,0} },
 
     { /* .code     = */ NODE_GNEQ,
@@ -134,7 +134,7 @@ static const NED node_data[] = {
       /* .model    = */ _004,
       /* .manufact = */ _HRC,
       /* .plant    = */ _ZZ,
-      /* .seq.code = */ _SERIAL,
+      /* .seq.code = */ {_SERIAL},
       /* .tag      = */ {0,0} },
 
     { /* .code     = */ NODE_GNEQ,
