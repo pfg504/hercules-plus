@@ -64,6 +64,7 @@ int define_vm_cmd(int argc, char *argv[],char *cmdline)
     UNREFERENCED(argc);
     UNREFERENCED(argv);
     UNREFERENCED(cmdline);
+    return 0;
 }
 /* HSCDEF.C End-of-text */
 
