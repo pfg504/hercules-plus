@@ -27,9 +27,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Some handy macros...       (feel free to add these to hercules.h)
 
-#ifndef BOOL
-#define BOOL  BYTE
-#endif
 #ifndef FALSE
 #define FALSE   0
 #endif

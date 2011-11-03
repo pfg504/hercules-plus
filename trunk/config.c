@@ -456,7 +456,7 @@ CHPBLK *chp;
     return NULL;
 }
 
-
+#if 0               // not used ?
 static
 CHPBLK *get_chpblk(U16 css, BYTE chpid, BYTE chptype)
 {
@@ -486,7 +486,7 @@ CHPBLK**chpp;
         *chpp = chp;
     }
 }
-
+#endif
 
 static
 DEVBLK *get_devblk(U16 lcss, U16 devnum)
