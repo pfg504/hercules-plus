@@ -1307,6 +1307,22 @@
 							>
 						</File>
 						<File
+							RelativePath=".\cmdtabvd.h"
+							>
+						</File>
+						<File
+							RelativePath=".\cmdtabvi.h"
+							>
+						</File>
+						<File
+							RelativePath=".\cmdtabvq.h"
+							>
+						</File>
+						<File
+							RelativePath=".\cmdtabvs.h"
+							>
+						</File>
+						<File
 							RelativePath=".\codepage.h"
 							>
 						</File>

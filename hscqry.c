@@ -61,16 +61,29 @@
 
 #include "cmdinc.h"
 
-int query_vm_cmd(int argc, char *argv[],char *cmdline)
+int query_vm_cmd(int argi, char *argx[],char *cmdline)
 {
-CMDTAB* pCmdTab;
-size_t  cmdlen, matchlen;
-int     rc = HERRINVCMD;             /* Default to invalid command   */
+    char           *argn[MAX_ARGS+1];   // Our copy of pointers
+    char          **argv = argn;        // Our copy of the ptr to pointers
+    int             argc;               // Our copy
+    CMDTAB*         pCmdTab;
+    size_t          cmdlen, matchlen;
+    int             rc;                 // Default to invalid command
+
     UNREFERENCED(argc);
     UNREFERENCED(argv);
     UNREFERENCED(cmdline);
-    argc--;
-    argv++;
+
+    VERIFY( argi <= MAX_ARGS );                     // This should always be true
+    argc = ( argi <= MAX_ARGS ? argi : MAX_ARGS );
+    for( rc = 0; rc < argc; rc++ )
+        argn[rc] = argx[rc];
+
+    argc--;         // Decrement Count to skip past "QUERY"
+    argv++;         // Move pointer forward past "QUERY"
+    
+    rc = HERRINVCMD;
+    
     for (pCmdTab = cmdtab; pCmdTab->statement; pCmdTab++)
     {
         if (1
@@ -103,9 +116,9 @@ int     rc = HERRINVCMD;             /* Default to invalid command   */
     return 0;
 }
 /*-------------------------------------------------------------------*/
-/* qhelp command                                                     */
+/* help command                                                      */
 /*-------------------------------------------------------------------*/
-static int qhelp_cmd(int argc, char *argv[], char *cmdline)
+static int help_cmd(int argc, char *argv[], char *cmdline)
 {
     UNREFERENCED(cmdline);
     UNREFERENCED(argv);
@@ -114,9 +127,9 @@ static int qhelp_cmd(int argc, char *argv[], char *cmdline)
 }
 
 /*-------------------------------------------------------------------*/
-/* qcpuid command                                                    */
+/* cpuid command                                                     */
 /*-------------------------------------------------------------------*/
-static int qcpuid_cmd(int argc, char *argv[], char *cmdline)
+static int cpuid_cmd(int argc, char *argv[], char *cmdline)
 {
     /* Note: The machine-type must be set before the message is      */
     /*       issued due to gcc incorrectly handling substitution     */
@@ -148,9 +161,9 @@ static int qcpuid_cmd(int argc, char *argv[], char *cmdline)
 
 #if       defined( OPTION_CONFIG_SYMBOLS )
 /*-------------------------------------------------------------------*/
-/* qpfkeys command                                                   */
+/* pfkeys command                                                    */
 /*-------------------------------------------------------------------*/
-static int qpfkeys_cmd(int argc, char *argv[], char *cmdline)
+static int pfkeys_cmd(int argc, char *argv[], char *cmdline)
 {
     int     i;
     char    szPF[6];
@@ -186,9 +199,9 @@ static int qpfkeys_cmd(int argc, char *argv[], char *cmdline)
 #endif // defined( OPTION_CONFIG_SYMBOLS )
 
 /*-------------------------------------------------------------------*/
-/* qpid command                                                      */
+/* pid command                                                       */
 /*-------------------------------------------------------------------*/
-static int qpid_cmd(int argc, char *argv[], char *cmdline)
+static int pid_cmd(int argc, char *argv[], char *cmdline)
 {
     UNREFERENCED(cmdline);
     UNREFERENCED(argv);
@@ -206,9 +219,9 @@ static int qpid_cmd(int argc, char *argv[], char *cmdline)
 }
 
 /*-------------------------------------------------------------------*/
-/* qports command                                                    */
+/* ports command                                                     */
 /*-------------------------------------------------------------------*/
-static int qports_cmd(int argc, char *argv[], char *cmdline)
+static int ports_cmd(int argc, char *argv[], char *cmdline)
 {
     char buf[64];
 
@@ -261,9 +274,9 @@ static int qports_cmd(int argc, char *argv[], char *cmdline)
 }
 
 /*-------------------------------------------------------------------*/
-/* qproc command                                                     */
+/* proc command                                                      */
 /*-------------------------------------------------------------------*/
-static int qproc_cmd(int argc, char *argv[], char *cmdline)
+static int proc_cmd(int argc, char *argv[], char *cmdline)
 {
     int i, j, k;
     int cpupct = 0;
@@ -462,7 +475,7 @@ static char *fmt_memsize( const U64 memsize )
 /*-------------------------------------------------------------------*/
 /* Query STORage command                                             */
 /*-------------------------------------------------------------------*/
-static int qstor_cmd(int argc, char *argv[], char *cmdline)
+static int stor_cmd(int argc, char *argv[], char *cmdline)
 {
     BYTE    display_main = FALSE;
     BYTE    display_xpnd = FALSE;
@@ -507,7 +520,5 @@ static int qstor_cmd(int argc, char *argv[], char *cmdline)
     return 0;
 }
 
-
 /* HSCQRY.C End-of-text */
 #undef _HSCQRY_C_
-
