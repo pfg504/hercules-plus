@@ -717,7 +717,7 @@ static unsigned char to_dcb(int v)
     return((v/10)*16+v%10);
 }
 
-static UCHAR *char_nums = "0123456789";
+static UCHAR *char_nums = (UCHAR*)("0123456789");
 
 /* Convert from  DCB (Decimal Coded Binary) value to a decimal value */
 u_int from_dcb(UCHAR *d, UCHAR v)
