@@ -444,7 +444,7 @@ static void DelSubchanFastLookup(U16 ssid, U16 subchan)
 }
 #endif
 
-
+#if 0               // not used ?
 static
 CHPBLK *fnd_chpblk(U16 css, BYTE chpid)
 {
@@ -456,7 +456,6 @@ CHPBLK *chp;
     return NULL;
 }
 
-#if 0               // not used ?
 static
 CHPBLK *get_chpblk(U16 css, BYTE chpid, BYTE chptype)
 {
