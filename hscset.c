@@ -59,6 +59,8 @@
 #include "dasdtab.h"
 #include "ctcadpt.h"
 
+#include "cmdinc.h"
+
 int set_vm_cmd(int argi, char *argx[],char *cmdline)
 {
     char           *argn[MAX_ARGS+1];   // Our copy of pointers
