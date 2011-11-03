@@ -1299,6 +1299,10 @@
 							>
 						</File>
 						<File
+							RelativePath=".\cmdinc.h"
+							>
+						</File>
+						<File
 							RelativePath=".\cmdtab.h"
 							>
 						</File>

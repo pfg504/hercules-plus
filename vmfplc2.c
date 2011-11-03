@@ -25,6 +25,9 @@
 /* NOTE : The tape blocks will always be 5 more to account */
 /*        for record headers                               */
 
+/* Default is tape write existing file */
+#define TAPE_CREATE     1
+#define TAPE_READONLY   2
 
 /* The File Status Table (as expected by VMFPLC2) */
 /* The "Basic" version is the FST for VM/370      */
@@ -86,7 +89,7 @@ struct options
 };
 
 /* Utility function to perform ascii to ebcdic translation on a string */
-void host_to_guest_str(unsigned char *d,char *s)
+static void host_to_guest_str(unsigned char *d,char *s)
 {
     int i;
 
@@ -96,9 +99,21 @@ void host_to_guest_str(unsigned char *d,char *s)
     }
 }
 
+/* Utility function to perform ascii to ebcdic translation on a string */
+static void guest_to_host_str( UCHAR *d, UCHAR *s, int sz )
+{
+    int i;
+
+    for(i=0;i<sz;i++)
+    {
+        d[i]=guest_to_host(s[i]);
+    }
+    d[sz] = '\0';
+    return;
+}
 /* Generic 'usage' routine in case of incorrect */
 /* invocation.                                  */
-int usage(char *cmd)
+static int usage(char *cmd)
 {
     char    *bcmd;
 
@@ -111,7 +126,7 @@ int usage(char *cmd)
 }
 
 /* Parse the command line */
-int parse_parms(int ac, char **av, struct options *opts)
+static int parse_parms(int ac, char **av, struct options *opts)
 {
     opts->cmd=basename(av[0]);
     if(ac<2)
@@ -179,7 +194,7 @@ static  char    *validfmnum="0123456";
 
 
 /* This function validates a CMS File Name or File Type */
-int validate_fnft(char *s)
+static int validate_fnft(char *s)
 {
     int i,j,found;
 
@@ -366,7 +381,7 @@ static void hexdump(unsigned char *bfr,int sz)
 #endif
 
 /* Add a chunk of data to a collection of tape blocks */
-void append_data(struct TAPE_BLOCKS *tbs,unsigned char *bfr,size_t sz)
+static void append_data(struct TAPE_BLOCKS *tbs,unsigned char *bfr,size_t sz)
 {
     int dsz;
     int of;
@@ -408,7 +423,7 @@ void append_data(struct TAPE_BLOCKS *tbs,unsigned char *bfr,size_t sz)
 }
 
 /* Release a collection of tape blocks */
-void free_blocks(struct TAPE_BLOCKS *tbs)
+static void free_blocks(struct TAPE_BLOCKS *tbs)
 {
     struct TAPE_BLOCK *tb,*ntb;
 
@@ -484,7 +499,7 @@ void addrecs(struct RECS *recs,unsigned char *bfr,int sz)
 /* empty files.                                                             */
 /* The last record of a RECFM F file is also padded if necessary            */
 
-struct TAPE_BLOCKS *flushrecs( struct RECS *recs,
+static struct TAPE_BLOCKS *flushrecs( struct RECS *recs,
                                int *recl,
                                int *recc,
                                size_t *filesz,
@@ -665,8 +680,17 @@ void big_endian_16(unsigned char *d,int s)
     d[1]=s&0xff;
 }
 
+/* Convert 16-bit Big Endian format to an integer */
+static u_int little_endian_16(unsigned char *s)
+{
+    u_int d = 0;
+    d += s[0] << 24;
+    d += s[1] << 16;
+    return d;
+}
+
 /* Convert a value to 32 bit Big Endian format */
-void big_endian_32(unsigned char *d,int s)
+static void big_endian_32(unsigned char *d,int s)
 {
     d[0]=(s>>24) & 0xff;
     d[1]=(s>>16) & 0xff;
@@ -674,10 +698,34 @@ void big_endian_32(unsigned char *d,int s)
     d[3]=s&0xff;
 }
 
+/* Convert 32-bit Big Endian format to an integer */
+static u_int little_endian_32(unsigned char *s)
+{
+    u_int d = 0;
+    d += s[0] << 24;
+    d += s[1] << 16;
+    d += s[2] << 8;
+    d += s[3];
+    return d;
+}
+
 /* Convert a single byte decimal value to DCB (Decimal Coded Binary) format */
-unsigned char to_dcb(int v)
+static unsigned char to_dcb(int v)
 {
     return((v/10)*16+v%10);
+}
+
+static UCHAR *char_nums = "0123456789";
+
+/* Convert from  DCB (Decimal Coded Binary) value to a decimal value */
+u_int from_dcb(UCHAR *d, UCHAR v)
+{
+    u_int x = ((U8)v & 0xF0 ) >> 4;
+    u_int y = (U8)v & 0x0F;
+    d[0] = char_nums[x];
+    d[1] = char_nums[y];
+    d[2] = '\0';
+    return(( x * 10 ) + y );
 }
 
 /* Create the VMFPLC2 Header record */
@@ -945,41 +993,171 @@ int process_procfile(struct options *opts)
 /* Open the tape file for output */
 int open_tapefile(struct options *opts,int w)
 {
-    if(w)
+    int rc = -1;
+    if( w == TAPE_CREATE)
     {
-        het_open(&opts->hetfd,opts->tapefile,HETOPEN_CREATE);
-        het_cntl(opts->hetfd,HETCNTL_SET|HETCNTL_COMPRESS,1);
+        rc = het_open(&opts->hetfd,opts->tapefile,HETOPEN_CREATE);
+        if ( rc == 0 )
+            rc = het_cntl(opts->hetfd,HETCNTL_SET|HETCNTL_COMPRESS,1);
+    }
+    else if ( w == TAPE_READONLY)
+    {
+        rc = het_open(&opts->hetfd,opts->tapefile,HETOPEN_READONLY);
+    }
+    else if ( w == 0 )       /* Open for read/write operations for existing file */
+    {
+        rc = het_open(&opts->hetfd,opts->tapefile,0);
+        if ( rc == 0 )
+            rc = het_cntl(opts->hetfd,HETCNTL_SET|HETCNTL_COMPRESS,1);
     }
     else
-    {
-        het_open(&opts->hetfd,opts->tapefile,HETOPEN_READONLY);
-        het_cntl(opts->hetfd,HETCNTL_SET|HETCNTL_DECOMPRESS,1);
-    }
-    return 0;
+        return -1;
+
+    return rc;
 }
 
 /* Perform vmfplc2 DUMP operation */
 int dodump(struct options *opts)
 {
+    int rc = -1;
     printf(" DUMPING.....\n");
-    open_tapefile(opts,1);
-    return process_procfile(opts);
+    rc = open_tapefile(opts,TAPE_READONLY);
+    if ( rc == 0 )
+        rc = process_procfile(opts);
+    return rc;
 }
 
 /* Perform vmfplc2 LOAD operation */
 int doload(struct options *opts)
 {
+    int rc = -1;
     UNREFERENCED(opts);
     printf("LOAD function not implemented yet\n");
-    return 0;
+    return rc;
 }
 
 /* Perform vmfplc2 SCAN operation */
 int doscan(struct options *opts)
 {
+    int rc = -1;
     UNREFERENCED(opts);
-    printf("SCAN function not implemented yet\n");
-    return 0;
+    printf(" SCANNING.....\n");
+    rc = open_tapefile(opts,TAPE_READONLY);
+    if ( rc == 0 )
+    {
+        UCHAR   cBuffer[65536];
+        struct  FST_BLOCK *fstb = (struct FST_BLOCK*)cBuffer;
+        UCHAR   fn[9];
+        UCHAR   ft[9];
+        UCHAR   fm[3];
+        UCHAR   cDate[9];
+        UCHAR   cYear[3];
+        UCHAR   cTime[9];         // if tape dump hh:mm; else hh:mm:ss
+        UCHAR   cRecfm[2];
+        u_int   uLrecl      = 0;
+        u_int   uBlockCnt   = 0;
+        u_int   uNumRecords = 0;
+        BOOL    bHdr = TRUE;
+        u_int   uFileNo = 1;
+        int     rc = -1;
+        UCHAR   cNULL[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+
+        memset(cBuffer, 0, sizeof(cBuffer) );
+        memset(fn     , 0, sizeof(fn     ) );
+        memset(ft     , 0, sizeof(ft     ) );
+        memset(fm     , 0, sizeof(fm     ) );
+        memset(cDate  , 0, sizeof(cDate  ) );
+        memset(cYear  , 0, sizeof(cYear  ) );
+        memset(cTime  , 0, sizeof(cTime  ) );
+        memset(cRecfm , 0, sizeof(cRecfm ) );
+
+        rc = het_rewind(opts->hetfd);
+
+        if ( rc == HETE_OK )
+        {
+            while ( rc >= 0 )
+            {
+                memset(cBuffer,0,sizeof(struct FST_BLOCK));
+                rc = het_read(opts->hetfd,cBuffer);
+                if ( rc > 0 )
+                {
+                    if ( memcmp(cBuffer, plch_hdr, sizeof(plch_hdr) ) == 0 )
+                    {
+                        guest_to_host_str( fn, fstb->fst.fn, sizeof(fstb->fst.fn) );
+                        guest_to_host_str( ft, fstb->fst.ft, sizeof(fstb->fst.ft) );
+                        guest_to_host_str( fm, fstb->fst.fm, sizeof(fstb->fst.fm) );
+                        cRecfm[0] = guest_to_host( fstb->fst.recfm );
+                        cRecfm[1] = '\0';
+                        if ( memcmp( fstb->fst.adt, cNULL, sizeof(fstb->fst.adt) ) != 0 )
+                        {
+                            guest_to_host_str( cYear, fstb->fst.year, sizeof(fstb->fst.year) );
+                            from_dcb(&cDate[0], fstb->fst.dt[0]);
+                            cDate[2] = '-';
+                            from_dcb(&cDate[3], fstb->fst.dt[1]);
+                            cDate[5] = '-';
+                            cDate[6] = cYear[0];
+                            cDate[7] = cYear[1];
+                            from_dcb(&cTime[0], fstb->fst.dt[2]);
+                            cTime[2] = ':';
+                            from_dcb(&cTime[3], fstb->fst.dt[3]);
+                        }
+                        else
+                        {
+                            from_dcb(&cDate[0], fstb->fst.adt[1]);
+                            cDate[2] = '-';
+                            from_dcb(&cDate[3], fstb->fst.adt[0]);
+                            cDate[5] = '-';
+                            from_dcb(&cDate[6], fstb->fst.adt[2]);
+                            from_dcb(&cTime[0], fstb->fst.adt[0]);
+                            cTime[2] = ':';
+                            from_dcb(&cTime[3], fstb->fst.adt[1]);
+                            cTime[5] = ':';
+                            from_dcb(&cTime[6], fstb->fst.adt[2]);
+                        }
+                        uLrecl = little_endian_32(fstb->fst.lrecl);
+                        if ( memcmp( fstb->fst.adbc, cNULL, sizeof(fstb->fst.adbc) ) == 0 )
+                            uBlockCnt = little_endian_16(fstb->fst.db);
+                        else
+                            uBlockCnt = little_endian_32(fstb->fst.adbc);
+                        if ( memcmp( fstb->fst.aic, cNULL, sizeof(fstb->fst.aic) ) == 0 )
+                            uNumRecords = little_endian_16(fstb->fst.reccount);
+                        else
+                            uNumRecords = little_endian_32(fstb->fst.aic);
+                        if ( bHdr )
+                        {
+                            bHdr = FALSE;
+                            printf("\n%-8s %-8s %-2s %-6s %-5s %8s %8s %-8s %-8s\n",
+                            "FileName", "FileType", "FM", "Recfm", "Lrecl", "Records",
+                            "Blocks", "  Date  ", "Time");
+                        }
+                        printf("%-8s %-8s %-2s %-6s %5u %8u %8u %-8s %-8s\n",
+                                fn,  ft,  fm, cRecfm, uLrecl, uNumRecords, uBlockCnt, cDate, cTime);
+                    }
+                }
+                else if ( rc == HETE_TAPEMARK )
+                {
+                    bHdr = TRUE;
+                    printf("End of File %4u\n", uFileNo++);
+                    rc = 0;
+                }
+                else if ( rc == HETE_EOT )
+                {
+                    printf("End of Tape\n");
+                }
+                else
+                {
+                    printf("%s\n", het_error(rc));
+                }
+            }  // end_while
+        }
+        else
+        {
+            printf("%s\n",het_error(rc));
+        }
+        rc = het_close(&opts->hetfd);
+    }
+    return rc;
 }
 
 /* Main routine */
