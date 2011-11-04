@@ -721,6 +721,10 @@ noinst_HEADERS = fishhang.h     \
                  shared.h       \
                  hscutl.h       \
                  cmdtab.h       \
+                 cmdtabvd.h     \
+                 cmdtabvi.h     \
+                 cmdtabvq.h     \
+                 cmdtabvs.h     \
                  hdl.h          \
                  sockdev.h      \
                  ltdl.h         \
