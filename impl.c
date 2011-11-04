@@ -1091,20 +1091,19 @@ int     dll_count;                      /* index into array          */
     if (rc)
         WRMSG(HHC00102, "E", strerror(rc));
 
-
 #if defined( OPTION_LOCK_CONFIG_FILE )
     if(cfgfile)
     {
         if ( ( fd_cfg = HOPEN( pathname, O_RDONLY, S_IRUSR | S_IRGRP ) ) < 0 )
         {
-            WRMSG( HHC01432, "S", pathname, "open()", strerror( errno ) );
+            WRMSG( HHC01454, "S", pathname, "open()", strerror( errno ) );
             delayed_exit(-1);
             return(1);
         }
         else
         {
 #if defined( _MSVC_ )
-            if( ( rc = _locking( fd_cfg, _LK_NBRLCK, 1L ) ) < 0 )
+            if( ( rc = _locking( fd_cfg, _LK_LOCK, 1L ) ) < 0 )
             {
                 int rc = errno;
                 WRMSG( HHC01454, "S", pathname, "_locking()", strerror( errno ) );
@@ -1121,7 +1120,7 @@ int     dll_count;                      /* index into array          */
             {
                 if (errno == EACCES || errno == EAGAIN)
                 {
-                    WRMSG( HHC01432, "S", pathname, "fcntl()", strerror( errno ) );
+                    WRMSG( HHC01454, "S", pathname, "fcntl()", strerror( errno ) );
                     delayed_exit(-1);
                     return(1);
                 }

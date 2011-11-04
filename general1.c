@@ -2123,7 +2123,7 @@ int     r1, r3;                         /* Register numbers          */
 int     b2;                             /* effective address base    */
 VADR    addr2;                          /* effective address         */
 BYTE   *main2;                          /* mainstor address          */
-U64     old, new;                       /* old, new values           */
+U64     _old, _new;                     /* old, new values           */
 
     RS(inst, regs, r1, r3, b2, addr2);
 
@@ -2140,14 +2140,14 @@ U64     old, new;                       /* old, new values           */
     main2 = MADDRL (addr2, 8, b2, regs, ACCTYPE_WRITE, regs->psw.pkey);
 
     /* Get old, new values */
-    old = CSWAP64(((U64)(regs->GR_L(r1)) << 32) | regs->GR_L(r1+1));
-    new = CSWAP64(((U64)(regs->GR_L(r3)) << 32) | regs->GR_L(r3+1));
+    _old = CSWAP64(((U64)(regs->GR_L(r1)) << 32) | regs->GR_L(r1+1));
+    _new = CSWAP64(((U64)(regs->GR_L(r3)) << 32) | regs->GR_L(r3+1));
 
     /* Obtain main-storage access lock */
     OBTAIN_MAINLOCK(regs);
 
     /* Attempt to exchange the values */
-    regs->psw.cc = cmpxchg8 (&old, new, main2);
+    regs->psw.cc = cmpxchg8 (&_old, _new, main2);
 
     /* Release main-storage access lock */
     RELEASE_MAINLOCK(regs);
@@ -2158,8 +2158,8 @@ U64     old, new;                       /* old, new values           */
     if (regs->psw.cc == 1)
     {
         PTT(PTT_CL_CSF,"*CDS",regs->GR_L(r1),regs->GR_L(r3),(U32)(addr2 & 0xffffffff));
-        regs->GR_L(r1) = CSWAP64(old) >> 32;
-        regs->GR_L(r1+1) = CSWAP64(old) & 0xffffffff;
+        regs->GR_L(r1) = CSWAP64(_old) >> 32;
+        regs->GR_L(r1+1) = CSWAP64(_old) & 0xffffffff;
 #if defined(_FEATURE_SIE)
         if(SIE_STATB(regs, IC0, CS1))
         {

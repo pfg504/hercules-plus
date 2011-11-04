@@ -248,6 +248,8 @@
 
   #endif // defined(GEN_MSC_ASSISTS) && defined(MSC_X86_IA64)
 
+#elif defined(__APPLE__) // if apple leave it alone for now
+/* the core2 machine fails with the greg code */
 #else // !defined( _MSVC_ )
 /*-------------------------------------------------------------------
  * GNU C or other compiler...   (i.e. NON-Microsoft C/C++)
