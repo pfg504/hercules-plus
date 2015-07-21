@@ -1,0 +1,1 @@
+Enhancements to Hercules Open Source project, improving performance and reliability.
